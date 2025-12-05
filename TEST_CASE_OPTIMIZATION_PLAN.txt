@@ -331,39 +331,54 @@ Tasks:
 7.1 Create output generator (output_generator.py)
     - Generate all output files:
       
-      7.1.1 optimized_test_suite.json
-          - List of optimized test cases with metadata
+      7.1.1 Optimized Test Case Files (Same Format as Input):
+          - output/test_cases/XX.json - Full test case metadata (same format as input)
+          - output/steps_in_test_cases/XX.json - Full test steps (same format as input)
+          - These files can be used directly in the application
+          - Only includes optimized test cases (removed duplicates)
+      
+      7.1.2 optimized_test_suite.json
+          - List of optimized test case IDs
           - Justification for each kept test case
           - Coverage information
+          - Reference file for documentation
       
-      7.1.2 duplicate_analysis.json
+      7.1.3 admin_optimized_tests.json
+          - List of admin test case IDs that were kept
+          - Admin-specific optimization details
+      
+      7.1.4 user_optimized_tests.json
+          - List of user test case IDs that were kept
+          - User-specific optimization details
+      
+      7.1.5 duplicate_analysis.json
           - Duplicate groups
           - Similarity scores
           - Recommendations (keep/remove/merge)
       
-      7.1.3 user_flows.json
+      7.1.6 user_flows.json
           - Identified user flows
           - Flow coverage matrix
           - Critical flows list
       
-      7.1.4 execution_order.json
+      7.1.7 execution_order.json
           - Ordered list of test cases
           - Priority scores
           - Execution groups
           - Estimated times
       
-      7.1.5 optimization_summary.json
+      7.1.8 optimization_summary.json
           - High-level metrics
           - Reduction statistics
           - Coverage comparison
           - Time savings estimate
       
-      7.1.6 ai_analysis.json
+      7.1.9 ai_analysis.json
           - Claude API analysis results
           - Semantic insights
           - Business value assessments
       
-      7.1.7 recommendations.json
+      7.1.10 recommendations.json
           - Actionable recommendations
           - Test cases to remove
           - Test cases to merge
