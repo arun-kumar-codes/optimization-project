@@ -1,0 +1,1951 @@
+{
+  "content": [
+    {
+      "id": 1,
+      "priority": "MAJOR",
+      "position": 1,
+      "preRequisiteStepId": null,
+      "action": "Go to https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+      "actionName": "navigateTo",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 94,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Go to https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "GOTO",
+        "control": "GET_CURRENT_URL",
+        "customEvent": "navigateTo",
+        "href": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+        "signals": [],
+        "type": "GOTO"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 2,
+      "priority": "MAJOR",
+      "position": 2,
+      "preRequisiteStepId": null,
+      "action": "Click on Username",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on label",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "Username",
+        "locator": {
+          "placeholder": "Username",
+          "xpath": ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "[placeholder=\"Username\"i]",
+              "name": "internal:attr",
+              "source": "[placeholder=\"Username\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Username\"i]",
+          ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus",
+          "[placeholder=\"Username\"]"
+        ],
+        "selector": "internal:attr=[placeholder=\"Username\"i]",
+        "signals": [],
+        "value": "Admin"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 3,
+      "priority": "MAJOR",
+      "position": 3,
+      "preRequisiteStepId": null,
+      "action": "Press Shift Key",
+      "actionName": "pressKey",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 1012,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Press Shift Key",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "keydown",
+        "customEvent": "pressKey",
+        "eventKey": "Shift",
+        "label": "",
+        "locator": {
+          "placeholder": "Username",
+          "xpath": ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus"
+        },
+        "modifiers": 8,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "[placeholder=\"Username\"i]",
+              "name": "internal:attr",
+              "source": "[placeholder=\"Username\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Username\"i]",
+          ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus",
+          "[placeholder=\"Username\"]"
+        ],
+        "selector": "internal:attr=[placeholder=\"Username\"i]",
+        "signals": [],
+        "value": "Admin"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 4,
+      "priority": "MAJOR",
+      "position": 4,
+      "preRequisiteStepId": null,
+      "action": "Enter Admin in the Username field",
+      "actionName": "enter",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 971,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter Admin in the label field",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "input",
+        "customEvent": "enter",
+        "label": "Username",
+        "locator": {
+          "placeholder": "Username",
+          "xpath": ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus"
+        },
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "[placeholder=\"Username\"i]",
+              "name": "internal:attr",
+              "source": "[placeholder=\"Username\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Username\"i]",
+          ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus",
+          "[placeholder=\"Username\"]"
+        ],
+        "selector": "internal:attr=[placeholder=\"Username\"i]",
+        "value": "Admin"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 5,
+      "priority": "MAJOR",
+      "position": 5,
+      "preRequisiteStepId": null,
+      "action": "Click on Password",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on label",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "Password",
+        "locator": {
+          "placeholder": "Password",
+          "xpath": ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "[placeholder=\"Password\"i]",
+              "name": "internal:attr",
+              "source": "[placeholder=\"Password\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Password\"i]",
+          ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus",
+          "[placeholder=\"Password\"]"
+        ],
+        "selector": "internal:attr=[placeholder=\"Password\"i]",
+        "signals": [],
+        "value": "admin123"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 6,
+      "priority": "MAJOR",
+      "position": 6,
+      "preRequisiteStepId": null,
+      "action": "Enter admin123 in the Password field",
+      "actionName": "enter",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 971,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter admin123 in the label field",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "input",
+        "customEvent": "enter",
+        "label": "Password",
+        "locator": {
+          "placeholder": "Password",
+          "xpath": ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus"
+        },
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "[placeholder=\"Password\"i]",
+              "name": "internal:attr",
+              "source": "[placeholder=\"Password\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Password\"i]",
+          ".oxd-form > .oxd-form-row > .oxd-input-group > div > .oxd-input--focus",
+          "[placeholder=\"Password\"]"
+        ],
+        "selector": "internal:attr=[placeholder=\"Password\"i]",
+        "value": "admin123"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 7,
+      "priority": "MAJOR",
+      "position": 7,
+      "preRequisiteStepId": null,
+      "action": "Click on Login",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Login",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "Login",
+        "locator": {
+          "role": "Button",
+          "text": "Login",
+          "xpath": ".orangehrm-login-slot > .orangehrm-login-form > .oxd-form > .oxd-form-actions > .oxd-button"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "button[name=\"Login\"i]",
+              "name": "internal:role",
+              "source": "button[name=\"Login\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=button[name=\"Login\"i]",
+          ".orangehrm-login-slot > .orangehrm-login-form > .oxd-form > .oxd-form-actions > .oxd-button",
+          "[role=\"Button\"]",
+          "text=Login"
+        ],
+        "selector": "internal:role=button[name=\"Login\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 8,
+      "priority": "MAJOR",
+      "position": 8,
+      "preRequisiteStepId": null,
+      "action": "Go to https://opensource-demo.orangehrmlive.com/web/index.php/dashboard/index",
+      "actionName": "navigateTo",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 94,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Go to https://opensource-demo.orangehrmlive.com/web/index.php/dashboard/index",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "GOTO",
+        "control": "GET_CURRENT_URL",
+        "customEvent": "navigateTo",
+        "href": "https://opensource-demo.orangehrmlive.com/web/index.php/dashboard/index",
+        "signals": [],
+        "type": "GOTO"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 9,
+      "priority": "MAJOR",
+      "position": 9,
+      "preRequisiteStepId": null,
+      "action": "Click on Admin",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Admin",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "Admin",
+        "locator": {
+          "role": "anchor link",
+          "text": "Admin",
+          "xpath": ".oxd-navbar-nav > .oxd-sidepanel-body > .oxd-main-menu > .oxd-main-menu-item-wrapper:nth-child(1) > .oxd-main-menu-item"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "link[name=\"Admin\"i]",
+              "name": "internal:role",
+              "source": "link[name=\"Admin\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=link[name=\"Admin\"i]",
+          ".oxd-navbar-nav > .oxd-sidepanel-body > .oxd-main-menu > .oxd-main-menu-item-wrapper:nth-child(1) > .oxd-main-menu-item",
+          "[role=\"anchor link\"]",
+          "text=Admin"
+        ],
+        "selector": "internal:role=link[name=\"Admin\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 10,
+      "priority": "MAJOR",
+      "position": 10,
+      "preRequisiteStepId": null,
+      "action": "Go to https://opensource-demo.orangehrmlive.com/web/index.php/admin/viewSystemUsers",
+      "actionName": "navigateTo",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 94,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Go to https://opensource-demo.orangehrmlive.com/web/index.php/admin/viewSystemUsers",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "GOTO",
+        "control": "GET_CURRENT_URL",
+        "customEvent": "navigateTo",
+        "href": "https://opensource-demo.orangehrmlive.com/web/index.php/admin/viewSystemUsers",
+        "signals": [],
+        "type": "GOTO"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 11,
+      "priority": "MAJOR",
+      "position": 11,
+      "preRequisiteStepId": null,
+      "action": "Click on label",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on label",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "",
+        "locator": {
+          "xpath": ".oxd-grid-4 > .oxd-grid-item > .oxd-input-group > div > .oxd-input"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "textbox",
+              "name": "internal:role",
+              "source": "textbox"
+            },
+            {
+              "body": "1",
+              "name": "nth",
+              "source": "1"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=1",
+          ".oxd-grid-4 > .oxd-grid-item > .oxd-input-group > div > .oxd-input"
+        ],
+        "selector": "internal:role=textbox >> nth=1",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 12,
+      "priority": "MAJOR",
+      "position": 12,
+      "preRequisiteStepId": null,
+      "action": "Press Shift Key",
+      "actionName": "pressKey",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 1012,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Press Shift Key",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "keydown",
+        "customEvent": "pressKey",
+        "eventKey": "Shift",
+        "label": "",
+        "locator": {
+          "xpath": ".oxd-grid-4 > .oxd-grid-item > .oxd-input-group > div > .oxd-input"
+        },
+        "modifiers": 8,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "textbox",
+              "name": "internal:role",
+              "source": "textbox"
+            },
+            {
+              "body": "1",
+              "name": "nth",
+              "source": "1"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=1",
+          ".oxd-grid-4 > .oxd-grid-item > .oxd-input-group > div > .oxd-input"
+        ],
+        "selector": "internal:role=textbox >> nth=1",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 13,
+      "priority": "MAJOR",
+      "position": 13,
+      "preRequisiteStepId": null,
+      "action": "Enter Admin in the label field",
+      "actionName": "enter",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 971,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter Admin in the label field",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "input",
+        "customEvent": "enter",
+        "label": "",
+        "locator": {
+          "xpath": ".oxd-grid-4 > .oxd-grid-item > .oxd-input-group > div > .oxd-input"
+        },
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "textbox",
+              "name": "internal:role",
+              "source": "textbox"
+            },
+            {
+              "body": "1",
+              "name": "nth",
+              "source": "1"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=1",
+          ".oxd-grid-4 > .oxd-grid-item > .oxd-input-group > div > .oxd-input"
+        ],
+        "selector": "internal:role=textbox >> nth=1",
+        "value": "Admin"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 14,
+      "priority": "MAJOR",
+      "position": 14,
+      "preRequisiteStepId": null,
+      "action": "Click on Search",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Search",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "Search",
+        "locator": {
+          "role": "Button",
+          "text": "Search",
+          "xpath": ".oxd-table-filter > .oxd-table-filter-area > .oxd-form > .oxd-form-actions > .oxd-button--secondary"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "button[name=\"Search\"i]",
+              "name": "internal:role",
+              "source": "button[name=\"Search\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=button[name=\"Search\"i]",
+          ".oxd-table-filter > .oxd-table-filter-area > .oxd-form > .oxd-form-actions > .oxd-button--secondary",
+          "[role=\"Button\"]",
+          "text=Search"
+        ],
+        "selector": "internal:role=button[name=\"Search\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 15,
+      "priority": "MAJOR",
+      "position": 15,
+      "preRequisiteStepId": null,
+      "action": "Click on Reset",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Reset",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "Reset",
+        "locator": {
+          "role": "Button",
+          "text": "Reset",
+          "xpath": ".oxd-table-filter > .oxd-table-filter-area > .oxd-form > .oxd-form-actions > .oxd-button--ghost"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "button[name=\"Reset\"i]",
+              "name": "internal:role",
+              "source": "button[name=\"Reset\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=button[name=\"Reset\"i]",
+          ".oxd-table-filter > .oxd-table-filter-area > .oxd-form > .oxd-form-actions > .oxd-button--ghost",
+          "[role=\"Button\"]",
+          "text=Reset"
+        ],
+        "selector": "internal:role=button[name=\"Reset\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 16,
+      "priority": "MAJOR",
+      "position": 16,
+      "preRequisiteStepId": null,
+      "action": "Click on label",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on label",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "",
+        "locator": {
+          "xpath": "div > .oxd-select-wrapper > .oxd-select-text--focus > .oxd-select-text--after > .oxd-icon"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": [
+                {
+                  "simples": [
+                    {
+                      "combinator": "",
+                      "selector": {
+                        "css": "form",
+                        "functions": []
+                      }
+                    },
+                    {
+                      "combinator": "",
+                      "selector": {
+                        "css": "i",
+                        "functions": []
+                      }
+                    }
+                  ]
+                }
+              ],
+              "name": "css",
+              "source": "form i"
+            },
+            {
+              "body": "0",
+              "name": "nth",
+              "source": "0"
+            }
+          ]
+        },
+        "pwLocator": [
+          "form i >> nth=0",
+          "div > .oxd-select-wrapper > .oxd-select-text--focus > .oxd-select-text--after > .oxd-icon"
+        ],
+        "selector": "form i >> nth=0",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 17,
+      "priority": "MAJOR",
+      "position": 17,
+      "preRequisiteStepId": null,
+      "action": "Click on Search",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Search",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "Search",
+        "locator": {
+          "role": "Button",
+          "text": "Search",
+          "xpath": ".oxd-table-filter > .oxd-table-filter-area > .oxd-form > .oxd-form-actions > .oxd-button--secondary"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "button[name=\"Search\"i]",
+              "name": "internal:role",
+              "source": "button[name=\"Search\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=button[name=\"Search\"i]",
+          ".oxd-table-filter > .oxd-table-filter-area > .oxd-form > .oxd-form-actions > .oxd-button--secondary",
+          "[role=\"Button\"]",
+          "text=Search"
+        ],
+        "selector": "internal:role=button[name=\"Search\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 18,
+      "priority": "MAJOR",
+      "position": 18,
+      "preRequisiteStepId": null,
+      "action": "Click on Paul Collings",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Paul Collings",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "Paul Collings",
+        "locator": {
+          "text": "Paul Collings",
+          "xpath": ".oxd-topbar-header-userarea > ul > .oxd-userdropdown > .oxd-userdropdown-tab > .oxd-userdropdown-name"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "\"Paul Collings\"i",
+              "name": "internal:text",
+              "source": "\"Paul Collings\"i"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:text=\"Paul Collings\"i",
+          ".oxd-topbar-header-userarea > ul > .oxd-userdropdown > .oxd-userdropdown-tab > .oxd-userdropdown-name",
+          "text=Paul Collings"
+        ],
+        "selector": "internal:text=\"Paul Collings\"i",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 19,
+      "priority": "MAJOR",
+      "position": 19,
+      "preRequisiteStepId": null,
+      "action": "Click on Logout",
+      "actionName": "click",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 109,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Logout",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "label": "Logout",
+        "locator": {
+          "role": "anchor link",
+          "text": "Logout",
+          "xpath": "ul > .\\--active > .oxd-dropdown-menu > li:nth-child(4) > .oxd-userdropdown-link"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "menuitem[name=\"Logout\"i]",
+              "name": "internal:role",
+              "source": "menuitem[name=\"Logout\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=menuitem[name=\"Logout\"i]",
+          "ul > .\\--active > .oxd-dropdown-menu > li:nth-child(4) > .oxd-userdropdown-link",
+          "[role=\"anchor link\"]",
+          "text=Logout"
+        ],
+        "selector": "internal:role=menuitem[name=\"Logout\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 20,
+      "priority": "MAJOR",
+      "position": 20,
+      "preRequisiteStepId": null,
+      "action": "Enter admin123 in the label field",
+      "actionName": "enter",
+      "testCaseId": 1,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 971,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter admin123 in the label field",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "input",
+        "customEvent": "enter",
+        "label": "",
+        "locator": {
+          "placeholder": "Password",
+          "xpath": ".oxd-form > .oxd-form-row:nth-child(3) > .oxd-input-group > div > .oxd-input"
+        },
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "[placeholder=\"Password\"i]",
+              "name": "internal:attr",
+              "source": "[placeholder=\"Password\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Password\"i]",
+          ".oxd-form > .oxd-form-row:nth-child(3) > .oxd-input-group > div > .oxd-input",
+          "[placeholder=\"Password\"]"
+        ],
+        "selector": "internal:attr=[placeholder=\"Password\"i]",
+        "value": "admin123"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "offset": 0,
+    "pageNumber": 0,
+    "pageSize": 2000,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalElements": 20,
+  "totalPages": 1,
+  "sort": {
+    "sorted": true,
+    "unsorted": false,
+    "empty": false
+  },
+  "size": 2000,
+  "number": 0,
+  "first": true,
+  "numberOfElements": 20,
+  "empty": false
+}

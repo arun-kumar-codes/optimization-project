@@ -1,0 +1,1239 @@
+{
+  "content": [
+    {
+      "id": 144,
+      "priority": "MAJOR",
+      "position": 0,
+      "preRequisiteStepId": null,
+      "action": "OHRM Login ",
+      "actionName": "STEP_GROUP",
+      "testCaseId": 13,
+      "stepGroupId": 12,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": null,
+      "type": "STEP_GROUP",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": null,
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "customEvent": "STEP_GROUP"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 124,
+      "priority": "MAJOR",
+      "position": 1,
+      "preRequisiteStepId": null,
+      "action": "Click on Admin",
+      "actionName": "click",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Admin",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Admin",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<span class=\"oxd-text oxd-text--span oxd-main-menu-item--name\" data-v-7b563373=\"\" data-v-6475d26d=\"\">Admin</span>",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "Admin",
+        "locator": {
+          "text": "Admin",
+          "xpath": ".oxd-sidepanel-body > .oxd-main-menu > .oxd-main-menu-item-wrapper:nth-child(1) > .oxd-main-menu-item > .oxd-text"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "link[name=\"Admin\"i]",
+              "name": "internal:role",
+              "source": "link[name=\"Admin\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=link[name=\"Admin\"i]",
+          ".oxd-sidepanel-body > .oxd-main-menu > .oxd-main-menu-item-wrapper:nth-child(1) > .oxd-main-menu-item > .oxd-text",
+          "text=Admin"
+        ],
+        "selector": "internal:role=link[name=\"Admin\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/74a3d528-c9d2-4c74-9c8a-6a71e305bd33.png",
+      "goldenHtmlCode": "<span class=\"oxd-text oxd-text--span oxd-main-menu-item--name\" data-v-7b563373=\"\" data-v-6475d26d=\"\">Admin</span>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Admin",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": [],
+        "element": "Admin"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 126,
+      "priority": "MAJOR",
+      "position": 2,
+      "preRequisiteStepId": null,
+      "action": "Click on Icon",
+      "actionName": "click",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Icon",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Icon",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<i class=\"oxd-icon bi-caret-down-fill oxd-userdropdown-icon\" data-v-bddebfba=\"\" data-v-bdd6d943=\"\"></i>",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "Icon",
+        "locator": {
+          "xpath": ".oxd-topbar-header-userarea > ul > .oxd-userdropdown > .oxd-userdropdown-tab > .oxd-icon"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "listitem",
+              "name": "internal:role",
+              "source": "listitem"
+            },
+            {
+              "body": "\"Test 66 Testerisufi\"i",
+              "name": "internal:has-text",
+              "source": "\"Test 66 Testerisufi\"i"
+            },
+            {
+              "body": [
+                {
+                  "simples": [
+                    {
+                      "combinator": "",
+                      "selector": {
+                        "css": "i",
+                        "functions": []
+                      }
+                    }
+                  ]
+                }
+              ],
+              "name": "css",
+              "source": "i"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=listitem >> internal:has-text=\"Test 66 Testerisufi\"i >> i",
+          ".oxd-topbar-header-userarea > ul > .oxd-userdropdown > .oxd-userdropdown-tab > .oxd-icon"
+        ],
+        "selector": "internal:role=listitem >> internal:has-text=\"Test 66 Testerisufi\"i >> i",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/021c3567-468b-453b-bb06-1a51a7ef6393.png",
+      "goldenHtmlCode": "<i class=\"oxd-icon bi-caret-down-fill oxd-userdropdown-icon\" data-v-bddebfba=\"\" data-v-bdd6d943=\"\"></i>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Icon",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": [],
+        "element": "Icon"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 127,
+      "priority": "MAJOR",
+      "position": 3,
+      "preRequisiteStepId": null,
+      "action": "Click on Change Password",
+      "actionName": "click",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Change Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Change Password",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<a href=\"/web/index.php/pim/updatePassword\" role=\"menuitem\" class=\"oxd-userdropdown-link\">Change Password</a>",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "Change Password",
+        "locator": {
+          "role": "anchor link",
+          "text": "Change Password",
+          "xpath": "ul > .--active > .oxd-dropdown-menu > li:nth-child(3) > .oxd-userdropdown-link"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "menuitem[name=\"Change Password\"i]",
+              "name": "internal:role",
+              "source": "menuitem[name=\"Change Password\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=menuitem[name=\"Change Password\"i]",
+          "ul > .--active > .oxd-dropdown-menu > li:nth-child(3) > .oxd-userdropdown-link",
+          "[role=\"anchor link\"]",
+          "text=Change Password"
+        ],
+        "selector": "internal:role=menuitem[name=\"Change Password\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/10b399b9-d298-475e-93a7-71c59519ea33.png",
+      "goldenHtmlCode": "<a href=\"/web/index.php/pim/updatePassword\" role=\"menuitem\" class=\"oxd-userdropdown-link\">Change Password</a>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Change Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": [],
+        "element": "Change Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 129,
+      "priority": "MAJOR",
+      "position": 4,
+      "preRequisiteStepId": null,
+      "action": "Click on label",
+      "actionName": "click",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on label",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" data-v-1f99f73c=\"\">",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "",
+        "locator": {
+          "xpath": ".oxd-grid-2 > .oxd-grid-item > .oxd-input-group > div > .oxd-input--focus"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "textbox",
+              "name": "internal:role",
+              "source": "textbox"
+            },
+            {
+              "body": "1",
+              "name": "nth",
+              "source": "1"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=1",
+          ".oxd-grid-2 > .oxd-grid-item > .oxd-input-group > div > .oxd-input--focus"
+        ],
+        "selector": "internal:role=textbox >> nth=1",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/eec2bc76-a5a4-40f8-a064-51a2e2621ce6.png",
+      "goldenHtmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" data-v-1f99f73c=\"\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 130,
+      "priority": "MAJOR",
+      "position": 5,
+      "preRequisiteStepId": null,
+      "action": "Enter admin123 in the label field",
+      "actionName": "enter",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": "admin123",
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 70,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter admin123 in the label field",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "input",
+        "customEvent": "enter",
+        "htmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" data-v-1f99f73c=\"\">",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "",
+        "locator": {
+          "xpath": ".oxd-grid-2 > .oxd-grid-item > .oxd-input-group > div > .oxd-input--focus"
+        },
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "textbox",
+              "name": "internal:role",
+              "source": "textbox"
+            },
+            {
+              "body": "1",
+              "name": "nth",
+              "source": "1"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=1",
+          ".oxd-grid-2 > .oxd-grid-item > .oxd-input-group > div > .oxd-input--focus"
+        ],
+        "selector": "internal:role=textbox >> nth=1",
+        "value": "admin123"
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/2519bc4b-e00e-447a-88f5-b07963790a36.png",
+      "goldenHtmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" data-v-1f99f73c=\"\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "admin123",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "admin123",
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 131,
+      "priority": "MAJOR",
+      "position": 6,
+      "preRequisiteStepId": null,
+      "action": "Click on label",
+      "actionName": "click",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on label",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\" data-v-1f99f73c=\"\">",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "",
+        "locator": {
+          "xpath": ".oxd-grid-2 > .user-password-cell > .oxd-input-group > div > .oxd-input"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "textbox",
+              "name": "internal:role",
+              "source": "textbox"
+            },
+            {
+              "body": "2",
+              "name": "nth",
+              "source": "2"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=2",
+          ".oxd-grid-2 > .user-password-cell > .oxd-input-group > div > .oxd-input"
+        ],
+        "selector": "internal:role=textbox >> nth=2",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/6c496533-19ed-46fb-a596-65cd9bde7869.png",
+      "goldenHtmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\" data-v-1f99f73c=\"\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 132,
+      "priority": "MAJOR",
+      "position": 7,
+      "preRequisiteStepId": null,
+      "action": "Enter password@123 in the label field",
+      "actionName": "enter",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": "password@123",
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 70,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter password@123 in the label field",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "input",
+        "customEvent": "enter",
+        "htmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\" data-v-1f99f73c=\"\">",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "",
+        "locator": {
+          "xpath": ".oxd-grid-2 > .user-password-cell > .oxd-input-group > div > .oxd-input"
+        },
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "textbox",
+              "name": "internal:role",
+              "source": "textbox"
+            },
+            {
+              "body": "2",
+              "name": "nth",
+              "source": "2"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=2",
+          ".oxd-grid-2 > .user-password-cell > .oxd-input-group > div > .oxd-input"
+        ],
+        "selector": "internal:role=textbox >> nth=2",
+        "value": "password@123"
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/f285eeca-dd21-4dd7-9cb0-47bfdf7b86ac.png",
+      "goldenHtmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\" data-v-1f99f73c=\"\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "password@123",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "password@123",
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 133,
+      "priority": "MAJOR",
+      "position": 8,
+      "preRequisiteStepId": null,
+      "action": "Click on label",
+      "actionName": "click",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on label",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\" data-v-1f99f73c=\"\">",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "",
+        "locator": {
+          "xpath": ".oxd-grid-2 > .oxd-grid-item > .oxd-input-group > div > .oxd-input--focus"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "textbox",
+              "name": "internal:role",
+              "source": "textbox"
+            },
+            {
+              "body": "3",
+              "name": "nth",
+              "source": "3"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=3",
+          ".oxd-grid-2 > .oxd-grid-item > .oxd-input-group > div > .oxd-input--focus"
+        ],
+        "selector": "internal:role=textbox >> nth=3",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/0057ac42-fa44-4a6b-83e4-6f5bcd04d9c6.png",
+      "goldenHtmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\" data-v-1f99f73c=\"\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 134,
+      "priority": "MAJOR",
+      "position": 9,
+      "preRequisiteStepId": null,
+      "action": "Enter password@123 in the label field",
+      "actionName": "enter",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": "password@123",
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 70,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter password@123 in the label field",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "input",
+        "customEvent": "enter",
+        "htmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\" data-v-1f99f73c=\"\">",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "",
+        "locator": {
+          "xpath": ".oxd-grid-2 > .oxd-grid-item > .oxd-input-group > div > .oxd-input--focus"
+        },
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "textbox",
+              "name": "internal:role",
+              "source": "textbox"
+            },
+            {
+              "body": "3",
+              "name": "nth",
+              "source": "3"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=3",
+          ".oxd-grid-2 > .oxd-grid-item > .oxd-input-group > div > .oxd-input--focus"
+        ],
+        "selector": "internal:role=textbox >> nth=3",
+        "value": "password@123"
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/fde3f6cd-b584-45eb-9b69-0babcabff9ce.png",
+      "goldenHtmlCode": "<input class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\" data-v-1f99f73c=\"\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "password@123",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "password@123",
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 141,
+      "priority": "MAJOR",
+      "position": 10,
+      "preRequisiteStepId": null,
+      "action": "Click on Save",
+      "actionName": "click",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Save",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Save",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<button type=\"submit\" class=\"oxd-button oxd-button--medium oxd-button--secondary orangehrm-left-space\" data-v-10d463b7=\"\" data-v-1c01b456=\"\"><!----> Save <!----></button>",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "Save",
+        "locator": {
+          "role": "Button",
+          "text": "Save",
+          "xpath": ".orangehrm-background-container > .orangehrm-card-container > .oxd-form > .oxd-form-actions > .oxd-button--secondary"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "button[name=\"Save\"i]",
+              "name": "internal:role",
+              "source": "button[name=\"Save\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=button[name=\"Save\"i]",
+          ".orangehrm-background-container > .orangehrm-card-container > .oxd-form > .oxd-form-actions > .oxd-button--secondary",
+          "[role=\"Button\"]",
+          "text=Save"
+        ],
+        "selector": "internal:role=button[name=\"Save\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/e09a3ba0-e1e6-47bf-a8c0-2979583703e0.png",
+      "goldenHtmlCode": "<button type=\"submit\" class=\"oxd-button oxd-button--medium oxd-button--secondary orangehrm-left-space\" data-v-10d463b7=\"\" data-v-1c01b456=\"\"><!----> Save <!----></button>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Save",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": [],
+        "element": "Save"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 143,
+      "priority": "MAJOR",
+      "position": 11,
+      "preRequisiteStepId": null,
+      "action": "Verify that the <span data-key=\"label\" data-event-key=\"label\" class=\"element\">label</span> text contains <span data-key=\"test-data\" data-event-key=\"value\" class=\"test_data action-flex-auto\" data-test-data-type=\"undefined\">SuccessSuccessfully Saved×</span>",
+      "actionName": "verifyTextContains",
+      "testCaseId": 13,
+      "stepGroupId": null,
+      "testData": "SuccessSuccessfully Saved×",
+      "testDataType": "raw",
+      "attribute": null,
+      "element": "label",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 105,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": null,
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "customEvent": "verifyTextContains",
+        "selector": "internal:text=\"SuccessSuccessfully Saved×\"i",
+        "value": "SuccessSuccessfully Saved×",
+        "label": "label",
+        "pwLocator": [
+          "internal:text=\"SuccessSuccessfully Saved×\"i"
+        ]
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/f743bc22-6a92-4186-a146-11f5a67a64db.png",
+      "goldenHtmlCode": "<div class=\"oxd-toast oxd-toast--success oxd-toast-container--toast\" aria-live=\"assertive\" data-v-35c8fe09=\"\"><div class=\"oxd-toast-start\" data-v-35c8fe09=\"\"><div class=\"oxd-toast-icon-container\" data-v-0d11940b=\"\" data-v-35c8fe09=\"\"><div class=\"oxd-toast-icon-wrap oxd-toast-icon-wrap--success\" data-v-0d11940b=\"\"><i class=\"oxd-icon bi-check2 oxd-toast-icon\" data-v-bddebfba=\"\" data-v-0d11940b=\"\"></i></div></div><div class=\"oxd-toast-content oxd-toast-content--success\" data-v-35c8fe09=\"\"><p class=\"oxd-text oxd-text--p oxd-text--toast-title oxd-toast-content-text\" data-v-7b563373=\"\" data-v-35c8fe09=\"\">Success</p><p class=\"oxd-text oxd-text--p oxd-text--toast-message oxd-toast-content-text\" data-v-7b563373=\"\" data-v-35c8fe09=\"\">Successfully Saved</p></div></div><div class=\"oxd-toast-close-container\" data-v-31aeb1cf=\"\" data-v-35c8fe09=\"\"><div class=\"oxd-toast-close oxd-toast-close--success\" role=\"button\" data-v-31aeb1cf=\"\">×</div></div></div>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "SuccessSuccessfully Saved×",
+        "test-data-type": "raw",
+        "element": "label",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testDataType": "raw",
+        "testData": "SuccessSuccessfully Saved×",
+        "conditionIf": [],
+        "element": "label"
+      },
+      "conditionIf": []
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "offset": 0,
+    "pageNumber": 0,
+    "pageSize": 2000,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalElements": 12,
+  "totalPages": 1,
+  "last": true,
+  "sort": {
+    "sorted": true,
+    "unsorted": false,
+    "empty": false
+  },
+  "size": 2000,
+  "number": 0,
+  "first": true,
+  "numberOfElements": 12,
+  "empty": false
+}

@@ -1,0 +1,608 @@
+{
+  "content": [
+    {
+      "id": 192,
+      "priority": "MAJOR",
+      "position": 0,
+      "preRequisiteStepId": null,
+      "action": "E-commerce Login",
+      "actionName": "STEP_GROUP",
+      "testCaseId": 18,
+      "stepGroupId": 17,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": null,
+      "type": "STEP_GROUP",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": null,
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "customEvent": "STEP_GROUP"
+      },
+      "goldenScreenshot": null,
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 187,
+      "priority": "MAJOR",
+      "position": 1,
+      "preRequisiteStepId": null,
+      "action": "Click on SHOP",
+      "actionName": "click",
+      "testCaseId": 18,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "SHOP",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on SHOP",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<a class=\"Header-module--navLink--2a5b8 Header-module--activeLink--d0bc2\" href=\"/shop\">Shop</a>",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "SHOP",
+        "locator": {
+          "role": "anchor link",
+          "text": "SHOP",
+          "xpath": ".Container-module--container--6761c > .Header-module--header--aa06a > .Header-module--linkContainer--b6652 > nav > .Header-module--activeLink--d0bc2"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "link[name=\"Shop\"i]",
+              "name": "internal:role",
+              "source": "link[name=\"Shop\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=link[name=\"Shop\"i]",
+          ".Container-module--container--6761c > .Header-module--header--aa06a > .Header-module--linkContainer--b6652 > nav > .Header-module--activeLink--d0bc2",
+          "[role=\"anchor link\"]",
+          "text=SHOP"
+        ],
+        "selector": "internal:role=link[name=\"Shop\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/306bd062-e00e-448d-9243-0f7fe19ac017.png",
+      "goldenHtmlCode": "<a class=\"Header-module--navLink--2a5b8 Header-module--activeLink--d0bc2\" href=\"/shop\">Shop</a>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "SHOP",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": [],
+        "element": "SHOP"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 188,
+      "priority": "MAJOR",
+      "position": 2,
+      "preRequisiteStepId": null,
+      "action": "Click on Search",
+      "actionName": "click",
+      "testCaseId": 18,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Search",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Search",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<svg width=\"20\" height=\"20\" fill=\"none\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\"><path d=\"M19.333 19.333 14 14m-5.333 2.667a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z\" stroke=\"currentColor\"></path></svg>",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "Search",
+        "locator": {
+          "xpath": ".Container-module--container--6761c > .Header-module--header--aa06a > .Header-module--actionContainers--fa486 > .Header-module--iconButton--db197:nth-child(1) > svg"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": "button[name=\"Search\"i]",
+              "name": "internal:role",
+              "source": "button[name=\"Search\"i]"
+            }
+          ]
+        },
+        "pwLocator": [
+          "internal:role=button[name=\"Search\"i]",
+          ".Container-module--container--6761c > .Header-module--header--aa06a > .Header-module--actionContainers--fa486 > .Header-module--iconButton--db197:nth-child(1) > svg"
+        ],
+        "selector": "internal:role=button[name=\"Search\"i]",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/ac74dc82-6295-4861-9751-1ace8793aa27.png",
+      "goldenHtmlCode": "<svg width=\"20\" height=\"20\" fill=\"none\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\"><path d=\"M19.333 19.333 14 14m-5.333 2.667a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z\" stroke=\"currentColor\"></path></svg>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Search",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": [],
+        "element": "Search"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 189,
+      "priority": "MAJOR",
+      "position": 3,
+      "preRequisiteStepId": null,
+      "action": "Click on searchInput",
+      "actionName": "click",
+      "testCaseId": 18,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "searchInput",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on searchInput",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "click",
+        "button": "left",
+        "clickCount": 1,
+        "customEvent": "click",
+        "htmlCode": "<input id=\"searchInput\" name=\"searchInput\" type=\"text\" placeholder=\"\" value=\"\">",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "searchInput",
+        "locator": {
+          "xpath": "#searchInput"
+        },
+        "modifiers": 0,
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": [
+                {
+                  "simples": [
+                    {
+                      "combinator": "",
+                      "selector": {
+                        "css": "#searchInput",
+                        "functions": []
+                      }
+                    }
+                  ]
+                }
+              ],
+              "name": "css",
+              "source": "#searchInput"
+            }
+          ]
+        },
+        "pwLocator": [
+          "#searchInput"
+        ],
+        "selector": "#searchInput",
+        "signals": [],
+        "value": ""
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/7d4b29b3-5727-4fa3-af83-19b4eb68ec4f.png",
+      "goldenHtmlCode": "<input id=\"searchInput\" name=\"searchInput\" type=\"text\" placeholder=\"\" value=\"\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "searchInput",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": [],
+        "element": "searchInput"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 190,
+      "priority": "MAJOR",
+      "position": 4,
+      "preRequisiteStepId": null,
+      "action": "Enter lama pajamas in the searchInput field",
+      "actionName": "enter",
+      "testCaseId": 18,
+      "stepGroupId": null,
+      "testData": "lama pajamas",
+      "testDataType": null,
+      "attribute": null,
+      "element": "searchInput",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 70,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter lama pajamas in the searchInput field",
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "action": "input",
+        "customEvent": "enter",
+        "htmlCode": "<input id=\"searchInput\" name=\"searchInput\" type=\"text\" placeholder=\"\" value=\"lama pajamas\">",
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "label": "searchInput",
+        "locator": {
+          "xpath": "#searchInput"
+        },
+        "parsedSelector": {
+          "parts": [
+            {
+              "body": [
+                {
+                  "simples": [
+                    {
+                      "combinator": "",
+                      "selector": {
+                        "css": "#searchInput",
+                        "functions": []
+                      }
+                    }
+                  ]
+                }
+              ],
+              "name": "css",
+              "source": "#searchInput"
+            }
+          ]
+        },
+        "pwLocator": [
+          "#searchInput"
+        ],
+        "selector": "#searchInput",
+        "value": "lama pajamas"
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/eba5be47-c5c1-4fd7-8871-9ba9975da526.png",
+      "goldenHtmlCode": "<input id=\"searchInput\" name=\"searchInput\" type=\"text\" placeholder=\"\" value=\"lama pajamas\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "lama pajamas",
+        "element": "searchInput",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "lama pajamas",
+        "conditionIf": [],
+        "element": "searchInput"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 194,
+      "priority": "MAJOR",
+      "position": 5,
+      "preRequisiteStepId": null,
+      "action": "Click on <span data-key=\"label\" data-event-key=\"label\" class=\"element action-flex-auto\">label</span>",
+      "actionName": "click",
+      "testCaseId": 18,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "label",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": null,
+      "specs": null,
+      "metadata": null,
+      "event": {
+        "customEvent": "click",
+        "selector": "internal:text=\"Lama Pajamas\"i",
+        "label": "label",
+        "pwLocator": [
+          "internal:text=\"Lama Pajamas\"i"
+        ]
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/1a6acd46-465b-4a9d-9d3f-239f39263f85.png",
+      "goldenHtmlCode": "<p role=\"presentation\" class=\"Header-module--suggestion--ebc9a\">Lama Pajamas</p>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": null,
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "label",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "conditionIf": [],
+        "element": "label"
+      },
+      "conditionIf": []
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "offset": 0,
+    "pageNumber": 0,
+    "pageSize": 2000,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalElements": 6,
+  "totalPages": 1,
+  "sort": {
+    "sorted": true,
+    "unsorted": false,
+    "empty": false
+  },
+  "size": 2000,
+  "number": 0,
+  "first": true,
+  "numberOfElements": 6,
+  "empty": false
+}

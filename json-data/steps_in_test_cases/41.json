@@ -1,0 +1,109 @@
+{
+  "content": [
+    {
+      "id": 485,
+      "priority": "MAJOR",
+      "position": 1,
+      "preRequisiteStepId": null,
+      "action": "Navigate to Test Case Steps Management Page",
+      "actionName": "navigateTo",
+      "testCaseId": 41,
+      "stepGroupId": null,
+      "testData": "https://arun.contextqa.com/td/cases/41/steps",
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 372,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Visit https://arun.contextqa.com/td/cases/41/steps",
+      "specs": null,
+      "metadata": "Open a web browser and input the URL 'https://arun.contextqa.com/td/cases/41/steps' into the address bar, then press Enter to load the page.",
+      "event": {
+        "action": "GOTO",
+        "type": "GOTO",
+        "control": "GET_CURRENT_URL",
+        "href": "https://arun.contextqa.com/td/cases/41/steps",
+        "customEvent": "navigateTo",
+        "signals": []
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/7b89f955-907a-4d53-8af6-dc6d904e98b7.png",
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/7b89f955-907a-4d53-8af6-dc6d904e98b7.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "https://arun.contextqa.com/td/cases/41/steps",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "https://arun.contextqa.com/td/cases/41/steps",
+        "testDataFunctionArgs": null,
+        "conditionIf": []
+      },
+      "conditionIf": []
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "offset": 0,
+    "pageNumber": 0,
+    "pageSize": 2000,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalElements": 1,
+  "totalPages": 1,
+  "last": true,
+  "sort": {
+    "sorted": true,
+    "unsorted": false,
+    "empty": false
+  },
+  "size": 2000,
+  "number": 0,
+  "first": true,
+  "numberOfElements": 1,
+  "empty": false
+}

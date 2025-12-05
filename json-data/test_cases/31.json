@@ -1,0 +1,178 @@
+{
+  "preRequisiteCase": null,
+  "id": 31,
+  "createdDate": 1710319255842,
+  "updatedDate": 1710319255842,
+  "startTime": null,
+  "endTime": null,
+  "isDataDriven": false,
+  "isStepGroup": false,
+  "priority": 1,
+  "draftAt": null,
+  "obsoleteAt": null,
+  "readyAt": null,
+  "description": null,
+  "name": "Impact Analysis ",
+  "status": "READY",
+  "type": 1,
+  "testDataId": null,
+  "workspaceVersionId": 1,
+  "preRequisite": null,
+  "copiedFrom": 29,
+  "deleted": false,
+  "testDataStartIndex": 0,
+  "testDataEndIndex": null,
+  "results": null,
+  "priorityName": null,
+  "typeName": null,
+  "testDataName": null,
+  "preRequisiteName": null,
+  "order": null,
+  "files": [],
+  "tags": [],
+  "version": {
+    "id": 1,
+    "workspaceId": 1,
+    "versionName": "Version1.0",
+    "description": null,
+    "workspace": {
+      "id": 1,
+      "name": "Web workspace (Live)",
+      "description": "Add, Delete or Update multiple workspace versions using Live.",
+      "workspaceType": "WebApplication",
+      "createdDate": 1655628237000,
+      "updatedDate": 1655628237000,
+      "userIds": [],
+      "createdBy": null,
+      "versions": null,
+      "is_demo": true
+    },
+    "createdDate": 1550559354000,
+    "updatedDate": 1655628237000
+  },
+  "from": null,
+  "to": null,
+  "url": null,
+  "testData": null,
+  "lastRun": {
+    "id": 81,
+    "testCaseId": 31,
+    "testPlanResultId": 57,
+    "environmentResultId": 1,
+    "suiteId": 1,
+    "iteration": null,
+    "result": "FAILURE",
+    "status": "STATUS_COMPLETED",
+    "isStepGroup": false,
+    "message": "",
+    "startTime": 1710320120184,
+    "endTime": 1710320263476,
+    "duration": 60237,
+    "aiDuration": null,
+    "suiteResultId": 63,
+    "parentId": null,
+    "testDataSetName": "Added test data set name",
+    "position": 1,
+    "testCaseTypeId": 3,
+    "testCaseStatus": "READY",
+    "priorityId": 1,
+    "isDataDriven": false,
+    "testDataId": 21,
+    "testCaseDetails": {
+      "name": "Verify Successful Login",
+      "testData": null,
+      "testDataSetName": null,
+      "prerequisite": null
+    },
+    "shortMessage": null,
+    "totalCount": 6,
+    "failedCount": 1,
+    "passedCount": 5,
+    "abortedCount": 0,
+    "stoppedCount": 0,
+    "notExecutedCount": 0,
+    "queuedCount": 0,
+    "isVisuallyPassed": null,
+    "testCase": null,
+    "testSuite": null,
+    "testDeviceResult": null,
+    "parentResult": null,
+    "sessionId": null,
+    "childResult": null,
+    "reRunParentId": null,
+    "createdDate": 1710320263476,
+    "updatedDate": 1764853799856,
+    "screenRecordingUrl": null,
+    "traceViewerUrl": null,
+    "gifUrl": null,
+    "apiTraceViewerUrl": null,
+    "platform": null,
+    "isManualExecution": false,
+    "isPrerequisite": false,
+    "executedResult": {
+      "failed_test_steps": [
+        {
+          "expected_result": "Click on Skip_IOS",
+          "actual_result": "Because of non-distinct locators, the ContextQA platform cannot pinpoint a particular element.",
+          "failed_step_id": 379,
+          "failed_step_index": 6,
+          "steps": [
+            "Visit https://login.salesforce.com/?locale=in",
+            "Click on Username",
+            "Enter deep@cqa.com in the Username field",
+            "Click on Password",
+            "Enter Pratham@123456 in the Password field",
+            "Click on Skip_IOS"
+          ],
+          "stepScreenshotUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/04d3886c-210d-44f6-82f3-703c6d387f3d.png",
+          "suggestions": "Solution 1: Re-record step using ContextQA Chrome extension (video) \n Solution 2: Use other tools to find correct locator (video) \n Solution 3: Provide ContextQA in specs/metadata",
+          "reason": "Not able to detect locator for Skip_IOS.",
+          "screen_recordings": [
+            "https://cqa-media.s3.us-east-2.amazonaws.com/bcc690ed-7bd9-453d-9cd2-a8ceb2c47d09.webm"
+          ],
+          "trace_viewers": [
+            "https://cqa-media.s3.us-east-2.amazonaws.com/af914e0f-23ae-4481-8531-7e561720574a.zip"
+          ],
+          "gifs": [
+            "https://cqa-media.s3.us-east-2.amazonaws.com/c7f9fdf7-b7d2-4850-8bca-578d13b7d2e9.gif"
+          ]
+        }
+      ],
+      "isTraceViewerDisplay": true,
+      "isApiTraceViewerDisplay": false
+    },
+    "screenRecordings": [
+      "https://cqa-media.s3.us-east-2.amazonaws.com/bcc690ed-7bd9-453d-9cd2-a8ceb2c47d09.webm"
+    ],
+    "traceViewers": [
+      "https://cqa-media.s3.us-east-2.amazonaws.com/af914e0f-23ae-4481-8531-7e561720574a.zip"
+    ],
+    "gifs": [
+      "https://cqa-media.s3.us-east-2.amazonaws.com/c7f9fdf7-b7d2-4850-8bca-578d13b7d2e9.gif"
+    ],
+    "consoleLogs": null,
+    "reports": null,
+    "jiraTicketIds": null,
+    "suggestions": null
+  },
+  "testType": "BROWSER",
+  "jiraTicketsId": null,
+  "isExtensionUsed": false,
+  "testConfiguration": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "testDataFunctionArgs": null,
+  "disableAutoWaitSteps": false,
+  "testcaseTimeout": null,
+  "session": null,
+  "lastRunResult": null,
+  "updateMetadata": false,
+  "missingData": null,
+  "createdBy": null,
+  "knowledgeId": null,
+  "platform": null,
+  "suites": null
+}

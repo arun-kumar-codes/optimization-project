@@ -1,0 +1,15 @@
+{
+  "name": "optimization",
+  "version": "1.0.0",
+  "description": "",
+  "main": "playwright-script.spec.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}

@@ -1,0 +1,3522 @@
+{
+  "content": [
+    {
+      "id": 682,
+      "priority": "MAJOR",
+      "position": 1,
+      "preRequisiteStepId": null,
+      "action": "Navigate to OrangeHRM Login Page",
+      "actionName": "navigateTo",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+      "testDataType": null,
+      "attribute": null,
+      "element": null,
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 372,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Visit https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+      "specs": null,
+      "metadata": "Open a web browser and visit the OrangeHRM login page by navigating to the URL: https://opensource-demo.orangehrmlive.com/web/index.php/auth/login.",
+      "event": {
+        "action": "GOTO",
+        "type": "GOTO",
+        "control": "GET_CURRENT_URL",
+        "href": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+        "customEvent": "navigateTo",
+        "signals": []
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/3a980214-e796-4d5b-9c2b-3de55e85fc45.png",
+      "goldenHtmlCode": null,
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/3a980214-e796-4d5b-9c2b-3de55e85fc45.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+        "testDataFunctionArgs": null,
+        "conditionIf": []
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 683,
+      "priority": "MAJOR",
+      "position": 2,
+      "preRequisiteStepId": null,
+      "action": "Focus on Username Field",
+      "actionName": "click",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Username",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Username",
+      "specs": null,
+      "metadata": "On the OrangeHRM login page, locate and click on the 'Username' input field.",
+      "event": {
+        "selector": "internal:attr=[placeholder=\"Username\"i]",
+        "label": "Username",
+        "value": "",
+        "action": "click",
+        "customEvent": "click",
+        "signals": [],
+        "button": "left",
+        "modifiers": 0,
+        "clickCount": 1,
+        "locator": {
+          "xpath": "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-row:nth-of-type(1) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active",
+          "placeholder": "Username"
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Username\"i]",
+          "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-row:nth-of-type(1) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active",
+          "[placeholder=\"Username\"]"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" name=\"username\" placeholder=\"Username\" autofocus=\"\">",
+        "locatorCoordinate": {
+          "y": 412,
+          "x": 446
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21973,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 29644.299999952316,
+            "startTime": 22024.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22028,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_branding.png?v=1721393199309",
+            "type": "img",
+            "duration": 3,
+            "startTime": 51695.39999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_logo.png",
+            "type": "img",
+            "duration": 5.200000047683716,
+            "startTime": 51695.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/img/blob.svg",
+            "type": "css",
+            "duration": 3.5999999046325684,
+            "startTime": 51695.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 4,
+            "startTime": 51696.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+        "timeStamp": 76952.59999990463
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/7442055e-8e7a-439d-877b-70fe9de5ba58.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" name=\"username\" placeholder=\"Username\" autofocus=\"\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/7442055e-8e7a-439d-877b-70fe9de5ba58.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Username",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Username"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 684,
+      "priority": "MAJOR",
+      "position": 3,
+      "preRequisiteStepId": null,
+      "action": "Enter Username",
+      "actionName": "enter",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": "admin",
+      "testDataType": null,
+      "attribute": null,
+      "element": "Username",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 70,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter admin in the Username field",
+      "specs": null,
+      "metadata": "Type 'admin' into the 'Username' field.",
+      "event": {
+        "selector": "internal:attr=[placeholder=\"Username\"i]",
+        "label": "Username",
+        "value": "admin",
+        "action": "keydown",
+        "customEvent": "enter",
+        "locator": {
+          "xpath": "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-row:nth-of-type(1) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active",
+          "placeholder": "Username"
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Username\"i]",
+          "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-row:nth-of-type(1) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active",
+          "[placeholder=\"Username\"]"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" name=\"username\" placeholder=\"Username\" autofocus=\"\">",
+        "locatorCoordinate": {
+          "y": null,
+          "x": null
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21973,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 29644.299999952316,
+            "startTime": 22024.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22028,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_branding.png?v=1721393199309",
+            "type": "img",
+            "duration": 3,
+            "startTime": 51695.39999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_logo.png",
+            "type": "img",
+            "duration": 5.200000047683716,
+            "startTime": 51695.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/img/blob.svg",
+            "type": "css",
+            "duration": 3.5999999046325684,
+            "startTime": 51695.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 4,
+            "startTime": 51696.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+        "timeStamp": 1764847095633
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/74d5656f-70b9-4f36-bb0c-075ac0e97760.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" name=\"username\" placeholder=\"Username\" autofocus=\"\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/74d5656f-70b9-4f36-bb0c-075ac0e97760.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "admin",
+        "element": "Username",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "admin",
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Username"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 685,
+      "priority": "MAJOR",
+      "position": 4,
+      "preRequisiteStepId": null,
+      "action": "Focus on Password Field",
+      "actionName": "click",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Password",
+      "specs": null,
+      "metadata": "Locate and click on the 'Password' input field on the login page.",
+      "event": {
+        "selector": "internal:attr=[placeholder=\"Password\"i]",
+        "label": "Password",
+        "value": "",
+        "action": "click",
+        "customEvent": "click",
+        "signals": [],
+        "button": "left",
+        "modifiers": 0,
+        "clickCount": 1,
+        "locator": {
+          "xpath": "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-row:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active",
+          "placeholder": "Password"
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Password\"i]",
+          "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-row:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active",
+          "[placeholder=\"Password\"]"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" name=\"password\" placeholder=\"Password\">",
+        "locatorCoordinate": {
+          "y": 496,
+          "x": 306
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21973,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 29644.299999952316,
+            "startTime": 22024.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22028,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_branding.png?v=1721393199309",
+            "type": "img",
+            "duration": 3,
+            "startTime": 51695.39999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_logo.png",
+            "type": "img",
+            "duration": 5.200000047683716,
+            "startTime": 51695.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/img/blob.svg",
+            "type": "css",
+            "duration": 3.5999999046325684,
+            "startTime": 51695.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 4,
+            "startTime": 51696.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+        "timeStamp": 80462.20000004768
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/821f146f-887c-4650-9359-ff58702a08d7.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" name=\"password\" placeholder=\"Password\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/821f146f-887c-4650-9359-ff58702a08d7.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 686,
+      "priority": "MAJOR",
+      "position": 5,
+      "preRequisiteStepId": null,
+      "action": "Enter Password",
+      "actionName": "enter",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": "admin123",
+      "testDataType": null,
+      "attribute": null,
+      "element": "Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 70,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter admin123 in the Password field",
+      "specs": null,
+      "metadata": "Type 'admin123' into the 'Password' field.",
+      "event": {
+        "selector": "internal:attr=[placeholder=\"Password\"i]",
+        "label": "Password",
+        "value": "admin123",
+        "action": "keydown",
+        "customEvent": "enter",
+        "locator": {
+          "xpath": "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-row:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active",
+          "placeholder": "Password"
+        },
+        "pwLocator": [
+          "internal:attr=[placeholder=\"Password\"i]",
+          "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-row:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active",
+          "[placeholder=\"Password\"]"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" name=\"password\" placeholder=\"Password\">",
+        "locatorCoordinate": {
+          "y": null,
+          "x": null
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21973,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 29644.299999952316,
+            "startTime": 22024.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22028,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_branding.png?v=1721393199309",
+            "type": "img",
+            "duration": 3,
+            "startTime": 51695.39999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_logo.png",
+            "type": "img",
+            "duration": 5.200000047683716,
+            "startTime": 51695.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/img/blob.svg",
+            "type": "css",
+            "duration": 3.5999999046325684,
+            "startTime": 51695.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 4,
+            "startTime": 51696.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+        "timeStamp": 1764847099432
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/58b76efa-962c-4869-97c7-fd07500af030.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" name=\"password\" placeholder=\"Password\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/58b76efa-962c-4869-97c7-fd07500af030.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "admin123",
+        "element": "Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "admin123",
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 687,
+      "priority": "MAJOR",
+      "position": 6,
+      "preRequisiteStepId": null,
+      "action": "Submit Login Credentials",
+      "actionName": "click",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": " Login ",
+      "testDataType": null,
+      "attribute": null,
+      "element": "Login",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Login",
+      "specs": null,
+      "metadata": "Click the 'Login' button on the login form to proceed.",
+      "event": {
+        "selector": "internal:role=button[name=\"Login\"i]",
+        "label": "Login",
+        "value": " Login ",
+        "action": "click",
+        "customEvent": "click",
+        "signals": [],
+        "button": "left",
+        "modifiers": 0,
+        "clickCount": 1,
+        "locator": {
+          "xpath": "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-actions.orangehrm-login-action:nth-of-type(3) > button.oxd-button.oxd-button--medium.oxd-button--main.orangehrm-login-button",
+          "role": "Button"
+        },
+        "pwLocator": [
+          "internal:role=button[name=\"Login\"i]",
+          "#app > div.orangehrm-login-layout:nth-of-type(1) > div.orangehrm-login-layout-blob > div.orangehrm-login-container:nth-of-type(1) > div.orangehrm-login-slot-wrapper > div.orangehrm-login-slot:nth-of-type(2) > div.orangehrm-login-form:nth-of-type(2) > form.oxd-form > div.oxd-form-actions.orangehrm-login-action:nth-of-type(3) > button.oxd-button.oxd-button--medium.oxd-button--main.orangehrm-login-button",
+          "[role=\"Button\"]"
+        ],
+        "htmlCode": "<button data-v-10d463b7=\"\" data-v-0af708be=\"\" type=\"submit\" class=\"oxd-button oxd-button--medium oxd-button--main orangehrm-login-button\"><!----> Login <!----></button>",
+        "locatorCoordinate": {
+          "y": 557,
+          "x": 407
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21972.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 21973,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 29644.299999952316,
+            "startTime": 22024.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22027.89999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 22028,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_branding.png?v=1721393199309",
+            "type": "img",
+            "duration": 3,
+            "startTime": 51695.39999985695,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/ohrm_logo.png",
+            "type": "img",
+            "duration": 5.200000047683716,
+            "startTime": 51695.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/img/blob.svg",
+            "type": "css",
+            "duration": 3.5999999046325684,
+            "startTime": 51695.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 4,
+            "startTime": 51696.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login",
+        "timeStamp": 84845.5
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/b54cafd4-0315-453c-a6d8-3967eae44d04.png",
+      "goldenHtmlCode": "<button data-v-10d463b7=\"\" data-v-0af708be=\"\" type=\"submit\" class=\"oxd-button oxd-button--medium oxd-button--main orangehrm-login-button\"><!----> Login <!----></button>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/b54cafd4-0315-453c-a6d8-3967eae44d04.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": " Login ",
+        "element": "Login",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": " Login ",
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Login"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 688,
+      "priority": "MAJOR",
+      "position": 7,
+      "preRequisiteStepId": null,
+      "action": "Open User Profile Dropdown",
+      "actionName": "click",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "abcTestNameTestNameTestName V",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on abcTestNameTestNameTestName V",
+      "specs": null,
+      "metadata": "After successfully logging in and landing on the dashboard, click on the user's name ('abcTestNameTestNameTestName V') located in the top right corner of the page to open the dropdown menu.",
+      "event": {
+        "selector": "internal:role=listitem >> internal:has-text=\"abcTestNameTestNameTestName V\"i >> i",
+        "label": "abcTestNameTestNameTestName V",
+        "value": "",
+        "action": "click",
+        "customEvent": "click",
+        "signals": [],
+        "button": "left",
+        "modifiers": 0,
+        "clickCount": 1,
+        "locator": {
+          "xpath": "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-navigation:nth-of-type(1) > header.oxd-topbar > div.oxd-topbar-header:nth-of-type(1) > div.oxd-topbar-header-userarea:nth-of-type(3) > ul > li.oxd-userdropdown > span.oxd-userdropdown-tab > i.oxd-icon.bi-caret-down-fill.oxd-userdropdown-icon"
+        },
+        "pwLocator": [
+          "internal:role=listitem >> internal:has-text=\"abcTestNameTestNameTestName V\"i >> i",
+          "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-navigation:nth-of-type(1) > header.oxd-topbar > div.oxd-topbar-header:nth-of-type(1) > div.oxd-topbar-header-userarea:nth-of-type(3) > ul > li.oxd-userdropdown > span.oxd-userdropdown-tab > i.oxd-icon.bi-caret-down-fill.oxd-userdropdown-icon"
+        ],
+        "htmlCode": "<i data-v-bddebfba=\"\" data-v-bdd6d943=\"\" class=\"oxd-icon bi-caret-down-fill oxd-userdropdown-icon\"></i>",
+        "locatorCoordinate": {
+          "y": 31,
+          "x": 1073
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 24103.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 24103.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 24103.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 24103.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 9986.400000095367,
+            "startTime": 24160.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orange.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 34171.90000009537,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orangehrm-logo.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 34172.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/dashboard_empty_widget_watermark.png",
+            "type": "img",
+            "duration": 0,
+            "startTime": 34184.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/dashboard/shortcuts",
+            "type": "xmlhttprequest",
+            "duration": 1767.5999999046326,
+            "startTime": 34195.200000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/dashboard/employees/leaves?date=2025-12-04",
+            "type": "xmlhttprequest",
+            "duration": 1414.7000000476837,
+            "startTime": 34195.59999990463,
+            "entryType": "resource",
+            "nextHopProtocol": "",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/dashboard/index",
+        "timeStamp": 42505.90000009537
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/b195f2ec-6a4b-4bca-bfd1-38a8fac3fea8.png",
+      "goldenHtmlCode": "<i data-v-bddebfba=\"\" data-v-bdd6d943=\"\" class=\"oxd-icon bi-caret-down-fill oxd-userdropdown-icon\"></i>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/b195f2ec-6a4b-4bca-bfd1-38a8fac3fea8.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "abcTestNameTestNameTestName V",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "abcTestNameTestNameTestName V"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 689,
+      "priority": "MAJOR",
+      "position": 8,
+      "preRequisiteStepId": null,
+      "action": "Select Change Password Option",
+      "actionName": "click",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": "Change Password",
+      "testDataType": null,
+      "attribute": null,
+      "element": "Change Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Change Password",
+      "specs": null,
+      "metadata": "From the opened user profile dropdown menu, click on the 'Change Password' option.",
+      "event": {
+        "selector": "internal:role=menuitem[name=\"Change Password\"i]",
+        "label": "Change Password",
+        "value": "Change Password",
+        "action": "click",
+        "customEvent": "click",
+        "signals": [],
+        "button": "left",
+        "modifiers": 0,
+        "clickCount": 1,
+        "locator": {
+          "xpath": "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-navigation:nth-of-type(1) > header.oxd-topbar > div.oxd-topbar-header:nth-of-type(1) > div.oxd-topbar-header-userarea:nth-of-type(3) > ul > li.--active.oxd-userdropdown > ul.oxd-dropdown-menu > li:nth-of-type(3) > a.oxd-userdropdown-link",
+          "role": "anchor link"
+        },
+        "pwLocator": [
+          "internal:role=menuitem[name=\"Change Password\"i]",
+          "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-navigation:nth-of-type(1) > header.oxd-topbar > div.oxd-topbar-header:nth-of-type(1) > div.oxd-topbar-header-userarea:nth-of-type(3) > ul > li.--active.oxd-userdropdown > ul.oxd-dropdown-menu > li:nth-of-type(3) > a.oxd-userdropdown-link",
+          "[role=\"anchor link\"]"
+        ],
+        "htmlCode": "<a href=\"/web/index.php/pim/updatePassword\" role=\"menuitem\" class=\"oxd-userdropdown-link\">Change Password</a>",
+        "locatorCoordinate": {
+          "y": 144,
+          "x": 990
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 24103.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 24103.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 24103.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 24103.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.599999904633,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 24129.799999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 9986.400000095367,
+            "startTime": 24160.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orange.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 34171.90000009537,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orangehrm-logo.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 34172.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/dashboard_empty_widget_watermark.png",
+            "type": "img",
+            "duration": 0,
+            "startTime": 34184.299999952316,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/dashboard/employees/time-at-work?timezoneOffset=5.5&currentDate=2025-12-04&currentTime=16:48",
+            "type": "xmlhttprequest",
+            "duration": 11688.699999809265,
+            "startTime": 34194.90000009537,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/dashboard/shortcuts",
+            "type": "xmlhttprequest",
+            "duration": 1767.5999999046326,
+            "startTime": 34195.200000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/dashboard/employees/action-summary",
+            "type": "xmlhttprequest",
+            "duration": 10727.899999856949,
+            "startTime": 34195.200000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/buzz/feed?limit=5&offset=0&sortOrder=DESC&sortField=share.createdAtUtc",
+            "type": "xmlhttprequest",
+            "duration": 8984.599999904633,
+            "startTime": 34195.40000009537,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/dashboard/employees/leaves?date=2025-12-04",
+            "type": "xmlhttprequest",
+            "duration": 1414.7000000476837,
+            "startTime": 34195.59999990463,
+            "entryType": "resource",
+            "nextHopProtocol": "",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/events/push",
+            "type": "xmlhttprequest",
+            "duration": 11778.799999952316,
+            "startTime": 34195.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/dashboard/index",
+        "timeStamp": 46022.200000047684
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/524a5b33-15c4-4baf-9e88-ed278236618d.png",
+      "goldenHtmlCode": "<a href=\"/web/index.php/pim/updatePassword\" role=\"menuitem\" class=\"oxd-userdropdown-link\">Change Password</a>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/524a5b33-15c4-4baf-9e88-ed278236618d.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "Change Password",
+        "element": "Change Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "Change Password",
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Change Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 690,
+      "priority": "MAJOR",
+      "position": 9,
+      "preRequisiteStepId": null,
+      "action": "Focus on Current Password Field",
+      "actionName": "click",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Current Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Current Password",
+      "specs": null,
+      "metadata": "On the 'Update Password' form, locate and click on the 'Current Password' input field.",
+      "event": {
+        "selector": "internal:role=textbox >> nth=1",
+        "label": "Current Password",
+        "value": "",
+        "action": "click",
+        "customEvent": "click",
+        "signals": [],
+        "button": "left",
+        "modifiers": 0,
+        "clickCount": 1,
+        "locator": {
+          "xpath": "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row:nth-of-type(1) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=1",
+          "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row:nth-of-type(1) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\">",
+        "locatorCoordinate": {
+          "y": 269,
+          "x": 843
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 9550.600000143051,
+            "startTime": 17932.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orange.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orangehrm-logo.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewPhoto/empNumber/7",
+            "type": "img",
+            "duration": 9598.299999952316,
+            "startTime": 27513.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/updatePassword",
+        "timeStamp": 38378.200000047684
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/251d6b56-1602-470e-9451-408e18708a7c.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/251d6b56-1602-470e-9451-408e18708a7c.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Current Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Current Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 691,
+      "priority": "MAJOR",
+      "position": 10,
+      "preRequisiteStepId": null,
+      "action": "Enter Current Password",
+      "actionName": "enter",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": "admin",
+      "testDataType": null,
+      "attribute": null,
+      "element": "Current Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 70,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter admin in the Current Password field",
+      "specs": null,
+      "metadata": "Type 'admin' into the 'Current Password' field.",
+      "event": {
+        "selector": "internal:role=textbox >> nth=1",
+        "label": "Current Password",
+        "value": "admin",
+        "action": "keydown",
+        "customEvent": "enter",
+        "locator": {
+          "xpath": "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row:nth-of-type(1) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=1",
+          "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row:nth-of-type(1) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\">",
+        "locatorCoordinate": {
+          "y": null,
+          "x": null
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 9550.600000143051,
+            "startTime": 17932.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orange.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orangehrm-logo.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewPhoto/empNumber/7",
+            "type": "img",
+            "duration": 9598.299999952316,
+            "startTime": 27513.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/updatePassword",
+        "timeStamp": 1764847200125
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/e327b1f7-0db7-4fd5-b4da-945656ef1d04.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/e327b1f7-0db7-4fd5-b4da-945656ef1d04.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "admin",
+        "element": "Current Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "admin",
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Current Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 692,
+      "priority": "MAJOR",
+      "position": 11,
+      "preRequisiteStepId": null,
+      "action": "Focus on New Password Field",
+      "actionName": "click",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Password",
+      "specs": null,
+      "metadata": "Locate and click on the 'Password' input field, which is designated for the new password.",
+      "event": {
+        "selector": "internal:role=textbox >> nth=2",
+        "label": "Password",
+        "value": "",
+        "action": "click",
+        "customEvent": "click",
+        "signals": [],
+        "button": "left",
+        "modifiers": 0,
+        "clickCount": 1,
+        "locator": {
+          "xpath": "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row.user-password-row:nth-of-type(2) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters.user-password-cell:nth-of-type(1) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=2",
+          "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row.user-password-row:nth-of-type(2) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters.user-password-cell:nth-of-type(1) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\">",
+        "locatorCoordinate": {
+          "y": 353,
+          "x": 464
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 9550.600000143051,
+            "startTime": 17932.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orange.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orangehrm-logo.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewPhoto/empNumber/7",
+            "type": "img",
+            "duration": 9598.299999952316,
+            "startTime": 27513.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/updatePassword",
+        "timeStamp": 44687.200000047684
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/56cde891-3c9e-4618-86d5-ff72eeac489f.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/56cde891-3c9e-4618-86d5-ff72eeac489f.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 693,
+      "priority": "MAJOR",
+      "position": 12,
+      "preRequisiteStepId": null,
+      "action": "Enter New Password",
+      "actionName": "enter",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": "admin123",
+      "testDataType": null,
+      "attribute": null,
+      "element": "Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 70,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter admin123 in the Password field",
+      "specs": null,
+      "metadata": "Type 'admin123' into the 'Password' (New Password) field.",
+      "event": {
+        "selector": "internal:role=textbox >> nth=2",
+        "label": "Password",
+        "value": "admin123",
+        "action": "keydown",
+        "customEvent": "enter",
+        "locator": {
+          "xpath": "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row.user-password-row:nth-of-type(2) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters.user-password-cell:nth-of-type(1) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=2",
+          "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row.user-password-row:nth-of-type(2) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters.user-password-cell:nth-of-type(1) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\">",
+        "locatorCoordinate": {
+          "y": null,
+          "x": null
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 9550.600000143051,
+            "startTime": 17932.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orange.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orangehrm-logo.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewPhoto/empNumber/7",
+            "type": "img",
+            "duration": 9598.299999952316,
+            "startTime": 27513.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/updatePassword",
+        "timeStamp": 1764847209405
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/e6c481df-1d53-419c-86f8-088495243a9d.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/e6c481df-1d53-419c-86f8-088495243a9d.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "admin123",
+        "element": "Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "admin123",
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 694,
+      "priority": "MAJOR",
+      "position": 13,
+      "preRequisiteStepId": null,
+      "action": "Focus on Confirm New Password Field",
+      "actionName": "click",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": null,
+      "testDataType": null,
+      "attribute": null,
+      "element": "Confirm Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Confirm Password",
+      "specs": null,
+      "metadata": "Locate and click on the 'Confirm Password' input field.",
+      "event": {
+        "selector": "internal:role=textbox >> nth=3",
+        "label": "Confirm Password",
+        "value": "",
+        "action": "click",
+        "customEvent": "click",
+        "signals": [],
+        "button": "left",
+        "modifiers": 0,
+        "clickCount": 1,
+        "locator": {
+          "xpath": "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row.user-password-row:nth-of-type(2) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=3",
+          "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row.user-password-row:nth-of-type(2) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\">",
+        "locatorCoordinate": {
+          "y": 377,
+          "x": 765
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 9550.600000143051,
+            "startTime": 17932.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orange.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orangehrm-logo.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewPhoto/empNumber/7",
+            "type": "img",
+            "duration": 9598.299999952316,
+            "startTime": 27513.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/updatePassword",
+        "timeStamp": 51952.300000190735
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/28c91fc8-0ad1-4985-85f2-927a0066969d.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/28c91fc8-0ad1-4985-85f2-927a0066969d.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "element": "Confirm Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Confirm Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 695,
+      "priority": "MAJOR",
+      "position": 14,
+      "preRequisiteStepId": null,
+      "action": "Confirm New Password",
+      "actionName": "enter",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": "admin123",
+      "testDataType": null,
+      "attribute": null,
+      "element": "Confirm Password",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 70,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Enter admin123 in the Confirm Password field",
+      "specs": null,
+      "metadata": "Type 'admin123' into the 'Confirm Password' field to re-enter the new password.",
+      "event": {
+        "selector": "internal:role=textbox >> nth=3",
+        "label": "Confirm Password",
+        "value": "admin123",
+        "action": "keydown",
+        "customEvent": "enter",
+        "locator": {
+          "xpath": "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row.user-password-row:nth-of-type(2) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        },
+        "pwLocator": [
+          "internal:role=textbox >> nth=3",
+          "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-row.user-password-row:nth-of-type(2) > div.oxd-grid-2.orangehrm-full-width-grid > div.oxd-grid-item.oxd-grid-item--gutters:nth-of-type(2) > div.oxd-input-group.oxd-input-field-bottom-space > div:nth-of-type(2) > input.oxd-input.oxd-input--active"
+        ],
+        "htmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\">",
+        "locatorCoordinate": {
+          "y": null,
+          "x": null
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 9550.600000143051,
+            "startTime": 17932.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orange.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orangehrm-logo.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewPhoto/empNumber/7",
+            "type": "img",
+            "duration": 9598.299999952316,
+            "startTime": 27513.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/updatePassword",
+        "timeStamp": 1764847213586
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/2c45532d-577c-448c-9ac5-9d9ca7bc1459.png",
+      "goldenHtmlCode": "<input data-v-1f99f73c=\"\" class=\"oxd-input oxd-input--focus\" type=\"password\" autocomplete=\"off\">",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/2c45532d-577c-448c-9ac5-9d9ca7bc1459.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": "admin123",
+        "element": "Confirm Password",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": "admin123",
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Confirm Password"
+      },
+      "conditionIf": []
+    },
+    {
+      "id": 696,
+      "priority": "MAJOR",
+      "position": 15,
+      "preRequisiteStepId": null,
+      "action": "Save New Password",
+      "actionName": "click",
+      "testCaseId": 55,
+      "stepGroupId": null,
+      "testData": " Save ",
+      "testDataType": null,
+      "attribute": null,
+      "element": "Save",
+      "elementId": null,
+      "fromElement": null,
+      "toElement": null,
+      "forLoopStartIndex": null,
+      "forLoopEndIndex": null,
+      "forLoopTestDataId": null,
+      "visualEnabled": false,
+      "testDataFunctionId": null,
+      "testDataProfileName": null,
+      "processedAsSubStep": false,
+      "addonTDF": null,
+      "testDataFunctionArgs": null,
+      "exceptedResult": null,
+      "naturalTextActionId": 26,
+      "type": "ACTION_TEXT",
+      "waitTime": 30,
+      "conditionType": null,
+      "parentId": null,
+      "restStep": null,
+      "phoneNumberId": null,
+      "addonActionId": null,
+      "addonNaturalTextActionData": null,
+      "addonTestData": null,
+      "addonElements": null,
+      "disabled": false,
+      "ignoreStepResult": false,
+      "testDataProfileStepId": null,
+      "testStepDTOS": [],
+      "index": null,
+      "testDataId": null,
+      "testDataIndex": null,
+      "setName": null,
+      "description": "Click on Save",
+      "specs": null,
+      "metadata": "Click the 'Save' button on the 'Update Password' form to apply the password change.",
+      "event": {
+        "selector": "internal:role=button[name=\"Save\"i]",
+        "label": "Save",
+        "value": " Save ",
+        "action": "click",
+        "customEvent": "click",
+        "signals": [],
+        "button": "left",
+        "modifiers": 0,
+        "clickCount": 1,
+        "locator": {
+          "xpath": "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-actions:nth-of-type(3) > button.oxd-button.oxd-button--medium.oxd-button--secondary.orangehrm-left-space:nth-of-type(2)",
+          "role": "Button"
+        },
+        "pwLocator": [
+          "internal:role=button[name=\"Save\"i]",
+          "#app > div.oxd-layout.orangehrm-upgrade-layout:nth-of-type(1) > div.oxd-layout-container:nth-of-type(2) > div.oxd-layout-context:nth-of-type(2) > div.orangehrm-background-container > div.orangehrm-card-container > form.oxd-form > div.oxd-form-actions:nth-of-type(3) > button.oxd-button.oxd-button--medium.oxd-button--secondary.orangehrm-left-space:nth-of-type(2)",
+          "[role=\"Button\"]"
+        ],
+        "htmlCode": "<button data-v-10d463b7=\"\" data-v-1c01b456=\"\" type=\"submit\" class=\"oxd-button oxd-button--medium oxd-button--secondary orangehrm-left-space\"><!----> Save <!----></button>",
+        "locatorCoordinate": {
+          "y": 485,
+          "x": 1009
+        },
+        "captureNetWork": [
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/chunk-vendors.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/css/app.css?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/chunk-vendors.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/js/app.js?v=1721393199309",
+            "type": "link",
+            "duration": 0,
+            "startTime": 17880.900000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages",
+            "type": "xmlhttprequest",
+            "duration": 9550.600000143051,
+            "startTime": 17932.700000047684,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-300.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-regular.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-italic.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-600.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-700.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/nunito-sans-v6-latin-ext_latin-800.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/dist/fonts/bootstrap-icons.woff2",
+            "type": "css",
+            "duration": 0,
+            "startTime": 17935.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orange.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.400000095367,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/images/orangehrm-logo.png?v=1721393199309",
+            "type": "img",
+            "duration": 0,
+            "startTime": 27507.800000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewPhoto/empNumber/7",
+            "type": "img",
+            "duration": 9598.299999952316,
+            "startTime": 27513.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/auth/public/validation/password",
+            "type": "xmlhttprequest",
+            "duration": 10098.100000143051,
+            "startTime": 46987.5,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/auth/public/validation/password",
+            "type": "xmlhttprequest",
+            "duration": 10910.599999904633,
+            "startTime": 48108.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          },
+          {
+            "name": "https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/auth/public/validation/password",
+            "type": "xmlhttprequest",
+            "duration": 11150,
+            "startTime": 50941.300000190735,
+            "entryType": "resource",
+            "nextHopProtocol": "http/1.1",
+            "initiator": null
+          }
+        ],
+        "iFrameLocator": "",
+        "isIFrame": false,
+        "targetPageUrl": "https://opensource-demo.orangehrmlive.com/web/index.php/pim/updatePassword",
+        "timeStamp": 67466.60000014305
+      },
+      "goldenScreenshot": "https://cqa-media.s3.us-east-2.amazonaws.com/084f7208-8c84-416e-aa4b-2fc5ae07eab9.png",
+      "goldenHtmlCode": "<button data-v-10d463b7=\"\" data-v-1c01b456=\"\" type=\"submit\" class=\"oxd-button oxd-button--medium oxd-button--secondary orangehrm-left-space\"><!----> Save <!----></button>",
+      "environmentId": null,
+      "screenshotUrl": null,
+      "domElementImageUrl": "https://cqa-media.s3.us-east-2.amazonaws.com/084f7208-8c84-416e-aa4b-2fc5ae07eab9.png",
+      "requestList": null,
+      "testDataList": null,
+      "manualExecution": false,
+      "dataMapBean": {
+        "condition_if": [],
+        "test-data": " Save ",
+        "element": "Save",
+        "for_loop": {
+          "startIndex": null,
+          "endIndex": null,
+          "testDataId": null
+        }
+      },
+      "dataMapJson": {
+        "testData": " Save ",
+        "testDataFunctionArgs": null,
+        "conditionIf": [],
+        "element": "Save"
+      },
+      "conditionIf": []
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "offset": 0,
+    "pageNumber": 0,
+    "pageSize": 2000,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalElements": 15,
+  "totalPages": 1,
+  "sort": {
+    "sorted": true,
+    "unsorted": false,
+    "empty": false
+  },
+  "size": 2000,
+  "number": 0,
+  "first": true,
+  "numberOfElements": 15,
+  "empty": false
+}
