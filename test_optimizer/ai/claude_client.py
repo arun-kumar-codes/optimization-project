@@ -9,18 +9,15 @@ from typing import Dict, List, Optional
 from dotenv import load_dotenv
 from anthropic import Anthropic
 
-# Load environment variables from .env file
 env_path = Path(__file__).parent.parent / ".env"
 if env_path.exists():
     load_dotenv(env_path)
 else:
-    # Try loading from project root
     project_root = Path(__file__).parent.parent.parent
     env_path = project_root / ".env"
     if env_path.exists():
         load_dotenv(env_path)
     else:
-        # Load from current directory
         load_dotenv()
 
 
@@ -42,8 +39,13 @@ class ClaudeClient:
                 )
         
         self.client = Anthropic(api_key=api_key)
-        self.model = "claude-3-5-sonnet"  # Using Claude 3.5 Sonnet model
-        self.rate_limit_delay = 1.0  # Delay between requests in seconds
+        self.model = "claude-3-5-haiku-20241022" 
+        
+        try:
+            from config.ai_config import AIConfig
+            self.rate_limit_delay = AIConfig.RATE_LIMIT_DELAY
+        except ImportError:
+            self.rate_limit_delay = 12.0
         self.last_request_time = 0
     
     def _rate_limit(self):
@@ -76,7 +78,6 @@ class ClaudeClient:
         try:
             messages = [{"role": "user", "content": prompt}]
             
-            # System prompt should be a list or string, but API expects it as a parameter
             create_params = {
                 "model": self.model,
                 "max_tokens": max_tokens,
@@ -89,8 +90,19 @@ class ClaudeClient:
             
             return response.content[0].text
         except Exception as e:
-            print(f"Error calling Claude API: {e}")
-            return f"Error: {str(e)}"
+            error_str = str(e)
+            if "429" in error_str or "rate_limit" in error_str.lower():
+                print(f"⚠ Rate limit exceeded. Waiting 60 seconds before retry...")
+                time.sleep(60) 
+                try:
+                    response = self.client.messages.create(**create_params)
+                    return response.content[0].text
+                except Exception as e2:
+                    print(f"Error calling Claude API (retry failed): {e2}")
+                    return f"Error: {str(e2)}"
+            else:
+                print(f"Error calling Claude API: {e}")
+                return f"Error: {str(e)}"
     
     def analyze_batch(
         self, 
@@ -151,18 +163,26 @@ ID: {tc1_id}
 Name: {tc1_name}
 Description: {tc1_description}
 Steps: {tc1_steps}
+Website/URL: {tc1_website}
 
 Test Case 2:
 ID: {tc2_id}
 Name: {tc2_name}
 Description: {tc2_description}
 Steps: {tc2_steps}
+Website/URL: {tc2_website}
+
+CRITICAL: Check if these test cases target DIFFERENT websites/domains.
+- If they target different websites (e.g., amazon.com vs ebay.com), they are NOT duplicates even if steps are identical
+- Different websites = different test contexts = should be kept separate
+- Only consider them similar if they test the SAME website/application
 
 Provide:
-1. Semantic similarity (0-100%)
-2. Are they testing the same functionality?
-3. Recommendation: Keep both, merge, or remove one
-4. Reasoning
+1. Semantic similarity (0-100%) - REDUCE significantly if different websites
+2. Are they testing the same functionality on the same website?
+3. Are they targeting different websites/domains? (YES/NO)
+4. Recommendation: Keep both, merge, or remove one
+5. Reasoning (explicitly mention website/domain if different)
 """,
             "optimization_recommendation": """
 Given the following test case and optimization context:

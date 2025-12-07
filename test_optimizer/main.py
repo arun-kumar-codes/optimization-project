@@ -12,6 +12,9 @@ from pathlib import Path
 # Add current directory to path
 sys.path.insert(0, str(Path(__file__).parent))
 
+# Get the directory where this script is located (test_optimizer folder)
+SCRIPT_DIR = Path(__file__).parent.resolve()
+
 from data.data_loader import DataLoader
 from data.validator import DataValidator
 from analysis.duplicate_detector import DuplicateDetector
@@ -33,23 +36,28 @@ def main():
     parser = argparse.ArgumentParser(
         description="Test Case Optimization System - Optimize test suites while maintaining coverage"
     )
+    # Default paths relative to test_optimizer folder (where json-data now resides)
+    default_test_cases = str(SCRIPT_DIR / "json-data" / "test_cases")
+    default_steps = str(SCRIPT_DIR / "json-data" / "steps_in_test_cases")
+    default_output = str(SCRIPT_DIR / "json-data" / "output")
+    
     parser.add_argument(
         "--input-test-cases",
         type=str,
-        default="../json-data/test_cases",
-        help="Path to test cases directory (default: ../json-data/test_cases)"
+        default=default_test_cases,
+        help="Path to test cases directory (default: json-data/test_cases inside test_optimizer folder)"
     )
     parser.add_argument(
         "--input-steps",
         type=str,
-        default="../json-data/steps_in_test_cases",
-        help="Path to steps directory (default: ../json-data/steps_in_test_cases)"
+        default=default_steps,
+        help="Path to steps directory (default: json-data/steps_in_test_cases inside test_optimizer folder)"
     )
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="../json-data/output",
-        help="Path to output directory (default: ../json-data/output)"
+        default=default_output,
+        help=f"Path to output directory (default: {default_output})"
     )
     parser.add_argument(
         "--min-coverage",
@@ -60,13 +68,18 @@ def main():
     parser.add_argument(
         "--skip-ai",
         action="store_true",
-        help="Skip AI analysis (Phase 4) to save API costs"
+        help="Skip ALL AI analysis (Phase 2b semantic duplicates + Phase 4) to save API costs"
+    )
+    parser.add_argument(
+        "--skip-phase4",
+        action="store_true",
+        help="Skip Phase 4 AI (optimization recommendations) only - keeps Phase 2b semantic duplicates"
     )
     parser.add_argument(
         "--ai-limit",
         type=int,
         default=None,
-        help="Limit number of test cases for AI analysis (to save costs)"
+        help="Limit number of test cases for Phase 4 AI analysis (to save costs)"
     )
     
     args = parser.parse_args()
@@ -101,14 +114,32 @@ def main():
     print(f"✓ Step coverage: {step_coverage['coverage_percentage']:.1f}%")
     print()
     
-    # Phase 2b: Duplicate Detection
+    # Phase 2b: Duplicate Detection (Algorithmic + AI Semantic)
     print("PHASE 2b: Detecting Duplicates...")
     duplicate_detector = DuplicateDetector()
-    duplicate_groups = duplicate_detector.detect_duplicates(test_cases)
+    
+    # Enable AI semantic detection if AI is available
+    ai_semantic_analyzer = None
+    use_ai_semantic = False
+    if not args.skip_ai:
+        try:
+            from ai.semantic_analyzer import SemanticAnalyzer
+            ai_semantic_analyzer = SemanticAnalyzer()
+            use_ai_semantic = True
+            duplicate_detector.use_ai_semantic = True
+            duplicate_detector.ai_semantic_analyzer = ai_semantic_analyzer
+            print("  Using AI for semantic duplicate detection...")
+        except Exception as e:
+            print(f"  Warning: AI semantic detection unavailable: {e}")
+            print("  Using only algorithmic duplicate detection...")
+    
+    duplicate_groups = duplicate_detector.detect_duplicates(test_cases, use_ai_semantic=use_ai_semantic)
     print(f"✓ Found {duplicate_groups['total_groups']} duplicate groups")
     print(f"  - Exact duplicates: {len(duplicate_groups['exact_duplicates'])}")
     print(f"  - Near duplicates: {len(duplicate_groups['near_duplicates'])}")
     print(f"  - Highly similar: {len(duplicate_groups['highly_similar'])}")
+    if use_ai_semantic and duplicate_groups.get('ai_semantic_pairs_found', 0) > 0:
+        print(f"  - AI semantic duplicates found: {duplicate_groups['ai_semantic_pairs_found']}")
     print()
     
     # Phase 3: Flow Analysis
@@ -123,15 +154,28 @@ def main():
     print(f"✓ All critical flows covered: {critical_coverage['all_critical_covered']}")
     print()
     
-    # Phase 4: AI Analysis (optional)
+    # Phase 4: AI Analysis (optional - disabled by default for performance)
     ai_recommendations = None
-    if not args.skip_ai:
-        print("PHASE 4: AI-Powered Analysis...")
+    phase4_enabled = False
+    
+    # Check if Phase 4 should be enabled
+    try:
+        from config.ai_config import AIConfig
+        phase4_enabled = AIConfig.PHASE4_ENABLED
+    except ImportError:
+        pass
+    
+    # Override with command line flags
+    if args.skip_ai:
+        phase4_enabled = False
+    elif args.skip_phase4:
+        phase4_enabled = False
+    
+    if phase4_enabled and not args.skip_ai:
+        print("PHASE 4: AI-Powered Analysis (Optimization Recommendations)...")
         try:
-            from ai.semantic_analyzer import SemanticAnalyzer
             from ai.optimization_advisor import OptimizationAdvisor
             
-            semantic_analyzer = SemanticAnalyzer()
             optimization_advisor = OptimizationAdvisor()
             
             # Analyze limited test cases if specified
@@ -154,7 +198,12 @@ def main():
             print("  Continuing without AI recommendations...")
             print()
     else:
-        print("PHASE 4: Skipped (--skip-ai flag)")
+        if args.skip_phase4:
+            print("PHASE 4: Skipped (--skip-phase4 flag - optimization recommendations disabled)")
+        elif args.skip_ai:
+            print("PHASE 4: Skipped (--skip-ai flag)")
+        else:
+            print("PHASE 4: Skipped (disabled by default for performance - use --enable-phase4 or set AI_PHASE4_ENABLED=true)")
         print()
     
     # Phase 5: Optimization (Iterative with Merging)
@@ -263,11 +312,11 @@ def main():
     output_generator.generate_admin_user_separated_files(optimized_test_cases, optimization_result)
     
     # Generate summary files
-    output_generator.generate_optimization_summary(optimization_result, optimization_report)
-    output_generator.generate_duplicate_analysis(duplicate_groups)
+    # Removed: generate_optimization_summary (not needed in output)
+    # Removed: generate_duplicate_analysis (not needed in output)
     output_generator.generate_execution_order(execution_plan)
-    output_generator.generate_user_flows(flow_coverage, flow_classifications)
-    output_generator.generate_recommendations(optimization_report, ai_recommendations)
+    # Removed: generate_user_flows (not needed in output)
+    # Removed: generate_recommendations (not needed in output)
     
     print(f"✓ All output files generated in: {args.output_dir}")
     print()
@@ -307,11 +356,7 @@ def main():
     print("  - steps_in_test_cases/ - Optimized step files (same format as input)")
     print("  - admin_optimized_tests.json - Admin test case IDs")
     print("  - user_optimized_tests.json - User test case IDs")
-    print("  - optimization_summary.json - Summary report")
     print("  - execution_order.json - Execution plan")
-    print("  - duplicate_analysis.json - Duplicate groups")
-    print("  - user_flows.json - Flow analysis")
-    print("  - recommendations.json - Optimization recommendations")
     print()
     
     return 0 if validation_results["all_valid"] else 1

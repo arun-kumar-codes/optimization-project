@@ -51,7 +51,6 @@ def extract_url_from_navigate_to(step_data: Dict[str, Any]) -> Optional[str]:
     if test_data and isinstance(test_data, str) and test_data.startswith("http"):
         return test_data.strip()
     
-    # Check event.href field
     event = step_data.get("event", {})
     if isinstance(event, dict):
         href = event.get("href")
@@ -142,7 +141,6 @@ def normalize_test_data(test_data: Optional[Any]) -> Optional[str]:
         return str(test_data)
     
     if isinstance(test_data, dict):
-        # For complex test data, return a string representation
         return str(test_data)
     
     return None

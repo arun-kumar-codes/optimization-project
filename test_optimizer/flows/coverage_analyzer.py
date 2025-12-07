@@ -147,7 +147,7 @@ class CoverageAnalyzer:
         # Build flow graph
         graph = self.graph_builder.build_graph(test_cases)
         
-        # Find isolated pages (not covered by any test case)
+        # Find isolated pages
         isolated = self.graph_builder.find_isolated_pages(graph)
         if isolated:
             gaps.append({
@@ -200,12 +200,12 @@ class CoverageAnalyzer:
         flow_score = min(len(flows) / 5.0, 1.0)  # Normalize to 0-1, cap at 5 flows
         score += flow_score * 0.4
         
-        # Number of steps (more comprehensive = better)
+        # Number of steps
         step_count = len(test_case.steps)
         step_score = min(step_count / 30.0, 1.0)  # Normalize to 0-1, cap at 30 steps
         score += step_score * 0.3
         
-        # Page transitions (more transitions = more coverage)
+        # Page transitions 
         transitions = self.flow_analyzer.extract_page_transitions(test_case)
         transition_score = min(len(transitions) / 10.0, 1.0)  # Normalize to 0-1, cap at 10 transitions
         score += transition_score * 0.3

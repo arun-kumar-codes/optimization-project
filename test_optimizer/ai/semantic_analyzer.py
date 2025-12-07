@@ -1,6 +1,3 @@
-"""
-Module for semantic analysis of test cases using Claude API.
-"""
 
 import json
 import sys
@@ -9,6 +6,7 @@ from typing import Dict, List, Optional
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from data.models import TestCase
 from ai.claude_client import ClaudeClient
+from ai.cache_manager import AICacheManager
 
 
 class SemanticAnalyzer:
@@ -22,6 +20,7 @@ class SemanticAnalyzer:
             api_key: Claude API key (optional)
         """
         self.claude_client = ClaudeClient(api_key)
+        self.cache_manager = AICacheManager()
         self.system_prompt = """You are an expert test automation analyst. 
 Analyze test cases and provide insights about their business value, purpose, and criticality.
 Be concise and specific in your analysis."""
@@ -36,10 +35,8 @@ Be concise and specific in your analysis."""
         Returns:
             Analysis dictionary
         """
-        # Prepare steps summary
         steps_summary = self._prepare_steps_summary(test_case)
         
-        # Create prompt
         prompt = self.claude_client.create_prompt_template(
             "semantic_analysis",
             test_case_id=test_case.id,
@@ -48,10 +45,8 @@ Be concise and specific in your analysis."""
             steps_summary=steps_summary
         )
         
-        # Get AI analysis
         ai_response = self.claude_client.analyze(prompt, self.system_prompt)
         
-        # Parse response
         analysis = self._parse_analysis_response(ai_response, test_case)
         
         return analysis
@@ -68,6 +63,12 @@ Be concise and specific in your analysis."""
                 step_desc += f" on {step.element}"
             if step.description:
                 step_desc += f": {step.description[:50]}"
+            if step.action_name == "navigateTo" and step.test_data:
+                import re
+                url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
+                match = re.search(url_pattern, step.test_data)
+                if match:
+                    step_desc += f" (URL: {match.group(0)})"
             steps_list.append(step_desc)
         
         if len(test_case.steps) > 10:
@@ -75,9 +76,70 @@ Be concise and specific in your analysis."""
         
         return "\n".join(steps_list)
     
+    def _extract_website_from_test_case(self, test_case: TestCase) -> str:
+        import re
+        from urllib.parse import urlparse
+        
+        websites = set()
+        
+        for step in test_case.steps:
+            url = None
+            if step.test_data:
+                url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
+                match = re.search(url_pattern, step.test_data)
+                if match:
+                    url = match.group(0)
+            if not url and step.action:
+                url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
+                match = re.search(url_pattern, step.action)
+                if match:
+                    url = match.group(0)
+            if not url and step.description:
+                url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
+                match = re.search(url_pattern, step.description)
+                if match:
+                    url = match.group(0)
+            
+            if url:
+                try:
+                    parsed = urlparse(url)
+                    domain = parsed.netloc or parsed.path.split('/')[0]
+                    domain = domain.split(':')[0].replace('www.', '').lower()
+                    if domain:
+                        websites.add(domain)
+                except:
+                    pass
+        
+        text = f"{test_case.name} {test_case.description or ''}".lower()
+        website_keywords = {
+            "amazon": "amazon.com",
+            "ebay": "ebay.com",
+            "walmart": "walmart.com",
+            "target": "target.com",
+            "etsy": "etsy.com",
+            "shopify": "shopify.com",
+            "facebook": "facebook.com",
+            "twitter": "twitter.com",
+            "linkedin": "linkedin.com",
+            "instagram": "instagram.com",
+            "youtube": "youtube.com",
+            "google": "google.com",
+            "microsoft": "microsoft.com",
+            "apple": "apple.com",
+            "netflix": "netflix.com",
+            "spotify": "spotify.com"
+        }
+        
+        for keyword, domain in website_keywords.items():
+            if keyword in text:
+                websites.add(domain)
+        
+        if websites:
+            return ", ".join(sorted(websites))
+        return "Unknown"
+    
     def _parse_analysis_response(self, response: str, test_case: TestCase) -> Dict:
         """Parse AI response into structured format."""
-        # Try to extract structured information from response
         analysis = {
             "test_case_id": test_case.id,
             "raw_response": response,
@@ -96,11 +158,9 @@ Be concise and specific in your analysis."""
         text_lower = text.lower()
         keyword_lower = keyword.lower()
         
-        # Try to find the field
         lines = text.split("\n")
         for i, line in enumerate(lines):
             if keyword_lower in line.lower() or label.lower() in line.lower():
-                # Get the next line or rest of current line
                 if ":" in line:
                     return line.split(":", 1)[1].strip()
                 elif i + 1 < len(lines):
@@ -109,7 +169,6 @@ Be concise and specific in your analysis."""
         return "Not specified"
     
     def _extract_criticality(self, text: str) -> str:
-        """Extract criticality level from response."""
         text_lower = text.lower()
         if "high" in text_lower and "critical" in text_lower:
             return "High"
@@ -117,7 +176,7 @@ Be concise and specific in your analysis."""
             return "Medium"
         elif "low" in text_lower:
             return "Low"
-        return "Medium"  # Default
+        return "Medium" 
     
     def _extract_classification(self, text: str) -> str:
         """Extract edge case vs happy path classification."""
@@ -130,7 +189,6 @@ Be concise and specific in your analysis."""
     
     def _extract_business_value(self, text: str) -> str:
         """Extract business value assessment."""
-        # Look for value indicators
         text_lower = text.lower()
         if any(word in text_lower for word in ["critical", "essential", "important", "high value"]):
             return "High"
@@ -147,6 +205,8 @@ Be concise and specific in your analysis."""
     ) -> Dict:
         """
         Identify if two test cases are semantically duplicates.
+        CRITICAL: Checks for different websites and reduces similarity if found.
+        Uses caching to avoid redundant API calls.
         
         Args:
             test_case1: First test case
@@ -158,49 +218,106 @@ Be concise and specific in your analysis."""
         steps1 = self._prepare_steps_summary(test_case1)
         steps2 = self._prepare_steps_summary(test_case2)
         
+        website1 = self._extract_website_from_test_case(test_case1)
+        website2 = self._extract_website_from_test_case(test_case2)
+        
+        test_case1_data = {
+            "name": test_case1.name,
+            "description": test_case1.description or "",
+            "steps_summary": steps1
+        }
+        test_case2_data = {
+            "name": test_case2.name,
+            "description": test_case2.description or "",
+            "steps_summary": steps2
+        }
+        
+        cached_result = self.cache_manager.get_cached_result(
+            test_case1.id,
+            test_case2.id,
+            test_case1_data,
+            test_case2_data
+        )
+        
+        if cached_result:
+            return cached_result
+        
+        different_websites = False
+        if website1 != "Unknown" and website2 != "Unknown":
+            domains1 = set(website1.split(", "))
+            domains2 = set(website2.split(", "))
+            if not domains1.intersection(domains2):
+                different_websites = True
+        
         prompt = self.claude_client.create_prompt_template(
             "duplicate_analysis",
             tc1_id=test_case1.id,
             tc1_name=test_case1.name,
             tc1_description=test_case1.description or "No description",
             tc1_steps=steps1,
+            tc1_website=website1,
             tc2_id=test_case2.id,
             tc2_name=test_case2.name,
             tc2_description=test_case2.description or "No description",
-            tc2_steps=steps2
+            tc2_steps=steps2,
+            tc2_website=website2
         )
         
         ai_response = self.claude_client.analyze(prompt, self.system_prompt)
         
-        # Parse response
         similarity_score = self._extract_similarity_score(ai_response)
         recommendation = self._extract_recommendation(ai_response)
         
-        return {
+        if different_websites:
+            similarity_score = similarity_score * 0.3  
+        
+        result = {
             "test_case_1": test_case1.id,
             "test_case_2": test_case2.id,
             "semantic_similarity": similarity_score,
-            "recommendation": recommendation,
-            "reasoning": ai_response
+            "recommendation": recommendation if not different_websites else "keep_both",
+            "reasoning": ai_response,
+            "different_websites": different_websites
         }
+        
+        self.cache_manager.cache_result(
+            test_case1.id,
+            test_case2.id,
+            test_case1_data,
+            test_case2_data,
+            result
+        )
+        
+        return result
     
     def _extract_similarity_score(self, text: str) -> float:
         """Extract similarity score from response."""
         import re
-        # Look for percentage
-        match = re.search(r'(\d+(?:\.\d+)?)\s*%', text)
-        if match:
-            return float(match.group(1)) / 100.0
+
+        patterns = [
+            r'similarity[:\s]+(\d+(?:\.\d+)?)\s*%', 
+            r'(\d+(?:\.\d+)?)\s*%\s+similar', 
+            r'(\d+(?:\.\d+)?)\s*%',  
+            r'similarity[:\s]+(\d+\.\d+)', 
+            r'(\d+\.\d+)\s+similarity', 
+        ]
         
-        # Look for decimal
-        match = re.search(r'(\d+\.\d+)', text)
+        for pattern in patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                score = float(match.group(1))
+                if score > 1.0:
+                    return score / 100.0
+             
+                return min(1.0, max(0.0, score))
+        
+        match = re.search(r'\b(0?\.\d+)\b', text)
         if match:
             score = float(match.group(1))
-            if score > 1.0:
-                return score / 100.0
-            return score
+            return min(1.0, max(0.0, score))
         
-        return 0.5  # Default
+        print(f"    Warning: Could not extract similarity score from AI response, using default 0.5")
+        return 0.5
     
     def _extract_recommendation(self, text: str) -> str:
         """Extract recommendation from response."""

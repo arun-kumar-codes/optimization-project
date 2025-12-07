@@ -30,7 +30,6 @@ class FlowGraphBuilder:
         """
         self.graph = nx.DiGraph()
         
-        # Add nodes (pages/screens or major actions)
         for test_id, test_case in test_cases.items():
             # Extract pages/URLs from test case
             pages = self._extract_pages(test_case)
@@ -65,20 +64,18 @@ class FlowGraphBuilder:
             if step.action_name == "navigateto":
                 url = self.flow_analyzer._extract_url_from_step(step)
                 if url:
-                    # Normalize URL (remove query params, fragments)
+                    
                     normalized = self._normalize_url(url)
                     pages.add(normalized)
             elif step.action_name in ["click", "navigate"]:
-                # Try to infer page from element or description
                 if step.element:
-                    # Could be a page identifier, but we'll focus on URLs for now
+                    
                     pass
         
         return list(pages)
     
     def _normalize_url(self, url: str) -> str:
         """Normalize URL by removing query params and fragments."""
-        # Simple normalization - keep base URL
         if "?" in url:
             url = url.split("?")[0]
         if "#" in url:
@@ -105,9 +102,7 @@ class FlowGraphBuilder:
             weight = edge[2].get("weight", 0)
             test_cases = edge[2].get("test_cases", set())
             
-            # Calculate criticality score
-            # Higher weight (frequency) = more critical
-            # More test cases using this edge = more critical
+           
             criticality = weight * 0.6 + len(test_cases) * 0.4
             
             critical_paths.append({

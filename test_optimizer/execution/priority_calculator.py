@@ -66,43 +66,37 @@ class PriorityCalculator:
         """
         score = 0.0
         
-        # 1. Business criticality (from priority field) - 30% weight
+        
         if test_case.priority is not None:
-            # Priority 1 = highest, Priority 5 = lowest
-            # Convert: 1 -> 100, 2 -> 80, 3 -> 60, 4 -> 40, 5 -> 20
+            
             priority_score = max(0, (6 - test_case.priority) * 20) if test_case.priority > 0 else 50
             score += priority_score * 0.3
         else:
-            score += 50 * 0.3  # Default medium priority
+            score += 50 * 0.3 
         
-        # 2. Historical pass rate - 25% weight
         if test_case.pass_count is not None and test_case.fail_count is not None:
             total = test_case.pass_count + test_case.fail_count
             if total > 0:
                 pass_rate = (test_case.pass_count / total) * 100
                 score += pass_rate * 0.25
             else:
-                score += 50 * 0.25  # Default if no history
+                score += 50 * 0.25  
         else:
-            score += 50 * 0.25  # Default if no history
+            score += 50 * 0.25  
         
-        # 3. Flow criticality - 20% weight
         flows = self.flow_analyzer.identify_flow_type(test_case)
         critical_flows = ["authentication", "navigation", "crud"]
         critical_flow_count = sum(1 for flow in flows if flow in critical_flows)
-        flow_score = min(critical_flow_count / 3.0, 1.0) * 100  # Normalize to 0-100
+        flow_score = min(critical_flow_count / 3.0, 1.0) * 100  
         score += flow_score * 0.20
         
-        # 4. Execution time efficiency - 15% weight (shorter = better, but not too important)
         if test_case.duration is not None:
-            # Normalize: shorter duration = higher score
-            # Assuming max duration of 300000ms (5 minutes)
-            time_score = max(0, 100 - (test_case.duration / 3000))  # Scale to 0-100
+            
+            time_score = max(0, 100 - (test_case.duration / 3000)) 
             score += time_score * 0.15
         else:
-            score += 50 * 0.15  # Default
+            score += 50 * 0.15 
         
-        # 5. Coverage score - 10% weight
         score += coverage_score * 100 * 0.10
         
         return min(100.0, max(0.0, score))

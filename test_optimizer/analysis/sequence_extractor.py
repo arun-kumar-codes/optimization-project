@@ -52,30 +52,37 @@ class SequenceExtractor:
         """
         Extract abstracted flow pattern (ignoring specific test data).
         
+        IMPORTANT: Only abstracts TRULY EQUIVALENT actions. Does NOT abstract:
+        - click, doubleClick, rightClick (different behaviors - context menu vs selection vs activation)
+        - These are kept distinct to preserve test intent
+        
         Args:
             test_case: The TestCase object
             
         Returns:
-            Abstracted flow pattern (e.g., ["navigateTo", "click", "enter", "click", "verify"])
+            Abstracted flow pattern (e.g., ["navigateTo", "click", "enter", "doubleClick", "verify"])
         """
         pattern = []
         for step in sorted(test_case.steps, key=lambda s: s.position):
             action = step.action_name
+           
             
-            # Abstract common patterns
             if action == "navigateTo":
                 pattern.append("navigateTo")
-            elif action in ["click", "doubleClick", "rightClick"]:
-                pattern.append("click")
+            
             elif action in ["enter", "type", "fill", "input"]:
                 pattern.append("enter")
+           
             elif action in ["select", "selectOption", "choose"]:
                 pattern.append("select")
+           
             elif action in ["verify", "assert", "check", "validate"]:
                 pattern.append("verify")
+            
             elif action in ["wait", "waitFor", "pause"]:
                 pattern.append("wait")
             else:
+                
                 pattern.append(action)
         
         return pattern
@@ -182,7 +189,6 @@ class SequenceExtractor:
         # Create a 2D table to store LCS lengths
         dp = [[0] * (n + 1) for _ in range(m + 1)]
         
-        # Fill the table
         for i in range(1, m + 1):
             for j in range(1, n + 1):
                 if seq1[i - 1] == seq2[j - 1]:

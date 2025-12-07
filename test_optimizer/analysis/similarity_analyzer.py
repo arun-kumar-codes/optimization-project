@@ -2,7 +2,7 @@
 Module for calculating similarity between test cases using multiple algorithms.
 """
 
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 from Levenshtein import distance as levenshtein_distance
 import sys
 from pathlib import Path
@@ -82,6 +82,7 @@ class SimilarityAnalyzer:
     ) -> float:
         """
         Calculate similarity by comparing individual steps.
+        CRITICAL: Considers URLs/websites - different websites = lower similarity.
         
         Args:
             test_case1: First test case
@@ -97,6 +98,19 @@ class SimilarityAnalyzer:
             return 1.0
         if not steps1 or not steps2:
             return 0.0
+        
+        # Extract URLs/websites from both test cases
+        urls1 = self._extract_urls_from_test_case(test_case1)
+        urls2 = self._extract_urls_from_test_case(test_case2)
+        domains1 = self._extract_domains(urls1)
+        domains2 = self._extract_domains(urls2)
+        
+        website_penalty = 0.0
+        if domains1 and domains2:
+            if not domains1.intersection(domains2):
+                website_penalty = 0.5  
+            elif domains1 != domains2:
+                website_penalty = 0.2 
         
         # Compare steps pairwise
         max_steps = max(len(steps1), len(steps2))
@@ -117,15 +131,28 @@ class SimilarityAnalyzer:
             elif not step1.element and not step2.element:
                 matches += 0.3
             
-            # Compare description (fuzzy)
+            # Compare description 
             if step1.description and step2.description:
                 desc_sim = self._fuzzy_string_similarity(
                     step1.description, 
                     step2.description
                 )
                 matches += desc_sim * 0.3
+            
+            if step1.action_name == "navigateTo" and step2.action_name == "navigateTo":
+                url1 = self._extract_url_from_step(step1)
+                url2 = self._extract_url_from_step(step2)
+                if url1 and url2:
+                    domain1 = self._extract_domain_from_url(url1)
+                    domain2 = self._extract_domain_from_url(url2)
+                    if domain1 and domain2 and domain1 != domain2:
+                        matches *= 0.5 
         
         similarity = matches / max_steps if max_steps > 0 else 0.0
+        
+        # Apply website penalty
+        similarity = similarity * (1.0 - website_penalty)
+        
         return min(1.0, similarity)
     
     def calculate_flow_pattern_similarity(
@@ -157,6 +184,7 @@ class SimilarityAnalyzer:
     ) -> Dict[str, float]:
         """
         Calculate comprehensive similarity using multiple methods.
+        CRITICAL: Applies website/URL penalty if test cases target different websites.
         
         Args:
             test_case1: First test case
@@ -174,6 +202,76 @@ class SimilarityAnalyzer:
                 "flow_pattern": 0.2
             }
         
+        urls1 = self._extract_urls_from_test_case(test_case1)
+        urls2 = self._extract_urls_from_test_case(test_case2)
+        domains1 = self._extract_domains(urls1)
+        domains2 = self._extract_domains(urls2)
+        
+        name1 = (test_case1.name or "").lower()
+        name2 = (test_case2.name or "").lower()
+        desc1 = (test_case1.description or "").lower()
+        desc2 = (test_case2.description or "").lower()
+        
+        website_keyword_map = {
+            "amazon": "amazon.com",
+            "ebay": "ebay.com",
+            "walmart": "walmart.com",
+            "target": "target.com",
+            "etsy": "etsy.com",
+            "shopify": "shopify.com",
+            "facebook": "facebook.com",
+            "twitter": "twitter.com",
+            "x.com": "twitter.com",  
+            "linkedin": "linkedin.com",
+            "instagram": "instagram.com",
+            "youtube": "youtube.com",
+            "google": "google.com",
+            "microsoft": "microsoft.com",
+            "apple": "apple.com",
+            "netflix": "netflix.com",
+            "spotify": "spotify.com",
+            "github": "github.com",
+            "stackoverflow": "stackoverflow.com",
+            "reddit": "reddit.com",
+            "pinterest": "pinterest.com"
+        }
+        
+        # Extract websites from names/descriptions
+        websites_in_tc1 = set()
+        websites_in_tc2 = set()
+        
+        text1 = f"{name1} {desc1}"
+        text2 = f"{name2} {desc2}"
+        
+        for keyword, domain in website_keyword_map.items():
+            if keyword in text1:
+                websites_in_tc1.add(domain)
+            if keyword in text2:
+                websites_in_tc2.add(domain)
+        
+        # Also check for domain patterns in text
+        import re
+        domain_pattern = r'\b([a-z0-9-]+\.(?:com|org|net|io|co|edu|gov|uk|ca|au|de|fr|jp|in))\b'
+        domains_in_text1 = set(re.findall(domain_pattern, text1, re.IGNORECASE))
+        domains_in_text2 = set(re.findall(domain_pattern, text2, re.IGNORECASE))
+        
+        # Normalize domains (remove www, lowercase)
+        domains_in_text1 = {d.replace('www.', '').lower() for d in domains_in_text1}
+        domains_in_text2 = {d.replace('www.', '').lower() for d in domains_in_text2}
+        
+        # Combine URL domains with keyword domains
+        all_domains1 = domains1.union(websites_in_tc1).union(domains_in_text1)
+        all_domains2 = domains2.union(websites_in_tc2).union(domains_in_text2)
+        
+        # Determine if different websites
+        different_websites = False
+        if all_domains1 and all_domains2:
+            if not all_domains1.intersection(all_domains2):
+                different_websites = True
+        elif websites_in_tc1 and websites_in_tc2:
+            if not websites_in_tc1.intersection(websites_in_tc2):
+                different_websites = True
+        
         # Calculate individual similarities
         seq_sim = self.calculate_sequence_similarity(test_case1, test_case2)
         lcs_sim, _ = self.calculate_lcs_similarity(test_case1, test_case2)
@@ -188,12 +286,16 @@ class SimilarityAnalyzer:
             flow_sim * weights["flow_pattern"]
         )
         
+        if different_websites:
+            overall = overall * 0.3  
+        
         return {
             "overall": overall,
             "sequence_similarity": seq_sim,
             "lcs_similarity": lcs_sim,
             "step_level_similarity": step_sim,
-            "flow_pattern_similarity": flow_sim
+            "flow_pattern_similarity": flow_sim,
+            "different_websites": different_websites  
         }
     
     def _fuzzy_string_similarity(self, str1: str, str2: str) -> float:
@@ -223,6 +325,71 @@ class SimilarityAnalyzer:
         similarity = 1.0 - (distance / max_len)
         
         return max(0.0, similarity)
+    
+    def _extract_urls_from_test_case(self, test_case: TestCase) -> List[str]:
+        """Extract all URLs from a test case."""
+        urls = []
+        for step in test_case.steps:
+            url = self._extract_url_from_step(step)
+            if url:
+                urls.append(url)
+        return urls
+    
+    def _extract_url_from_step(self, step) -> Optional[str]:
+        """Extract URL from a step (from action, test_data, or description)."""
+        import re
+        
+        # Check test_data first
+        if step.test_data:
+            url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
+            match = re.search(url_pattern, step.test_data)
+            if match:
+                return match.group(0)
+        
+        # Check action
+        if step.action:
+            url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
+            match = re.search(url_pattern, step.action)
+            if match:
+                return match.group(0)
+        
+        # Check description
+        if step.description:
+            url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
+            match = re.search(url_pattern, step.description)
+            if match:
+                return match.group(0)
+        
+        return None
+    
+    def _extract_domain_from_url(self, url: str) -> Optional[str]:
+        """Extract domain from URL."""
+        import re
+        from urllib.parse import urlparse
+        
+        try:
+            parsed = urlparse(url)
+            domain = parsed.netloc or parsed.path.split('/')[0]
+            # Remove port if present
+            domain = domain.split(':')[0]
+            # Remove www. prefix for comparison
+            domain = domain.replace('www.', '')
+            return domain.lower() if domain else None
+        except:
+            # Fallback: simple regex extraction
+            match = re.search(r'https?://(?:www\.)?([^/]+)', url)
+            if match:
+                return match.group(1).lower()
+            return None
+    
+    def _extract_domains(self, urls: List[str]) -> set:
+        """Extract unique domains from a list of URLs."""
+        domains = set()
+        for url in urls:
+            domain = self._extract_domain_from_url(url)
+            if domain:
+                domains.add(domain)
+        return domains
     
     def find_similar_test_cases(
         self, 

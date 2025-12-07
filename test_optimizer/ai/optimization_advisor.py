@@ -11,7 +11,6 @@ from ai.claude_client import ClaudeClient
 
 
 class OptimizationAdvisor:
-    """Provides AI-powered optimization recommendations."""
     
     def __init__(self, api_key: Optional[str] = None):
         """
@@ -40,19 +39,16 @@ Focus on removing duplicates, merging similar tests, and prioritizing critical t
         Returns:
             Optimization recommendation dictionary
         """
-        # Calculate pass rate
         pass_rate = None
         if test_case.pass_count is not None and test_case.fail_count is not None:
             total = test_case.pass_count + test_case.fail_count
             if total > 0:
                 pass_rate = (test_case.pass_count / total) * 100
         
-        # Prepare context
         similar_count = len(context.get("similar_test_cases", []))
         flow_coverage = context.get("flow_coverage", 0)
         total_test_cases = context.get("total_test_cases", 0)
         
-        # Get flows (simplified)
         flows = context.get("flows", [])
         flows_str = ", ".join(flows) if flows else "Unknown"
         
@@ -72,7 +68,6 @@ Focus on removing duplicates, merging similar tests, and prioritizing critical t
         
         ai_response = self.claude_client.analyze(prompt, self.system_prompt)
         
-        # Parse response
         recommendation = self._parse_recommendation(ai_response, test_case)
         
         return recommendation
@@ -81,20 +76,16 @@ Focus on removing duplicates, merging similar tests, and prioritizing critical t
         """Parse AI recommendation response."""
         response_lower = response.lower()
         
-        # Determine action
         action = "keep"
         if "remove" in response_lower and "don't remove" not in response_lower:
             action = "remove"
         elif "merge" in response_lower:
             action = "merge"
         
-        # Extract justification
         justification = self._extract_justification(response)
         
-        # Extract coverage impact
         coverage_impact = self._extract_coverage_impact(response)
         
-        # Extract priority recommendation
         priority_rec = self._extract_priority_recommendation(response)
         
         return {
@@ -108,7 +99,6 @@ Focus on removing duplicates, merging similar tests, and prioritizing critical t
     
     def _extract_justification(self, text: str) -> str:
         """Extract justification from response."""
-        # Look for justification section
         lines = text.split("\n")
         justification_lines = []
         in_justification = False
@@ -130,7 +120,6 @@ Focus on removing duplicates, merging similar tests, and prioritizing critical t
         if justification_lines:
             return " ".join(justification_lines)
         
-        # Fallback: return first paragraph
         paragraphs = text.split("\n\n")
         if paragraphs:
             return paragraphs[0].strip()
@@ -186,26 +175,28 @@ Focus on removing duplicates, merging similar tests, and prioritizing critical t
         
         print(f"Getting optimization recommendations for {len(test_case_list)} test cases...")
         
-        # Build similarity map
         similarity_map = {}
         for group_type, groups in duplicate_groups.items():
+            if not isinstance(groups, list):
+                continue
             for group in groups:
-                for test_id in group.get("test_case_ids", []):
+                test_case_ids = group.get("test_case_ids", [])
+                if not isinstance(test_case_ids, list):
+                    continue
+                for test_id in test_case_ids:
                     if test_id not in similarity_map:
                         similarity_map[test_id] = []
                     similarity_map[test_id].extend([
-                        tid for tid in group.get("test_case_ids", []) 
+                        tid for tid in test_case_ids 
                         if tid != test_id
                     ])
         
-        # Get flow information
         from flows.flow_analyzer import FlowAnalyzer
         flow_analyzer = FlowAnalyzer()
         
         for test_id, test_case in test_case_list:
             print(f"  Analyzing test case {test_id}...")
             
-            # Prepare context
             similar_ids = similarity_map.get(test_id, [])
             flows = flow_analyzer.identify_flow_type(test_case)
             coverage_pct = flow_coverage.get("coverage_percentage", 0)

@@ -243,7 +243,6 @@ class StepCoverageTracker:
         Returns:
             Step signature string
         """
-        # Normalize components
         action = normalize_action_name(step.action_name) if step.action_name else ""
         element = normalize_element_identifier(step.element) or ""
         description = clean_description(step.description) or ""
@@ -251,11 +250,9 @@ class StepCoverageTracker:
             description = description.lower().strip()
         test_data = str(step.test_data).lower().strip() if step.test_data else ""
         
-        # Create signature
         signature_parts = [action, element, description, test_data]
         signature_str = "|".join(signature_parts)
         
-        # Hash for consistent comparison
         return hashlib.md5(signature_str.encode()).hexdigest()
 
 

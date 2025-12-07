@@ -42,10 +42,8 @@ Focus on critical business flows and edge cases."""
         Returns:
             Gap analysis dictionary
         """
-        # Prepare test cases summary
         test_cases_summary = self._prepare_test_cases_summary(test_cases)
         
-        # Prepare flows information
         flows_covered = flow_coverage.get("all_flows", [])
         flows_covered_str = ", ".join(flows_covered) if flows_covered else "None"
         critical_flows_str = ", ".join(critical_flows) if critical_flows else "None"
@@ -59,7 +57,6 @@ Focus on critical business flows and edge cases."""
         
         ai_response = self.claude_client.analyze(prompt, self.system_prompt)
         
-        # Parse response
         gaps = self._parse_gap_analysis(ai_response)
         
         return {
@@ -72,7 +69,6 @@ Focus on critical business flows and edge cases."""
         """Prepare a summary of test cases for AI analysis."""
         summary_lines = []
         
-        # Group by flow type
         from flows.flow_analyzer import FlowAnalyzer
         flow_analyzer = FlowAnalyzer()
         
@@ -103,13 +99,10 @@ Focus on critical business flows and edge cases."""
             if not line:
                 continue
             
-            # Check if this is a new gap (numbered or bulleted)
             if line[0].isdigit() or line.startswith("-") or line.startswith("*"):
-                # Save previous gap
                 if current_gap:
                     gaps.append(current_gap)
                 
-                # Start new gap
                 gap_text = line.lstrip("0123456789.-* ").strip()
                 current_gap = {
                     "type": "missing_flow",
@@ -117,7 +110,6 @@ Focus on critical business flows and edge cases."""
                     "severity": "Medium"
                 }
             elif current_gap:
-                # Add to current gap description
                 if ":" in line:
                     parts = line.split(":", 1)
                     key = parts[0].strip().lower()
@@ -132,15 +124,13 @@ Focus on critical business flows and edge cases."""
                 else:
                     current_gap["description"] += f" {line}"
         
-        # Add last gap
         if current_gap:
             gaps.append(current_gap)
         
-        # If no structured gaps found, create one from full response
         if not gaps:
             gaps.append({
                 "type": "general",
-                "description": response[:500],  # First 500 chars
+                "description": response[:500], 
                 "severity": "Medium"
             })
         
@@ -181,10 +171,9 @@ Focus on critical business flows and edge cases."""
         """
         suggestions = []
         
-        # Focus on high severity gaps
         high_severity_gaps = [g for g in gaps if g.get("severity") == "High"]
         
-        for gap in high_severity_gaps[:5]:  # Limit to top 5
+        for gap in high_severity_gaps[:5]: 
             suggestion = {
                 "suggested_name": self._generate_test_case_name(gap),
                 "description": gap.get("description", ""),
@@ -197,7 +186,6 @@ Focus on critical business flows and edge cases."""
         return suggestions
     
     def _generate_test_case_name(self, gap: Dict) -> str:
-        """Generate a test case name from gap description."""
         description = gap.get("description", "")
         gap_type = gap.get("type", "general")
         
@@ -225,8 +213,7 @@ Focus on critical business flows and edge cases."""
         Returns:
             Modification suggestions
         """
-        # This would use AI to suggest specific modifications
-        # For now, return a basic structure
+       
         return {
             "test_case_id": test_case.id,
             "suggested_modifications": [

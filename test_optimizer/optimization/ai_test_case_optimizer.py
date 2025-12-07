@@ -110,7 +110,6 @@ Provide optimized test case in JSON format:
             return optimized_test_case
             
         except Exception as e:
-            # Fallback: return original test case if AI fails
             print(f"AI optimization failed: {e}. Returning original test case.")
             return test_case
     
@@ -223,7 +222,6 @@ Generate merged test case in JSON format:
             return merged_test_case
             
         except Exception as e:
-            # Fallback: use rule-based merging
             print(f"AI merging failed: {e}. Using rule-based merging.")
             from optimization.test_case_merger import TestCaseMerger
             merger = TestCaseMerger()
@@ -244,7 +242,6 @@ Generate merged test case in JSON format:
         Returns:
             List of optimized test cases
         """
-        # Prepare summary data for AI (to avoid token limits)
         test_cases_summary = []
         for tc_id, tc in list(all_test_cases.items())[:20]:  # Limit to 20 for AI
             test_cases_summary.append({
@@ -284,8 +281,7 @@ Provide optimization recommendations in JSON format:
             response = self.claude_client.analyze(prompt, max_tokens=4000)
             recommendations = self._parse_ai_response(response)
             
-            # Process recommendations (implementation would go here)
-            # For now, return original test cases
+           
             return list(all_test_cases.values())
             
         except Exception as e:
@@ -440,8 +436,7 @@ Provide optimized steps in JSON format:
     def _parse_ai_response(self, response: str) -> Dict:
         """Parse AI response JSON."""
         try:
-            # Try to extract JSON from response
-            # AI might wrap JSON in markdown code blocks
+           
             if "```json" in response:
                 start = response.find("```json") + 7
                 end = response.find("```", start)
@@ -478,7 +473,7 @@ Provide optimized steps in JSON format:
                 template_step = template_test_case.steps[0]
             
             step = TestStep(
-                id=step_data.get("id", i * 1000),  # Generate IDs
+                id=step_data.get("id", i * 1000), 
                 position=step_data.get("position", i),
                 action_name=step_data.get("action_name", ""),
                 action=step_data.get("action", step_data.get("action_name", "")),

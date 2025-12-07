@@ -116,7 +116,6 @@ class OutputValidator:
     def _validate_summary_files(self) -> Dict:
         """Validate summary JSON files."""
         required_files = [
-            "optimization_summary.json",
             "admin_optimized_tests.json",
             "user_optimized_tests.json",
             "execution_order.json"

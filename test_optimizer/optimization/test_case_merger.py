@@ -116,11 +116,16 @@ class TestCaseMerger:
         Returns:
             Merged TestCase object
         """
+        print(f"      [MERGER] Merging TC{test_case1.id} ({len(test_case1.steps)} steps) + TC{test_case2.id} ({len(test_case2.steps)} steps)...")
+        
         # Identify unique steps
         uniqueness_result = self.step_uniqueness_analyzer.identify_unique_steps(
             test_case1,
             test_case2
         )
+        unique_1 = uniqueness_result["unique_in_test_case_1"]["total"]
+        unique_2 = uniqueness_result["unique_in_test_case_2"]["total"]
+        print(f"      [MERGER] Unique steps: TC{test_case1.id} has {unique_1} unique, TC{test_case2.id} has {unique_2} unique")
         
         # Get steps from both test cases
         steps1 = sorted(test_case1.steps, key=lambda s: s.position)
@@ -128,6 +133,7 @@ class TestCaseMerger:
         
         # Merge steps intelligently
         merged_steps = self._merge_steps_intelligently(steps1, steps2)
+        print(f"      [MERGER] Merged to {len(merged_steps)} steps (from {len(steps1) + len(steps2)} total)")
         
         # Generate new ID if not provided
         if new_test_case_id is None:
@@ -208,10 +214,8 @@ class TestCaseMerger:
         if len(test_cases_list) == 1:
             return test_cases_list[0]
         
-        # Start with first test case
         merged = test_cases_list[0]
         
-        # Merge each subsequent test case
         for i in range(1, len(test_cases_list)):
             merged = self.generate_merged_test_case(
                 merged,
@@ -236,10 +240,8 @@ class TestCaseMerger:
         Returns:
             Optimized merged TestCase
         """
-        # Merge test cases
         merged = self.merge_test_cases_intelligently(source_test_cases, new_test_case_id)
         
-        # Optimize step order
         optimized_steps = self._optimize_step_order(merged.steps)
         merged.steps = optimized_steps
         
@@ -255,12 +257,10 @@ class TestCaseMerger:
         Returns:
             New test case ID
         """
-        # Use hash-based approach for deterministic IDs
         source_str = "_".join(sorted(str(id) for id in source_ids))
         hash_value = int(hashlib.md5(source_str.encode()).hexdigest()[:8], 16)
         
-        # Use range 10000+ for merged test cases
-        new_id = 10000 + (hash_value % 90000)  # Range: 10000-99999
+        new_id = 10000 + (hash_value % 90000)
         
         return new_id
     
@@ -322,7 +322,6 @@ class TestCaseMerger:
         merged_steps = []
         seen_step_signatures = set()
         
-        # Create step signatures for comparison
         def get_step_signature(step: TestStep) -> str:
             """Create signature for step comparison."""
             action = step.action_name or ""
@@ -335,7 +334,7 @@ class TestCaseMerger:
         for step in steps1:
             sig = get_step_signature(step)
             if sig not in seen_step_signatures:
-                # Create new step with updated position and test_case_id
+               
                 new_step = TestStep(
                     id=step.id,  # Keep original ID for now
                     position=position,
@@ -346,7 +345,7 @@ class TestCaseMerger:
                     locator=step.locator,
                     test_data=step.test_data,
                     wait_time=step.wait_time,
-                    test_case_id=None,  # Will be set when merged test case is created
+                    test_case_id=None,  
                     raw_data=step.raw_data
                 )
                 merged_steps.append(new_step)
@@ -393,13 +392,12 @@ class TestCaseMerger:
         prev_step = None
         
         for step in steps:
-            # Skip redundant waits (if previous step already has wait)
+            
             if step.action_name == "wait" and prev_step and prev_step.wait_time:
                 if step.wait_time and step.wait_time <= prev_step.wait_time:
-                    continue  # Skip redundant wait
+                    continue  
             
-            # Combine similar consecutive actions (optional - can be enhanced)
-            # For now, just add the step
+           
             optimized.append(step)
             prev_step = step
         

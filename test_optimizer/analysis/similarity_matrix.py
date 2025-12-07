@@ -41,7 +41,7 @@ class SimilarityMatrixGenerator:
                     # Same test case = 100% similar
                     matrix[id1][id2] = 1.0
                 elif id2 in matrix and id1 in matrix[id2]:
-                    # Use symmetric property (similarity is symmetric)
+                    
                     matrix[id1][id2] = matrix[id2][id1]
                 else:
                     # Calculate similarity
@@ -67,13 +67,13 @@ class SimilarityMatrixGenerator:
             Dictionary with summary statistics
         """
         all_similarities = []
-        high_similarities = []  # > 0.75
-        medium_similarities = []  # 0.5 - 0.75
-        low_similarities = []  # < 0.5
+        high_similarities = []  
+        medium_similarities = []  
+        low_similarities = [] 
         
         for id1, similarities in matrix.items():
             for id2, sim_score in similarities.items():
-                if id1 != id2:  # Exclude self-similarity
+                if id1 != id2:  
                     all_similarities.append(sim_score)
                     if sim_score > 0.75:
                         high_similarities.append((id1, id2, sim_score))
@@ -90,7 +90,7 @@ class SimilarityMatrixGenerator:
             "high_similarity_count": len(high_similarities),
             "medium_similarity_count": len(medium_similarities),
             "low_similarity_count": len(low_similarities),
-            "high_similarity_pairs": sorted(high_similarities, key=lambda x: x[2], reverse=True)[:20],  # Top 20
+            "high_similarity_pairs": sorted(high_similarities, key=lambda x: x[2], reverse=True)[:20], 
             "most_similar_pair": max(high_similarities, key=lambda x: x[2]) if high_similarities else None
         }
     
@@ -106,7 +106,6 @@ class SimilarityMatrixGenerator:
             matrix: Similarity matrix
             output_path: Path to output JSON file
         """
-        # Convert to list format for JSON (more readable)
         test_case_ids = sorted(matrix.keys())
         
         export_data = {
@@ -141,10 +140,9 @@ class SimilarityMatrixGenerator:
         
         for id1, similarities in matrix.items():
             for id2, sim_score in similarities.items():
-                if id1 < id2:  # Avoid duplicates (since matrix is symmetric)
+                if id1 < id2: 
                     pairs.append((id1, id2, sim_score))
         
-        # Sort by similarity (highest first)
         pairs.sort(key=lambda x: x[2], reverse=True)
         
         return pairs[:top_n]
@@ -172,7 +170,6 @@ class SimilarityMatrixGenerator:
             if other_id != test_case_id:
                 similarities.append((other_id, sim_score))
         
-        # Sort by similarity (highest first)
         similarities.sort(key=lambda x: x[1], reverse=True)
         
         return similarities

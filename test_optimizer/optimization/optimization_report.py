@@ -41,7 +41,7 @@ class OptimizationReportGenerator:
             if test_id in original_test_cases:
                 tc = original_test_cases[test_id]
                 reason = optimization_result["removal_reasons"].get(test_id, {})
-                # Handle case where reason might be a string or dict
+                
                 if isinstance(reason, str):
                     reason_dict = {"reason": reason}
                 elif isinstance(reason, dict):

@@ -103,7 +103,7 @@ class ExecutionScheduler:
         for category in ["smoke", "high", "medium", "low"]:
             category_tests = priority_categories[category]
             
-            # Filter to tests that are ready (dependencies satisfied)
+            # Filter to tests that are ready
             ready_tests = []
             for test_id in category_tests:
                 if test_id in remaining:

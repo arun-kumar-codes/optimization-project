@@ -94,7 +94,6 @@ class OptimizedTestCaseGenerator:
         source_ids = [tc.id for tc in source_test_cases]
         new_id = self.assign_new_test_case_id(source_ids)
         
-        # Merge steps (use first test case's steps as base, add unique from others)
         merged_steps = []
         seen_step_signatures = set()
         
@@ -329,17 +328,13 @@ class OptimizedTestCaseGenerator:
         Returns:
             Step file JSON structure
         """
-        # Generate step content
         steps_data = []
         for step in sorted(test_case.steps, key=lambda s: s.position):
             if step.raw_data:
-                # Use original raw data
                 step_json = step.raw_data.copy()
-                # Update position and test_case_id
                 step_json["position"] = step.position
                 step_json["testCaseId"] = test_case.id
             else:
-                # Create from TestStep object
                 step_json = {
                     "id": step.id,
                     "position": step.position,
@@ -356,12 +351,10 @@ class OptimizedTestCaseGenerator:
             
             steps_data.append(step_json)
         
-        # Create step file structure
         step_file = {
             "content": steps_data
         }
         
-        # Add pageable metadata if requested
         if include_pageable:
             step_count = len(steps_data)
             step_file.update({
@@ -400,7 +393,6 @@ class OptimizedTestCaseGenerator:
             self._used_ids.add(test_id)
             return test_id
         
-        # Find next available ID
         new_id = test_id
         while new_id in existing_ids or new_id in self._used_ids:
             new_id += 1

@@ -24,4 +24,7 @@ __pycache__/
 *.json
 !requirements.txt
 
+# AI cache
+.ai_cache/
+
 

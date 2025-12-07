@@ -41,7 +41,7 @@ class TestCase:
     last_run_result: Optional[str] = None
     created_date: Optional[int] = None
     updated_date: Optional[int] = None
-    raw_data: Optional[Dict[str, Any]] = None  # Store original JSON for reference
+    raw_data: Optional[Dict[str, Any]] = None  
     
     def get_step_count(self) -> int:
         """Get the number of steps in this test case."""

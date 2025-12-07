@@ -54,23 +54,22 @@ class OutputGenerator:
             optimized_test_cases: Optimized test cases to output
             original_test_cases: Original test cases (for raw_data reference)
         """
-        print(f"Generating {len(optimized_test_cases)} optimized test case files...")
+        print(f"  [OUTPUT GENERATOR] Generating {len(optimized_test_cases)} optimized test case files...")
         
-        for test_id, test_case in optimized_test_cases.items():
+        for idx, (test_id, test_case) in enumerate(optimized_test_cases.items(), 1):
+            print(f"    [{idx}/{len(optimized_test_cases)}] Generating TC{test_id:02d}.json...", end=" ")
             test_case_json = None
             
-            # Try to get original raw data
             if test_id in original_test_cases:
                 original_raw = original_test_cases[test_id].raw_data
                 if original_raw:
-                    # Use original format, but update ID/name if changed
+                    
                     test_case_json = original_raw.copy()
                     test_case_json["id"] = test_case.id
                     test_case_json["name"] = test_case.name
                     if test_case.description:
                         test_case_json["description"] = test_case.description
             
-            # If original file exists, load it for metadata
             if not test_case_json and self.original_test_cases_dir:
                 original_file = self.original_test_cases_dir / f"{test_id:02d}.json"
                 if original_file.exists():
@@ -85,7 +84,7 @@ class OutputGenerator:
                     except Exception as e:
                         print(f"Warning: Could not load original file {original_file}: {e}")
             
-            # If still no JSON, create from TestCase object but preserve structure
+            
             if not test_case_json:
                 test_case_json = self._test_case_to_json(test_case, preserve_structure=True)
             
@@ -93,6 +92,7 @@ class OutputGenerator:
             file_path = self.test_cases_dir / f"{test_id:02d}.json"
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(test_case_json, f, indent=2, ensure_ascii=False)
+            print(f"✓ Written ({len(test_case.steps)} steps)")
     
     def generate_optimized_step_files(
         self,
@@ -107,23 +107,23 @@ class OutputGenerator:
             optimized_test_cases: Optimized test cases
             original_test_cases: Original test cases (for raw_data reference)
         """
-        print(f"Generating {len(optimized_test_cases)} optimized step files...")
+        print(f"  [OUTPUT GENERATOR] Generating {len(optimized_test_cases)} optimized step files...")
         
-        for test_id, test_case in optimized_test_cases.items():
+        for idx, (test_id, test_case) in enumerate(optimized_test_cases.items(), 1):
+            print(f"    [{idx}/{len(optimized_test_cases)}] Generating steps for TC{test_id:02d}.json...", end=" ")
             # Get steps data
             steps_data = []
             for step in sorted(test_case.steps, key=lambda s: s.position):
                 if step.raw_data:
-                    # Use original raw data, update position and testCaseId
+                    
                     step_json = step.raw_data.copy()
                     step_json["position"] = step.position
                     step_json["testCaseId"] = test_id
                     steps_data.append(step_json)
                 else:
-                    # Create from TestStep object with full structure
+                    
                     steps_data.append(self._test_step_to_json(step, test_id))
             
-            # Try to load original file for metadata
             original_metadata = None
             if self.original_steps_dir:
                 original_file = self.original_steps_dir / f"{test_id:02d}.json"
@@ -137,11 +137,11 @@ class OutputGenerator:
             
             # Also try from original test cases
             if not original_metadata and test_id in original_test_cases:
-                # Try to get from first step's raw_data structure
+                
                 if original_test_cases[test_id].steps:
                     first_step = original_test_cases[test_id].steps[0]
                     if first_step.raw_data and isinstance(first_step.raw_data, dict):
-                        # This won't have pageable, but we'll create it below
+                       
                         pass
             
             # Create step file with all metadata
@@ -149,10 +149,8 @@ class OutputGenerator:
             steps_json = {
                 "content": steps_data
             }
-            
-            # Add pageable and all metadata (preserve from original or create default)
+           
             if original_metadata:
-                # Preserve pageable structure from original
                 steps_json["pageable"] = original_metadata.get("pageable", self._create_default_pageable())
                 steps_json["sort"] = original_metadata.get("sort", self._create_default_sort())
             else:
@@ -160,7 +158,6 @@ class OutputGenerator:
                 steps_json["pageable"] = self._create_default_pageable()
                 steps_json["sort"] = self._create_default_sort()
             
-            # Update counts based on actual steps
             steps_json["totalElements"] = step_count
             steps_json["totalPages"] = 1 if step_count > 0 else 0
             steps_json["last"] = True
@@ -174,6 +171,7 @@ class OutputGenerator:
             file_path = self.steps_dir / f"{test_id:02d}.json"
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(steps_json, f, indent=2, ensure_ascii=False)
+            print(f"✓ Written ({step_count} steps)")
     
     def generate_admin_user_separated_files(
         self,
@@ -226,7 +224,6 @@ class OutputGenerator:
     
     def _is_admin_test_case(self, test_case: TestCase, flows: List[str]) -> bool:
         """Check if test case is an admin test case."""
-        # Check name and description
         text = f"{test_case.name} {test_case.description or ''}".lower()
         admin_keywords = ["admin", "user management", "system user", "delete user", "create user"]
         
@@ -337,9 +334,7 @@ class OutputGenerator:
             preserve_structure: If True, preserve all fields from raw_data
         """
         if preserve_structure and test_case.raw_data:
-            # Start with original structure
             json_data = test_case.raw_data.copy()
-            # Update with current values
             json_data["id"] = test_case.id
             json_data["name"] = test_case.name
             if test_case.description:

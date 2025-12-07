@@ -46,14 +46,11 @@ class StepUniquenessAnalyzer:
         steps1 = sorted(test_case1.steps, key=lambda s: s.position)
         steps2 = sorted(test_case2.steps, key=lambda s: s.position)
         
-        # Build step signatures for comparison
         signatures1 = {self._get_step_signature(step): step for step in steps1}
         signatures2 = {self._get_step_signature(step): step for step in steps2}
         
-        # Find exact matches
         exact_matches = set(signatures1.keys()) & set(signatures2.keys())
         
-        # Find unique steps (exact)
         unique_in_1_exact = {
             sig: step for sig, step in signatures1.items() 
             if sig not in exact_matches
@@ -63,7 +60,6 @@ class StepUniquenessAnalyzer:
             if sig not in exact_matches
         }
         
-        # Find fuzzy matches (similar but not identical)
         unique_in_1_fuzzy = []
         unique_in_2_fuzzy = []
         
@@ -128,7 +124,6 @@ class StepUniquenessAnalyzer:
         if not test_case_signatures:
             return 0.0
         
-        # Count how many steps are unique (not found in other test cases)
         unique_count = 0
         total_steps = len(test_case_steps)
         
@@ -136,7 +131,6 @@ class StepUniquenessAnalyzer:
             step_sig = self._get_step_signature(step)
             is_unique = True
             
-            # Check if this step exists in other test cases
             for other_id, other_test_case in all_test_cases.items():
                 if other_id == test_case.id:
                     continue
@@ -145,12 +139,10 @@ class StepUniquenessAnalyzer:
                 for other_step in other_steps:
                     other_sig = self._get_step_signature(other_step)
                     
-                    # Check exact match
                     if step_sig == other_sig:
                         is_unique = False
                         break
                     
-                    # Check fuzzy match
                     similarity = self._calculate_step_similarity(step, other_step)
                     if similarity >= self.fuzzy_threshold:
                         is_unique = False

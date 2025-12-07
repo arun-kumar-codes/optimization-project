@@ -116,13 +116,11 @@ class FlowAnalyzer:
             action_lower = step.action_name.lower()
             desc_lower = (step.description or "").lower()
             
-            # If first step is not login but test case needs authentication,
-            # it might depend on a login test case
+            
             if "login" not in action_lower and "login" not in desc_lower:
                 flow_types = self.identify_flow_type(test_case)
                 if "authentication" in flow_types:
-                    # Might need login first, but we can't determine which test case
-                    # This would need more context
+                    
                     pass
         
         return dependencies
@@ -186,7 +184,7 @@ class FlowAnalyzer:
         
         for test_id, test_case in test_cases.items():
             flow_types = self.identify_flow_type(test_case)
-            priority = test_case.priority or 5  # Default to lowest priority
+            priority = test_case.priority or 5 
             
             for flow_type in flow_types:
                 if flow_type not in flow_type_counts:
@@ -234,7 +232,6 @@ class FlowAnalyzer:
         flow_groups = {}
         
         for test_id, test_case in test_cases.items():
-            # Get flow signature
             flow_types = self.identify_flow_type(test_case)
             flow_signature = "->".join(sorted(flow_types))
             

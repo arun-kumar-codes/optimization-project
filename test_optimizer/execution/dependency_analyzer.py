@@ -83,9 +83,7 @@ class DependencyAnalyzer:
             if test_case.prerequisite_case in all_test_cases:
                 dependencies.append(test_case.prerequisite_case)
         
-        # Check for implicit dependencies based on flow patterns
-        # If test case starts with a non-login action but needs authentication,
-        # it might depend on a login test case
+        
         flows = self.flow_analyzer.identify_flow_type(test_case)
         
         if "authentication" not in flows:
@@ -215,7 +213,7 @@ class DependencyAnalyzer:
                     if in_degree[test_id] == 0:
                         queue.append(test_id)
         
-        # Add any remaining nodes (shouldn't happen if no cycles)
+      
         remaining = [tid for tid in dependencies.keys() if tid not in result]
         result.extend(remaining)
         
@@ -239,7 +237,7 @@ class DependencyAnalyzer:
         for test_id in dependencies.keys():
             graph[test_id] = set(dependencies.get(test_id, []))
         
-        # Find connected components (groups with dependencies)
+        # Find connected component
         visited = set()
         groups = []
         

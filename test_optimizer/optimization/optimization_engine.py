@@ -71,7 +71,6 @@ class OptimizationEngine:
         if use_iterative:
             return self.optimize_test_suite_iteratively(test_cases, ai_recommendations)
         
-        # Original one-pass optimization (fallback)
         return self._optimize_test_suite_one_pass(test_cases, ai_recommendations)
     
     def optimize_test_suite_iteratively(
@@ -89,18 +88,38 @@ class OptimizationEngine:
         Returns:
             Optimization result dictionary
         """
+        print(f"  [OPTIMIZATION ENGINE] Starting iterative optimization on {len(test_cases)} test cases...")
+        
         # Step 1: Calculate baseline coverage
+        print(f"  [OPTIMIZATION ENGINE] Step 1: Calculating baseline coverage...")
         baseline_coverage = self.coverage_analyzer.calculate_flow_coverage(test_cases)
         baseline_critical = self.coverage_analyzer.identify_critical_flow_coverage(test_cases)
         baseline_step_coverage = self.step_coverage_tracker.calculate_step_coverage(test_cases)
+        print(f"    Baseline flow coverage: {baseline_coverage['coverage_percentage']:.1f}% ({baseline_coverage['covered_flows']}/{baseline_coverage['total_unique_flows']} flows)")
+        print(f"    Baseline step coverage: {baseline_step_coverage['coverage_percentage']:.1f}% ({baseline_step_coverage['covered_steps']}/{baseline_step_coverage['total_unique_steps']} steps)")
+        print(f"    Critical flows covered: {baseline_critical['all_critical_covered']}")
         
         # Build step coverage map
+        print(f"  [OPTIMIZATION ENGINE] Building step coverage map...")
         self.step_coverage_tracker.build_step_coverage_map(test_cases)
         
         # Step 2: Get optimization candidates (sorted by priority)
+        print(f"  [OPTIMIZATION ENGINE] Step 2: Getting optimization candidates...")
         candidates = self._get_optimization_candidates(test_cases, ai_recommendations)
+        print(f"    Found {len(candidates)} optimization candidates")
+        if candidates:
+            top_5 = [f"TC{c['test_case_id']} ({c['type']}, sim={c.get('similarity', 0):.1%}, action={c.get('action', 'unknown')})" for c in candidates[:5]]
+            print(f"    Top 5 candidates: {top_5}")
+            # Count by type
+            exact = sum(1 for c in candidates if c.get('type') == 'exact_duplicate')
+            near = sum(1 for c in candidates if c.get('type') == 'near_duplicate')
+            highly = sum(1 for c in candidates if c.get('type') == 'highly_similar')
+            merge_count = sum(1 for c in candidates if c.get('action') == 'merge')
+            remove_count = sum(1 for c in candidates if c.get('action') == 'remove')
+            print(f"    Breakdown: {exact} exact, {near} near, {highly} highly similar | {merge_count} merge, {remove_count} remove")
         
         # Step 3: Iteratively optimize (one at a time with rollback)
+        print(f"  [OPTIMIZATION ENGINE] Step 3: Iteratively optimizing (one at a time with rollback)...")
         current_test_cases = test_cases.copy()
         to_remove = set()
         to_keep = set()
@@ -109,7 +128,14 @@ class OptimizationEngine:
         removal_reasons = {}
         skipped_candidates = []
         
-        for candidate in candidates:
+        print(f"    Processing {len(candidates)} candidates one by one...")
+        for idx, candidate in enumerate(candidates, 1):
+            test_id = candidate['test_case_id']
+            keep_id = candidate.get('keep_id')
+            action = candidate.get('action', 'unknown')
+            sim = candidate.get('similarity', 0)
+            keep_str = f"TC{keep_id}" if keep_id else "N/A"
+            print(f"    [{idx}/{len(candidates)}] TC{test_id} → {action.upper()} (sim={sim:.1%}, keep={keep_str})...", end=" ")
             # Try optimization
             result = self._try_optimize(current_test_cases, candidate, test_cases)
             
@@ -120,11 +146,15 @@ class OptimizationEngine:
                 if result["action"] == "remove":
                     to_remove.add(candidate["test_case_id"])
                     removal_reasons[candidate["test_case_id"]] = result.get("reason", {})
+                    reason_str = result.get("reason", {}).get("reason", "Unknown") if isinstance(result.get("reason"), dict) else str(result.get("reason", "Unknown"))
+                    print(f"✓ REMOVED (reason: {reason_str[:50]})")
                 elif result["action"] == "merge":
                     merged_id = result.get("merged_id")
                     if merged_id:
                         merged_test_cases[merged_id] = result.get("merged_test_case")
                         to_merge[merged_id] = result.get("source_ids", [])
+                        source_ids_str = ", ".join([f"TC{sid}" for sid in result.get("source_ids", [])])
+                        print(f"✓ MERGED → TC{merged_id} (from: {source_ids_str})")
                         for source_id in result.get("source_ids", []):
                             to_remove.add(source_id)
                             removal_reasons[source_id] = {
@@ -134,13 +164,17 @@ class OptimizationEngine:
                             }
             else:
                 # Skip this candidate
+                reason = result.get("reason", "Coverage would be lost")
+                reason_str = reason if isinstance(reason, str) else reason.get("reason", "Coverage would be lost") if isinstance(reason, dict) else str(reason)
+                print(f"✗ SKIPPED (reason: {reason_str[:50]})")
                 skipped_candidates.append({
                     "candidate": candidate,
-                    "reason": result.get("reason", "Coverage would be lost")
+                    "reason": reason
                 })
         
-        # Step 4: Process exact duplicates (always safe)
+        print(f"  [OPTIMIZATION ENGINE] Step 4: Processing exact duplicates (always safe)...")
         duplicate_groups = self.duplicate_detector.detect_duplicates(test_cases)
+        exact_count = 0
         for group in duplicate_groups["exact_duplicates"]:
             keep_id = group["recommended_keep"]
             remove_ids = group["recommended_remove"]
@@ -158,28 +192,19 @@ class OptimizationEngine:
                         # Remove from current set
                         if remove_id in current_test_cases:
                             del current_test_cases[remove_id]
+                            exact_count += 1
+        print(f"    Processed {exact_count} exact duplicates")
         
-        # Process exact duplicates (100% similar - safe to remove)
-        for group in duplicate_groups["exact_duplicates"]:
-            keep_id = group["recommended_keep"]
-            remove_ids = group["recommended_remove"]
-            
-            to_keep.add(keep_id)
-            for remove_id in remove_ids:
-                to_remove.add(remove_id)
-                removal_reasons[remove_id] = {
-                    "reason": "Exact duplicate",
-                    "similar_to": keep_id,
-                    "similarity": group["max_similarity"]
-                }
         
-        # Step 5: Apply AI recommendations for test cases not in duplicate groups
+        if ai_recommendations:
+            print(f"  [OPTIMIZATION ENGINE] Step 5: Applying AI recommendations...")
+            ai_processed = 0
         if ai_recommendations:
             for test_id, recommendation in ai_recommendations.items():
                 if test_id in current_test_cases and test_id not in to_remove and test_id not in to_keep:
                     action = recommendation.get("action", "keep")
                     if action == "remove":
-                        # Try to remove based on AI recommendation
+                       
                         result = self._try_optimize(
                             current_test_cases,
                             {
@@ -187,7 +212,7 @@ class OptimizationEngine:
                                 "keep_id": None,
                                 "similarity": 0.0,
                                 "type": "ai_recommendation",
-                                "priority": 2,  # Medium priority
+                                "priority": 2, 
                                 "action": "remove"
                             },
                             test_cases
@@ -204,19 +229,36 @@ class OptimizationEngine:
                     elif action == "keep":
                         # Explicitly keep this test case
                         to_keep.add(test_id)
+                        ai_processed += 1
+            print(f"    Processed {ai_processed} AI recommendations")
+        else:
+            print(f"  [OPTIMIZATION ENGINE] Step 5: No AI recommendations (skipped)")
         
-        # Step 6: Finalize optimized test cases
+        print(f"  [OPTIMIZATION ENGINE] Step 6: Finalizing optimized test cases...")
         all_ids = set(test_cases.keys())
         final_to_keep = all_ids - to_remove
         optimized_test_cases = {tid: current_test_cases[tid] for tid in final_to_keep if tid in current_test_cases}
-        optimized_test_cases.update(merged_test_cases)  # Add merged test cases
+        optimized_test_cases.update(merged_test_cases) 
+        print(f"    Kept: {len(final_to_keep)} test cases")
+        print(f"    Removed: {len(to_remove)} test cases")
+        print(f"    Merged: {len(merged_test_cases)} new merged test cases")
+        print(f"    Skipped: {len(skipped_candidates)} candidates (coverage would be lost)")
         
-        # Step 7: Validate final coverage
+        print(f"  [OPTIMIZATION ENGINE] Step 7: Validating final coverage...")
         optimized_coverage = self.coverage_analyzer.calculate_flow_coverage(optimized_test_cases)
         optimized_critical = self.coverage_analyzer.identify_critical_flow_coverage(optimized_test_cases)
-        optimized_step_coverage = self.step_coverage_tracker.calculate_step_coverage(optimized_test_cases)
+     
+        step_coverage_loss = self.step_coverage_tracker.check_coverage_loss(test_cases, optimized_test_cases)
+        original_step_count = step_coverage_loss["original_step_count"]
+        optimized_step_count = step_coverage_loss["optimized_step_count"]
+        step_coverage_pct = step_coverage_loss["coverage_percentage_after"]
         
-        # Step 8: Calculate metrics
+        print(f"    Final flow coverage: {optimized_coverage['coverage_percentage']:.1f}% ({optimized_coverage['covered_flows']}/{optimized_coverage['total_unique_flows']} flows)")
+        print(f"    Final step coverage: {step_coverage_pct:.1f}% ({optimized_step_count}/{original_step_count} steps) [vs original]")
+        print(f"    Lost steps: {step_coverage_loss['lost_step_count']}")
+        print(f"    Critical flows covered: {optimized_critical['all_critical_covered']}")
+        
+        print(f"  [OPTIMIZATION ENGINE] Step 8: Calculating metrics...")
         original_count = len(test_cases)
         optimized_count = len(optimized_test_cases)
         reduction = original_count - optimized_count
@@ -228,12 +270,6 @@ class OptimizationEngine:
         time_saved = original_time - optimized_time
         time_saved_percentage = (time_saved / original_time * 100) if original_time > 0 else 0
         
-        # Step coverage loss analysis
-        step_coverage_loss = self.step_coverage_tracker.check_coverage_loss(
-            test_cases,
-            optimized_test_cases
-        )
-        
         return {
             "original_test_cases": original_count,
             "optimized_test_cases": optimized_count,
@@ -243,7 +279,7 @@ class OptimizationEngine:
             "test_cases_removed": sorted(list(to_remove)),
             "test_cases_merged": to_merge,
             "merged_test_cases": list(merged_test_cases.keys()),
-            "merged_test_cases_dict": merged_test_cases,  # Full merged test cases for output
+            "merged_test_cases_dict": merged_test_cases, 
             "removal_reasons": removal_reasons,
             "skipped_candidates": len(skipped_candidates),
             "coverage": {
@@ -263,8 +299,9 @@ class OptimizationEngine:
                     "coverage_percentage": optimized_coverage["coverage_percentage"],
                     "critical_flows_covered": optimized_critical["all_critical_covered"],
                     "step_coverage": {
-                        "total_unique_steps": optimized_step_coverage["total_unique_steps"],
-                        "coverage_percentage": optimized_step_coverage["coverage_percentage"]
+                        "total_unique_steps": original_step_count,
+                        "covered_steps": optimized_step_count,
+                        "coverage_percentage": step_coverage_pct
                     }
                 }
             },
@@ -298,25 +335,23 @@ class OptimizationEngine:
         Returns:
             Optimization result dictionary
         """
-        # Step 1: Calculate baseline coverage (flow and step level)
+        
         baseline_coverage = self.coverage_analyzer.calculate_flow_coverage(test_cases)
         baseline_critical = self.coverage_analyzer.identify_critical_flow_coverage(test_cases)
         baseline_step_coverage = self.step_coverage_tracker.calculate_step_coverage(test_cases)
         
-        # Build step coverage map
         self.step_coverage_tracker.build_step_coverage_map(test_cases)
         
-        # Step 2: Detect duplicates
         duplicate_groups = self.duplicate_detector.detect_duplicates(test_cases)
         
-        # Step 3: Identify test cases to merge or remove (with step-level checks)
+       
         to_remove = set()
         to_keep = set()
-        to_merge = {}  # {merged_id: [source_ids]}
-        merged_test_cases = {}  # {merged_id: TestCase}
+        to_merge = {}  
+        merged_test_cases = {}  
         removal_reasons = {}
         
-        # Process exact duplicates (100% similar - safe to remove)
+        
         for group in duplicate_groups["exact_duplicates"]:
             keep_id = group["recommended_keep"]
             remove_ids = group["recommended_remove"]
@@ -330,17 +365,15 @@ class OptimizationEngine:
                     "similarity": group["max_similarity"]
                 }
         
-        # Process near duplicates (>90% similar) - CHECK FOR MERGING FIRST
+        
         for group in duplicate_groups["near_duplicates"]:
             keep_id = group["recommended_keep"]
             remove_ids = group["recommended_remove"]
             
-            # Check if keep_id is already marked for removal
             if keep_id not in to_remove:
-                # Check each removal candidate individually
                 for remove_id in remove_ids:
                     if remove_id not in to_keep and remove_id not in to_remove:
-                        # Check if should merge instead of remove
+                       
                         should_merge = self.test_case_merger.should_merge_instead_of_remove(
                             test_cases[keep_id],
                             test_cases[remove_id]
@@ -395,7 +428,7 @@ class OptimizationEngine:
                                     "step_coverage_maintained": removal_check.get("step_coverage_maintained", True)
                                 }
                             else:
-                                # Don't remove - unique steps not covered
+                                # Don't remove unique steps not covered
                                 to_keep.add(keep_id)
                                 removal_reasons[remove_id] = {
                                     "reason": f"Near duplicate but kept: {removal_check.get('reason', 'Unique steps not covered')}",
@@ -403,15 +436,13 @@ class OptimizationEngine:
                                     "similarity": group["max_similarity"],
                                     "action": "kept"
                                 }
-        
-        # Process highly similar (>75% similar) - CHECK FOR MERGING FIRST
+       
         for group in duplicate_groups["highly_similar"]:
             keep_id = group["recommended_keep"]
             remove_ids = group["recommended_remove"]
             
-            # Only remove if keep_id is not already removed
             if keep_id not in to_remove:
-                # Check EACH test case individually (not just first one)
+                
                 for remove_id in remove_ids:
                     if remove_id not in to_keep and remove_id not in to_remove:
                         # Check if should merge instead of remove
@@ -478,7 +509,7 @@ class OptimizationEngine:
                                     "action": "kept"
                                 }
         
-        # Step 4: Apply AI recommendations if available (with step-level validation)
+       
         if ai_recommendations:
             for test_id, recommendation in ai_recommendations.items():
                 if test_id in test_cases and test_id not in to_keep:
@@ -487,7 +518,7 @@ class OptimizationEngine:
                         # Verify coverage impact with step-level check
                         removal_check = self._should_remove_test_case(
                             test_id,
-                            None,  # No specific similar test case
+                            None,  
                             test_cases,
                             to_remove,
                             to_keep
@@ -503,36 +534,31 @@ class OptimizationEngine:
                                 "step_coverage_maintained": removal_check.get("step_coverage_maintained", True)
                             }
         
-        # Step 5: Add merged test cases to optimized set
-        # Step 6: Ensure all test cases are either kept or removed
+       
         all_ids = set(test_cases.keys())
         final_to_keep = all_ids - to_remove
         
-        # Step 7: Validate coverage (flow and step level)
-        # Include merged test cases in optimized set
         optimized_test_cases = {tid: test_cases[tid] for tid in final_to_keep}
-        optimized_test_cases.update(merged_test_cases)  # Add merged test cases
+        optimized_test_cases.update(merged_test_cases) 
         optimized_coverage = self.coverage_analyzer.calculate_flow_coverage(optimized_test_cases)
         optimized_critical = self.coverage_analyzer.identify_critical_flow_coverage(optimized_test_cases)
-        optimized_step_coverage = self.step_coverage_tracker.calculate_step_coverage(optimized_test_cases)
         
-        # Step 8: Calculate metrics
+        step_coverage_loss_one_pass = self.step_coverage_tracker.check_coverage_loss(test_cases, optimized_test_cases)
+        original_step_count_one_pass = step_coverage_loss_one_pass["original_step_count"]
+        optimized_step_count_one_pass = step_coverage_loss_one_pass["optimized_step_count"]
+        step_coverage_pct_one_pass = step_coverage_loss_one_pass["coverage_percentage_after"]
+        
         original_count = len(test_cases)
         optimized_count = len(optimized_test_cases)
         reduction = original_count - optimized_count
         reduction_percentage = (reduction / original_count * 100) if original_count > 0 else 0
         
-        # Calculate time savings (estimate)
         original_time = sum(tc.duration or 0 for tc in test_cases.values())
         optimized_time = sum(tc.duration or 0 for tc in optimized_test_cases.values())
         time_saved = original_time - optimized_time
         time_saved_percentage = (time_saved / original_time * 100) if original_time > 0 else 0
-        
-        # Step coverage loss analysis
-        step_coverage_loss = self.step_coverage_tracker.check_coverage_loss(
-            test_cases,
-            optimized_test_cases
-        )
+       
+        step_coverage_loss = step_coverage_loss_one_pass
         
         return {
             "original_test_cases": original_count,
@@ -541,8 +567,8 @@ class OptimizationEngine:
             "reduction_percentage": reduction_percentage,
             "test_cases_kept": sorted(list(final_to_keep)),
             "test_cases_removed": sorted(list(to_remove)),
-            "test_cases_merged": to_merge,  # {merged_id: [source_ids]}
-            "merged_test_cases": list(merged_test_cases.keys()),  # List of merged test case IDs
+            "test_cases_merged": to_merge, 
+            "merged_test_cases": list(merged_test_cases.keys()), 
             "removal_reasons": removal_reasons,
             "coverage": {
                 "before": {
@@ -561,8 +587,9 @@ class OptimizationEngine:
                     "coverage_percentage": optimized_coverage["coverage_percentage"],
                     "critical_flows_covered": optimized_critical["all_critical_covered"],
                     "step_coverage": {
-                        "total_unique_steps": optimized_step_coverage["total_unique_steps"],
-                        "coverage_percentage": optimized_step_coverage["coverage_percentage"]
+                        "total_unique_steps": original_step_count_one_pass,
+                        "covered_steps": optimized_step_count_one_pass,
+                        "coverage_percentage": step_coverage_pct_one_pass
                     }
                 }
             },
@@ -614,7 +641,7 @@ class OptimizationEngine:
         test_set = {k: v for k, v in test_cases.items() 
                    if k != remove_id and k not in to_remove}
         
-        # If we have a similar test case to keep, ensure it's in the set
+        
         if keep_id and keep_id in test_cases:
             test_set[keep_id] = test_cases[keep_id]
         
@@ -653,7 +680,7 @@ class OptimizationEngine:
                 "coverage_percentage": coverage_info["coverage_percentage"]
             }
         else:
-            # No similar test case - check uniqueness against all others
+           
             uniqueness_score = self.step_uniqueness_analyzer.calculate_step_uniqueness_score(
                 test_case_to_remove,
                 test_cases
@@ -760,17 +787,39 @@ class OptimizationEngine:
         # Detect duplicates
         duplicate_groups = self.duplicate_detector.detect_duplicates(test_cases)
         
-        # Process exact duplicates (highest priority - safest)
+        
         for group in duplicate_groups["exact_duplicates"]:
             keep_id = group["recommended_keep"]
             for remove_id in group["recommended_remove"]:
+               
+                if keep_id in test_cases and remove_id in test_cases:
+                    unique_steps = self.step_uniqueness_analyzer.identify_unique_steps(
+                        test_cases[remove_id],  
+                        test_cases[keep_id]   
+                    )
+                    
+                    unique_in_remove = unique_steps.get("unique_in_test_case_1", {})
+                    unique_count = unique_in_remove.get("total", 0) if isinstance(unique_in_remove, dict) else 0
+                    
+                  
+                    if unique_count > 0:
+                        action = "merge"
+                        priority = 1.5 
+                    else:
+                        action = "remove"
+                        priority = 1  
+                else:
+                    # Fallback if test cases not found
+                    action = "remove"
+                    priority = 1
+                
                 candidates.append({
                     "test_case_id": remove_id,
                     "keep_id": keep_id,
                     "similarity": group["max_similarity"],
                     "type": "exact_duplicate",
-                    "priority": 1,  # Highest priority
-                    "action": "remove"
+                    "priority": priority,
+                    "action": action
                 })
         
         # Process near duplicates
@@ -816,14 +865,14 @@ class OptimizationEngine:
                 test_id = candidate["test_case_id"]
                 if test_id in ai_recommendations:
                     ai_rec = ai_recommendations[test_id]
-                    # Adjust priority based on AI recommendation
+                    
                     if ai_rec.get("action") == "remove":
-                        # AI says remove - increase priority (make it higher priority)
+                        
                         candidate["priority"] = max(0.5, candidate["priority"] - 0.5)
                         candidate["ai_recommendation"] = "remove"
                         candidate["ai_justification"] = ai_rec.get("justification", "")
                     elif ai_rec.get("action") == "keep":
-                        # AI says keep - decrease priority (make it lower priority)
+                        
                         candidate["priority"] = candidate["priority"] + 1.0
                         candidate["ai_recommendation"] = "keep"
                     elif ai_rec.get("action") == "merge":
@@ -833,7 +882,7 @@ class OptimizationEngine:
                         candidate["ai_recommendation"] = "merge"
                         candidate["ai_justification"] = ai_rec.get("justification", "")
         
-        # Sort by priority (1 = highest), then by similarity (higher = safer)
+        
         candidates.sort(key=lambda x: (x["priority"], -x["similarity"]))
         
         return candidates
@@ -950,29 +999,31 @@ class OptimizationEngine:
         """
         Comprehensive coverage validation.
         
+        CRITICAL: Compares optimized against BASELINE (original test suite), not snapshot.
+        This ensures cumulative coverage loss doesn't exceed threshold.
+        
         Args:
-            original: Original test cases (before this change)
-            optimized: Optimized test cases (after this change)
-            baseline: Baseline test cases (for comparison)
+            original: Original test cases (before this change) - snapshot
+            optimized: Optimized test cases (after this change) - new state
+            baseline: Baseline test cases (for comparison) - TRUE ORIGINAL
             
         Returns:
             Validation result
         """
-        # Check flow coverage
-        original_flow = self.coverage_analyzer.calculate_flow_coverage(original)
+        
+        baseline_flow = self.coverage_analyzer.calculate_flow_coverage(baseline)
         optimized_flow = self.coverage_analyzer.calculate_flow_coverage(optimized)
         
         flow_maintained = optimized_flow["coverage_percentage"] >= self.min_coverage * 100
         
-        # Check step coverage
+        
         step_check = self.step_coverage_tracker.validate_step_coverage_maintained(
-            original,
+            baseline, 
             optimized,
             self.min_step_coverage
         )
         
-        # Check critical flows
-        original_critical = self.coverage_analyzer.identify_critical_flow_coverage(original)
+        baseline_critical = self.coverage_analyzer.identify_critical_flow_coverage(baseline)
         optimized_critical = self.coverage_analyzer.identify_critical_flow_coverage(optimized)
         critical_maintained = optimized_critical["all_critical_covered"]
         
@@ -980,9 +1031,9 @@ class OptimizationEngine:
         
         reason = ""
         if not flow_maintained:
-            reason = f"Flow coverage dropped to {optimized_flow['coverage_percentage']:.1f}%"
+            reason = f"Flow coverage dropped to {optimized_flow['coverage_percentage']:.1f}% (baseline: {baseline_flow['coverage_percentage']:.1f}%)"
         elif not step_check["is_maintained"]:
-            reason = f"Step coverage dropped to {step_check['coverage_percentage']:.1f}%"
+            reason = f"Step coverage dropped to {step_check['coverage_percentage']:.1f}% vs baseline (threshold: {step_check['threshold']:.1f}%)"
         elif not critical_maintained:
             reason = "Critical flows no longer covered"
         else:
@@ -992,7 +1043,7 @@ class OptimizationEngine:
             "passed": passed,
             "reason": reason,
             "flow_coverage": {
-                "original": original_flow["coverage_percentage"],
+                "original": baseline_flow["coverage_percentage"],
                 "optimized": optimized_flow["coverage_percentage"],
                 "maintained": flow_maintained
             },
@@ -1002,7 +1053,7 @@ class OptimizationEngine:
                 "maintained": step_check["is_maintained"]
             },
             "critical_flows": {
-                "original": original_critical["all_critical_covered"],
+                "original": baseline_critical["all_critical_covered"],
                 "optimized": critical_maintained,
                 "maintained": critical_maintained
             }

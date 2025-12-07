@@ -39,19 +39,30 @@ class DataLoader:
         Returns:
             Dictionary mapping test case IDs to TestCase objects
         """
+        print(f"  [DATA LOADER] Discovering test case IDs...")
         # First, find all available test case IDs
         test_case_ids = self._discover_test_case_ids()
+        print(f"  [DATA LOADER] Found {len(test_case_ids)} test case IDs: {test_case_ids[:10]}{'...' if len(test_case_ids) > 10 else ''}")
         
         # Load test cases
-        for test_case_id in test_case_ids:
+        print(f"  [DATA LOADER] Loading {len(test_case_ids)} test cases...")
+        for idx, test_case_id in enumerate(test_case_ids, 1):
             try:
+                print(f"    [{idx}/{len(test_case_ids)}] Loading test case {test_case_id:02d}...", end=" ")
                 test_case = self.load_test_case(test_case_id)
                 if test_case:
                     self.test_cases[test_case_id] = test_case
+                    print(f"✓ Loaded (name: '{test_case.name[:50]}...', {len(test_case.steps)} steps)")
+                else:
+                    print(f"✗ Failed (not found)")
             except Exception as e:
                 error_msg = f"Error loading test case {test_case_id}: {str(e)}"
                 self.load_errors.append((test_case_id, error_msg))
-                print(f"Warning: {error_msg}")
+                print(f"✗ Error: {str(e)}")
+        
+        print(f"  [DATA LOADER] ✓ Successfully loaded {len(self.test_cases)}/{len(test_case_ids)} test cases")
+        if self.load_errors:
+            print(f"  [DATA LOADER] ⚠ {len(self.load_errors)} errors occurred")
         
         return self.test_cases
     
@@ -205,10 +216,8 @@ class DataLoader:
                 elif "label" in event:
                     locator = {"label": event["label"]}
         
-        # Extract test data
         test_data = normalize_test_data(step_data.get("testData"))
         
-        # Create TestStep
         step = TestStep(
             id=step_data.get("id"),
             position=step_data.get("position", 0),
