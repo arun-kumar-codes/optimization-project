@@ -1,0 +1,160 @@
+================================================================================
+STEP 8: ADD ITERATIVE OPTIMIZATION LOOP
+================================================================================
+
+OBJECTIVE:
+Implement iterative optimization that removes/merges test cases one at a time,
+checks coverage after each change, and adds back if coverage drops.
+
+WHAT NEEDS TO BE DONE:
+----------------------
+1. Modify: `optimization/optimization_engine.py`
+2. Change from one-pass to iterative approach
+3. Add rollback mechanism
+4. Add coverage validation after each step
+
+KEY CHANGES TO MAKE:
+--------------------
+1. Change Optimization Flow:
+   BEFORE:
+   - Identify all duplicates
+   - Remove all at once
+   - Check final coverage
+   
+   AFTER:
+   - Identify all duplicates (sorted by priority)
+   - For each duplicate group:
+     a. Try removing/merging one test case
+     b. Check coverage immediately
+     c. If coverage maintained: keep change
+     d. If coverage drops: undo change, skip this candidate
+     e. Move to next candidate
+   - Continue until all candidates processed
+
+2. Add Iteration Loop:
+   ```python
+   def optimize_test_suite_iteratively(self, test_cases):
+       optimized = test_cases.copy()
+       candidates = self._get_optimization_candidates(test_cases)
+       candidates.sort(key=lambda x: x['priority'])
+       
+       for candidate in candidates:
+           # Try optimization
+           test_result = self._try_optimize(optimized, candidate)
+           
+           if test_result['coverage_maintained']:
+               optimized = test_result['optimized_test_cases']
+               self._log_optimization(candidate, 'applied')
+           else:
+               self._log_optimization(candidate, 'skipped', 
+                                     test_result['reason'])
+       
+       return optimized
+   ```
+
+3. Add Coverage Check After Each Change:
+   - Step coverage check
+   - Flow coverage check
+   - Critical flow check
+   - If any fails, undo change
+
+4. Add Rollback Mechanism:
+   - Keep snapshot before each change
+   - If coverage drops, restore snapshot
+   - Track what was tried and why it failed
+
+5. Priority-Based Processing:
+   - Process exact duplicates first (safest)
+   - Then near duplicates
+   - Then highly similar
+   - Within each group, process by similarity (highest first)
+
+ITERATION STRATEGY:
+-------------------
+1. Sort candidates by:
+   - Type (exact > near > similar)
+   - Similarity score (higher = safer to remove)
+   - Coverage impact (lower = safer)
+
+2. Process one at a time:
+   - Remove/merge one test case
+   - Check coverage
+   - If OK: commit change
+   - If not OK: rollback, skip
+
+3. Continue until:
+   - All candidates processed, OR
+   - Coverage threshold reached, OR
+   - No more safe optimizations
+
+COVERAGE VALIDATION:
+--------------------
+After each change, check:
+1. Step coverage >= threshold (default 95%)
+2. Flow coverage >= threshold (default 90%)
+3. All critical flows still covered
+4. No unique steps lost (unless covered elsewhere)
+
+ROLLBACK LOGIC:
+---------------
+```python
+def _try_optimize(self, current_test_cases, candidate):
+    # Create snapshot
+    snapshot = current_test_cases.copy()
+    
+    # Try optimization
+    if candidate['action'] == 'remove':
+        optimized = {k: v for k, v in current_test_cases.items() 
+                     if k != candidate['test_case_id']}
+    elif candidate['action'] == 'merge':
+        optimized = self._merge_test_cases(current_test_cases, candidate)
+    
+    # Check coverage
+    coverage_check = self._validate_coverage(snapshot, optimized)
+    
+    if coverage_check['passed']:
+        return {
+            'optimized_test_cases': optimized,
+            'coverage_maintained': True
+        }
+    else:
+        # Rollback
+        return {
+            'optimized_test_cases': snapshot,
+            'coverage_maintained': False,
+            'reason': coverage_check['reason']
+        }
+```
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/optimization_engine.py
+
+NEW METHODS TO ADD:
+-------------------
+1. `optimize_test_suite_iteratively() -> Dict`
+   - Main iterative optimization method
+
+2. `_get_optimization_candidates() -> List[Dict]`
+   - Get all optimization candidates sorted by priority
+
+3. `_try_optimize(current, candidate) -> Dict`
+   - Try one optimization, return result
+
+4. `_validate_coverage(original, optimized) -> Dict`
+   - Comprehensive coverage validation
+
+5. `_create_snapshot(test_cases) -> Dict`
+   - Create snapshot for rollback
+
+OUTPUT:
+-------
+Iterative optimization that safely optimizes test suite while maintaining coverage.
+
+NEXT STEP:
+----------
+After this, move to Step 9: Create Comprehensive Validation
+
+================================================================================
+
+

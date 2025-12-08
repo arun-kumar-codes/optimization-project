@@ -1,0 +1,135 @@
+================================================================================
+STEP 5: CREATE AI-POWERED TEST CASE OPTIMIZER
+================================================================================
+
+OBJECTIVE:
+Use AI (Claude API) to create new optimized test cases that combine
+coverage from multiple test cases in the most efficient way.
+
+WHAT NEEDS TO BE DONE:
+----------------------
+1. Create new module: `optimization/ai_test_case_optimizer.py`
+2. Use AI to analyze test cases and generate optimized versions
+3. AI suggests best way to combine test cases
+4. AI creates new test case structures
+
+KEY FUNCTIONS TO IMPLEMENT:
+---------------------------
+1. `optimize_test_case_with_ai(test_case, context) -> TestCase`
+   - AI analyzes test case
+   - AI suggests optimizations (remove redundant steps, combine actions)
+   - Returns optimized test case
+
+2. `merge_test_cases_with_ai(test_cases_list) -> TestCase`
+   - AI analyzes multiple test cases
+   - AI determines best way to merge them
+   - AI creates optimized merged test case
+   - AI ensures all coverage is preserved
+
+3. `generate_optimized_test_suite_with_ai(all_test_cases) -> List[TestCase]`
+   - AI analyzes entire test suite
+   - AI identifies optimization opportunities
+   - AI generates new optimized test cases
+   - AI ensures coverage is maintained
+
+4. `ai_suggest_test_case_combinations(test_cases) -> List[Dict]`
+   - AI suggests which test cases should be combined
+   - AI provides reasoning
+   - AI estimates coverage impact
+
+5. `ai_optimize_step_sequence(steps) -> List[TestStep]`
+   - AI optimizes step order
+   - AI removes redundant steps
+   - AI combines similar actions
+   - AI maintains logical flow
+
+AI PROMPT STRATEGY:
+--------------------
+1. Provide test case context:
+   - All test cases with their steps
+   - Coverage analysis
+   - Similarity analysis
+   - Flow information
+
+2. Ask AI to:
+   - Identify redundant test cases
+   - Suggest optimal merging strategy
+   - Generate new optimized test cases
+   - Ensure coverage is maintained
+   - Optimize step sequences
+
+3. AI Response Format:
+   - JSON with optimized test cases
+   - Reasoning for each optimization
+   - Coverage validation
+   - Step-by-step breakdown
+
+IMPLEMENTATION DETAILS:
+------------------------
+- Use Claude API (claude-3-5-sonnet)
+- Structure prompts to get JSON responses
+- Parse AI responses into TestCase objects
+- Validate AI-generated test cases
+- Fallback to rule-based if AI fails
+
+PROMPT TEMPLATE:
+----------------
+"""
+You are a test case optimization expert. Analyze these test cases and create
+optimized versions that:
+1. Maintain 100% coverage of all original steps
+2. Combine similar test cases efficiently
+3. Remove redundant steps
+4. Optimize step sequences
+
+Test Cases:
+{test_cases_json}
+
+Similarity Analysis:
+{similarity_analysis}
+
+Coverage Requirements:
+{coverage_requirements}
+
+Generate optimized test cases in JSON format:
+{
+  "optimized_test_cases": [
+    {
+      "name": "...",
+      "description": "...",
+      "steps": [...],
+      "source_test_case_ids": [...],
+      "coverage_maintained": true
+    }
+  ],
+  "reasoning": "...",
+  "coverage_validation": {...}
+}
+"""
+
+FILES TO CREATE:
+----------------
+- test_optimizer/optimization/ai_test_case_optimizer.py
+
+FILES TO USE:
+-------------
+- ai.claude_client (for API calls)
+- data.models (TestCase, TestStep)
+- analysis.similarity_analyzer (for context)
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/__init__.py (add import)
+
+OUTPUT:
+-------
+AI-optimized test cases that efficiently combine coverage from multiple
+source test cases.
+
+NEXT STEP:
+----------
+After this, move to Step 6: Create New Optimized Test Case Generator
+
+================================================================================
+
+

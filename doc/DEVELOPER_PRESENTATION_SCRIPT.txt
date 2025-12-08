@@ -1,0 +1,1410 @@
+================================================================================
+TEST CASE OPTIMIZATION SYSTEM - DEVELOPER PRESENTATION SCRIPT
+================================================================================
+
+This script is designed for presenting the system to fellow developers.
+It explains the technical implementation, architecture, and how components work.
+
+================================================================================
+SLIDE 1: SYSTEM OVERVIEW
+================================================================================
+
+WHAT WE BUILT:
+--------------
+An AI-powered test case optimization system that:
+- Reduces test case count (e.g., 43 → 30 test cases)
+- Maintains 95%+ step coverage and 90%+ flow coverage
+- Uses iterative optimization with rollback safety
+- Supports merging similar test cases (not just removal)
+- Integrates AI for semantic duplicate detection
+
+TECHNOLOGY STACK:
+-----------------
+- Language: Python 3.8+
+- AI: Anthropic Claude API (claude-3-5-haiku-20241022)
+- Algorithms: Levenshtein distance, LCS, graph algorithms
+- Data: JSON files (test cases + steps)
+- Libraries: python-Levenshtein, NetworkX (for graphs)
+
+ARCHITECTURE:
+-------------
+Modular design with clear separation of concerns:
+- data/        → Data loading, models, validation
+- analysis/    → Similarity analysis, duplicate detection
+- flows/       → Flow analysis, coverage calculation
+- ai/          → AI integration (Claude API)
+- optimization/ → Core optimization engine, merging
+- execution/   → Execution planning, prioritization
+- output/      → Output generation, validation
+
+================================================================================
+SLIDE 2: PROJECT STRUCTURE
+================================================================================
+
+test_optimizer/
+├── main.py                    # Main orchestrator (entry point)
+│
+├── data/                      # Data Layer
+│   ├── data_loader.py        # Loads JSON files, parses into TestCase objects
+│   ├── models.py             # Pydantic models: TestCase, TestStep
+│   ├── normalizers.py        # Normalizes actions, elements, URLs
+│   └── validator.py          # Validates data completeness
+│
+├── analysis/                  # Analysis Layer
+│   ├── sequence_extractor.py # Extracts action/element sequences
+│   ├── similarity_analyzer.py # Calculates similarity (Levenshtein, LCS)
+│   ├── duplicate_detector.py # Finds duplicate groups, builds graph
+│   ├── step_uniqueness_analyzer.py # Identifies unique steps
+│   └── similarity_matrix.py  # Generates similarity matrix
+│
+├── flows/                     # Flow Analysis Layer
+│   ├── flow_analyzer.py      # Identifies flow types
+│   ├── flow_graph.py         # Builds NetworkX graph
+│   ├── coverage_analyzer.py  # Calculates flow coverage
+│   └── flow_classifier.py    # Classifies admin vs user flows
+│
+├── ai/                        # AI Integration Layer
+│   ├── claude_client.py      # Claude API client (rate limiting, caching)
+│   ├── semantic_analyzer.py  # Semantic duplicate detection
+│   ├── optimization_advisor.py # AI optimization recommendations
+│   └── cache_manager.py      # Persistent AI result caching
+│
+├── optimization/             # Optimization Layer (CORE)
+│   ├── optimization_engine.py # Main optimization logic (iterative)
+│   ├── step_coverage_tracker.py # Tracks step coverage
+│   ├── test_case_merger.py   # Merges test cases
+│   ├── coverage_validator.py # Validates coverage after optimization
+│   └── optimized_test_case_generator.py # Generates merged test cases
+│
+├── execution/                 # Execution Planning Layer
+│   ├── execution_plan.py     # Generates execution order
+│   ├── dependency_analyzer.py # Analyzes test dependencies
+│   ├── priority_calculator.py # Calculates test priorities
+│   └── execution_scheduler.py # Schedules parallel execution
+│
+├── output/                    # Output Layer
+│   ├── output_generator.py   # Generates optimized JSON files
+│   ├── output_validator.py   # Validates output files
+│   └── report_formatter.py   # Formats reports
+│
+└── config/                    # Configuration
+    └── ai_config.py          # AI settings (rate limits, thresholds)
+
+================================================================================
+SLIDE 3: DATA MODELS AND STRUCTURE
+================================================================================
+
+CORE MODELS (data/models.py):
+------------------------------
+
+1. TestCase (Pydantic Model)
+   - id: int
+   - name: str
+   - description: str
+   - priority: int (1-5)
+   - status: str
+   - duration: int (milliseconds)
+   - pass_count, fail_count: int
+   - tags: List[str]
+   - steps: List[TestStep]
+   - test_data_id: Optional[int]
+   - prerequisite_case: Optional[int]
+   - raw_data: Dict (preserves original JSON)
+
+2. TestStep (Pydantic Model)
+   - id: int
+   - position: int
+   - action: str (click, type, navigate, verify, etc.)
+   - action_name: str
+   - element: Optional[str] (selector, locator)
+   - description: str
+   - test_data: Optional[Dict]
+   - wait_time: Optional[int]
+
+DATA FLOW:
+----------
+Input JSON Files → DataLoader → TestCase Objects → Analysis → Optimization → Output JSON Files
+
+Example:
+--------
+Input: json-data/test_cases/01.json
+{
+  "id": 1,
+  "name": "Login Test",
+  "steps": [...]
+}
+
+→ DataLoader.load_all()
+→ TestCase(id=1, name="Login Test", steps=[...])
+→ Used throughout system
+
+================================================================================
+SLIDE 4: PHASE 1 - DATA LOADING
+================================================================================
+
+FILE: data/data_loader.py
+CLASS: DataLoader
+
+WHAT IT DOES:
+-------------
+1. Discovers test case IDs by scanning directory
+2. Loads test case JSON files
+3. Loads corresponding step JSON files
+4. Parses into TestCase objects
+5. Handles missing files gracefully
+
+KEY METHODS:
+------------
+- load_all() → Dict[int, TestCase]
+  * Scans test_cases/ directory
+  * For each ID, loads test case + steps
+  * Returns dictionary: {test_id: TestCase}
+
+- _load_test_case(test_id) → Optional[TestCase]
+  * Loads test case JSON
+  * Loads steps JSON
+  * Creates TestCase object with all steps
+  * Preserves raw_data for output generation
+
+CODE EXAMPLE:
+--------------
+loader = DataLoader("json-data/test_cases", "json-data/steps_in_test_cases")
+test_cases = loader.load_all()
+# Returns: {1: TestCase(...), 2: TestCase(...), ...}
+
+VALIDATION:
+-----------
+DataValidator validates:
+- Required fields present
+- Data types correct
+- Steps are valid
+- Generates validation report
+
+================================================================================
+SLIDE 5: PHASE 2 - STEP ANALYSIS
+================================================================================
+
+FILE: analysis/step_uniqueness_analyzer.py
+CLASS: StepUniquenessAnalyzer
+
+WHAT IT DOES:
+-------------
+Identifies which steps are unique (appear only once) vs duplicated.
+
+KEY METHOD:
+----------
+- identify_unique_steps(test_cases) → Dict[str, List[int]]
+  * Creates a "fingerprint" for each step
+  * Fingerprint = hash(action + element + description)
+  * Tracks which test cases contain each step
+  * Returns: {step_fingerprint: [test_case_ids]}
+
+STEP FINGERPRINTING:
+--------------------
+def _create_step_fingerprint(step: TestStep) -> str:
+    """Create unique identifier for a step."""
+    key_parts = [
+        step.action or "",
+        step.element or "",
+        step.description or ""
+    ]
+    return hashlib.md5("|".join(key_parts).encode()).hexdigest()
+
+EXAMPLE:
+--------
+Step: action="click", element="button#login", description="Click login button"
+Fingerprint: "a3f5b2c1d4e6f7g8h9i0j1k2l3m4n5o6"
+
+If this fingerprint appears in:
+- TC11, TC12, TC36 → NOT unique (appears 3 times)
+- Only TC45 → UNIQUE (must keep TC45)
+
+FILE: optimization/step_coverage_tracker.py
+CLASS: StepCoverageTracker
+
+WHAT IT DOES:
+-------------
+Tracks which test cases cover which steps. Critical for safety.
+
+KEY METHODS:
+-----------
+- build_step_coverage_map(test_cases) → Dict[str, Set[int]]
+  * Maps each step fingerprint to set of test case IDs
+  * Example: {"step_hash": {11, 12, 36}}
+
+- check_coverage_loss(original, optimized) → Dict
+  * Compares step coverage before/after
+  * Returns: lost_step_count, coverage_percentage_after
+
+- validate_step_coverage_maintained(original, optimized, threshold) → bool
+  * Checks if coverage >= threshold (95%)
+  * Returns True if safe, False if coverage lost
+
+USAGE IN OPTIMIZATION:
+----------------------
+Before removing a test case:
+1. Check which steps it covers
+2. Check if other test cases cover those steps
+3. If any step is unique to this test case → DON'T REMOVE
+4. If all steps are covered elsewhere → SAFE TO REMOVE
+
+================================================================================
+SLIDE 6: PHASE 2b - DUPLICATE DETECTION
+================================================================================
+
+FILE: analysis/duplicate_detector.py
+CLASS: DuplicateDetector
+
+WHAT IT DOES:
+-------------
+Finds duplicate and similar test cases using:
+1. Algorithmic comparison (fast, no AI)
+2. AI semantic comparison (optional, finds semantic duplicates)
+
+ALGORITHMIC COMPARISON:
+-----------------------
+Uses SimilarityAnalyzer (analysis/similarity_analyzer.py):
+
+1. SEQUENCE SIMILARITY (Levenshtein Distance)
+   - Extracts action sequence: ["click", "type", "click", "verify"]
+   - Converts to string: "click type click verify"
+   - Calculates Levenshtein distance
+   - Similarity = 1.0 - (distance / max_length)
+
+2. LCS SIMILARITY (Longest Common Subsequence)
+   - Finds longest common subsequence
+   - Similarity = (2 * LCS_length) / (len1 + len2)
+
+3. STEP-LEVEL SIMILARITY
+   - Compares each step: action, element, description
+   - Counts matching steps
+   - Similarity = matching_steps / total_steps
+
+4. FLOW PATTERN SIMILARITY
+   - Compares flow patterns (login → navigate → action)
+   - Similarity based on pattern matching
+
+5. WEBSITE/DOMAIN CHECK
+   - Extracts URLs from steps
+   - Checks if test cases target different websites
+   - If different websites → Applies penalty (similarity * 0.3)
+
+COMPREHENSIVE SIMILARITY:
+-------------------------
+def calculate_comprehensive_similarity(tc1, tc2, weights):
+    """Weighted combination of all similarity metrics."""
+    sequence_sim = calculate_sequence_similarity(tc1, tc2)
+    lcs_sim, _ = calculate_lcs_similarity(tc1, tc2)
+    step_sim = calculate_step_level_similarity(tc1, tc2)
+    flow_sim = calculate_flow_pattern_similarity(tc1, tc2)
+    
+    # Apply website penalty if different websites
+    if different_websites:
+        similarity *= 0.3  # Heavy penalty
+    
+    # Weighted combination
+    total = (
+        weights["sequence"] * sequence_sim +
+        weights["lcs"] * lcs_sim +
+        weights["step_level"] * step_sim +
+        weights["flow_pattern"] * flow_sim
+    )
+    return total
+
+BUILDING SIMILARITY GRAPH:
+--------------------------
+1. Compare all pairs of test cases
+2. If similarity >= threshold → Add edge to graph
+3. Find connected components (groups of similar test cases)
+4. Categorize groups:
+   - Exact duplicates: similarity = 100%
+   - Near duplicates: similarity 90-99%
+   - Highly similar: similarity 75-89%
+
+CODE EXAMPLE:
+-------------
+detector = DuplicateDetector()
+duplicate_groups = detector.detect_duplicates(test_cases)
+
+Returns:
+{
+    "exact_duplicates": [
+        {"test_case_ids": [11, 12, 36], "max_similarity": 1.0}
+    ],
+    "near_duplicates": [...],
+    "highly_similar": [...],
+    "total_groups": 4
+}
+
+AI SEMANTIC DETECTION:
+---------------------
+FILE: ai/semantic_analyzer.py
+CLASS: SemanticAnalyzer
+
+WHAT IT DOES:
+-------------
+Uses Claude AI to find semantic duplicates (same meaning, different words).
+
+PROCESS:
+--------
+1. Selects candidate pairs (top N similar pairs from algorithmic analysis)
+2. For each pair, sends to Claude API:
+   - Test case names, descriptions, steps
+   - Detected websites/domains
+   - Asks: "Are these semantically similar?"
+
+3. Claude responds with:
+   - Semantic similarity (0-100%)
+   - Recommendation: keep_both, merge, or remove_one
+   - Reasoning
+
+4. If different websites detected → Forces "keep_both" (regardless of AI)
+
+CODE EXAMPLE:
+-------------
+analyzer = SemanticAnalyzer()
+result = analyzer.identify_semantic_duplicates(tc1, tc2)
+
+Returns:
+{
+    "semantic_similarity": 85.0,
+    "recommendation": "merge",
+    "reasoning": "Both test login flow with slight variations"
+}
+
+CACHING:
+--------
+AI results are cached (ai/cache_manager.py) to avoid redundant API calls.
+Cache key = hash(test_case_ids + content)
+
+================================================================================
+SLIDE 7: PHASE 3 - FLOW ANALYSIS
+================================================================================
+
+FILE: flows/flow_analyzer.py
+CLASS: FlowAnalyzer
+
+WHAT IT DOES:
+-------------
+Identifies user flows (workflows) in test cases.
+
+FLOW TYPES:
+-----------
+- Login flow
+- Navigation flow
+- Data entry flow
+- Verification flow
+- Logout flow
+- etc.
+
+KEY METHODS:
+-----------
+- identify_flow_type(test_case) → List[str]
+  * Analyzes step sequence
+  * Identifies flow patterns
+  * Returns: ["login", "navigation"]
+
+- build_flow_graph(test_cases) → NetworkX Graph
+  * Nodes = pages/screens
+  * Edges = transitions between pages
+  * Example: Login Page → Dashboard → Profile Page
+
+FILE: flows/coverage_analyzer.py
+CLASS: CoverageAnalyzer
+
+WHAT IT DOES:
+-------------
+Calculates flow coverage (how many unique flows are covered).
+
+KEY METHODS:
+-----------
+- calculate_flow_coverage(test_cases) → Dict
+  * Identifies all unique flows
+  * Counts how many are covered
+  * Returns: {
+      "total_unique_flows": 7,
+      "covered_flows": 7,
+      "coverage_percentage": 100.0
+    }
+
+- identify_critical_flow_coverage(test_cases) → Dict
+  * Identifies critical flows (must be tested)
+  * Checks if all critical flows are covered
+  * Returns: {"all_critical_covered": True}
+
+FILE: flows/flow_classifier.py
+CLASS: FlowClassifier
+
+WHAT IT DOES:
+-------------
+Classifies test cases as "Admin" or "User" flows.
+
+KEY METHOD:
+----------
+- classify_all_test_cases(test_cases) → Dict[int, str]
+  * Analyzes test case content
+  * Classifies as "admin" or "user"
+  * Returns: {1: "admin", 2: "user", ...}
+
+================================================================================
+SLIDE 8: PHASE 4 - AI OPTIMIZATION RECOMMENDATIONS (OPTIONAL)
+================================================================================
+
+FILE: ai/optimization_advisor.py
+CLASS: OptimizationAdvisor
+
+WHAT IT DOES:
+-------------
+Uses Claude AI to analyze each test case and recommend:
+- REMOVE: Safe to remove (redundant)
+- KEEP: Important, keep it
+- MERGE: Can be merged with another
+
+PROCESS:
+--------
+1. For each test case, sends to Claude:
+   - Test case details (name, description, steps)
+   - Duplicate information
+   - Flow information
+   - Pass/fail rates
+
+2. Claude analyzes:
+   - Business value
+   - Criticality
+   - Uniqueness
+   - Test quality
+
+3. Returns recommendation:
+   {
+     "action": "remove",
+     "justification": "Exact duplicate of TC11, no unique value",
+     "priority": 1
+   }
+
+NOTE: This phase is DISABLED by default (for performance/cost).
+      Enable with --enable-phase4 or set AI_PHASE4_ENABLED=true
+
+================================================================================
+SLIDE 9: PHASE 5 - OPTIMIZATION ENGINE (CORE)
+================================================================================
+
+FILE: optimization/optimization_engine.py
+CLASS: OptimizationEngine
+
+THIS IS THE HEART OF THE SYSTEM!
+
+ITERATIVE OPTIMIZATION PROCESS:
+--------------------------------
+
+Step 1: Calculate Baseline Coverage
+-----------------------------------
+baseline_coverage = calculate_flow_coverage(test_cases)
+baseline_step_coverage = calculate_step_coverage(test_cases)
+# Example: Flow: 100%, Steps: 100% (213/213)
+
+Step 2: Get Optimization Candidates
+------------------------------------
+candidates = _get_optimization_candidates(test_cases, ai_recommendations)
+# Sorted by priority:
+# 1. Exact duplicates (safest)
+# 2. Near duplicates
+# 3. Highly similar
+
+Step 3: Process Each Candidate (ONE AT A TIME)
+-----------------------------------------------
+For each candidate:
+    1. Create snapshot of current test cases
+    2. Try optimization:
+       - If action="remove": Remove test case
+       - If action="merge": Merge with another test case
+    3. Check coverage:
+       - Step coverage >= 95%? ✓
+       - Flow coverage >= 90%? ✓
+       - Critical flows covered? ✓
+    4. If YES → Apply change permanently
+    5. If NO → Rollback (undo) and skip
+
+KEY METHOD: _try_optimize()
+---------------------------
+def _try_optimize(self, current_test_cases, candidate, baseline):
+    """Try optimization and check coverage."""
+    snapshot = current_test_cases.copy()
+    
+    if candidate["action"] == "remove":
+        # Remove test case
+        optimized = {tid: tc for tid, tc in snapshot.items() 
+                     if tid != candidate["test_case_id"]}
+    elif candidate["action"] == "merge":
+        # Merge test cases
+        merged_tc = self.test_case_merger.generate_merged_test_case(...)
+        optimized = snapshot.copy()
+        optimized[candidate["keep_id"]] = merged_tc
+        del optimized[candidate["test_case_id"]]
+    
+    # Check coverage
+    coverage_maintained = self._validate_coverage(
+        baseline,  # Original test cases
+        optimized,  # After optimization
+        snapshot    # Before this change
+    )
+    
+    return {
+        "coverage_maintained": coverage_maintained,
+        "optimized_test_cases": optimized if coverage_maintained else snapshot,
+        "action": candidate["action"]
+    }
+
+COVERAGE VALIDATION:
+-------------------
+def _validate_coverage(self, baseline, optimized, original):
+    """Validate coverage is maintained."""
+    # Step coverage
+    step_check = self.step_coverage_tracker.validate_step_coverage_maintained(
+        baseline,  # Compare against ORIGINAL, not snapshot!
+        optimized,
+        self.min_step_coverage  # 0.95 = 95%
+    )
+    
+    # Flow coverage
+    baseline_flow = self.coverage_analyzer.calculate_flow_coverage(baseline)
+    optimized_flow = self.coverage_analyzer.calculate_flow_coverage(optimized)
+    flow_maintained = optimized_flow["coverage_percentage"] >= self.min_coverage * 100
+    
+    # Critical flows
+    baseline_critical = self.coverage_analyzer.identify_critical_flow_coverage(baseline)
+    optimized_critical = self.coverage_analyzer.identify_critical_flow_coverage(optimized)
+    critical_maintained = optimized_critical["all_critical_covered"]
+    
+    return step_check["passed"] and flow_maintained and critical_maintained
+
+CRITICAL: Baseline Comparison
+-----------------------------
+The system compares against the ORIGINAL baseline, not the snapshot.
+This prevents cumulative coverage loss from multiple small changes.
+
+Example:
+- Original: 100% coverage
+- After removing TC53: 95.1% coverage ✓ (OK)
+- After removing TC17: 94.8% coverage ✗ (Below 95%, rollback)
+- Final: 95.1% coverage (only TC53 removed)
+
+================================================================================
+SLIDE 10: TEST CASE MERGING
+================================================================================
+
+FILE: optimization/test_case_merger.py
+CLASS: TestCaseMerger
+
+WHAT IT DOES:
+-------------
+Merges two similar test cases into one, preserving all unique steps.
+
+PROCESS:
+--------
+1. Identify unique steps in each test case
+2. Combine all unique steps
+3. Create new merged TestCase object
+4. Preserve metadata from both source test cases
+
+KEY METHOD: generate_merged_test_case()
+---------------------------------------
+def generate_merged_test_case(self, tc1, tc2, new_id):
+    """Merge two test cases into one."""
+    # Find unique steps
+    tc1_unique = self.step_uniqueness_analyzer.get_unique_steps_in_test_case(tc1, [tc2])
+    tc2_unique = self.step_uniqueness_analyzer.get_unique_steps_in_test_case(tc2, [tc1])
+    
+    # Combine steps (preserve order)
+    merged_steps = []
+    # Add steps from tc1 (unique ones)
+    for step in tc1.steps:
+        if step in tc1_unique:
+            merged_steps.append(step)
+    # Add steps from tc2 (unique ones)
+    for step in tc2.steps:
+        if step in tc2_unique:
+            merged_steps.append(step)
+    
+    # Create merged TestCase
+    merged_tc = TestCase(
+        id=new_id,  # New ID (10000+)
+        name=f"Merged: {tc1.name} + {tc2.name}",
+        description=f"Combined: TC{tc1.id} + TC{tc2.id}",
+        steps=merged_steps,
+        priority=min(tc1.priority, tc2.priority),
+        duration=(tc1.duration or 0) + (tc2.duration or 0),
+        tags=list(set(tc1.tags + tc2.tags)),
+        raw_data={"source_test_cases": [tc1.id, tc2.id]}
+    )
+    
+    return merged_tc
+
+EXAMPLE:
+--------
+TC29: 7 steps (2 unique)
+TC32: 7 steps (2 unique)
+Overlap: 5 steps (same in both)
+
+Merged TC20346: 8 steps (2 from TC29 + 2 from TC32 + 4 common)
+Result: Preserved all unique functionality!
+
+NEW ID GENERATION:
+------------------
+Merged test cases get new IDs starting from 10000+ to avoid conflicts.
+Example: TC20346, TC72901, TC14330
+
+================================================================================
+SLIDE 11: COMPREHENSIVE VALIDATION
+================================================================================
+
+FILE: optimization/coverage_validator.py
+CLASS: CoverageValidator
+
+WHAT IT DOES:
+-------------
+Performs final validation to ensure nothing important was lost.
+
+VALIDATION METRICS:
+-------------------
+1. Step Coverage (CRITICAL)
+   - Threshold: 95%
+   - Checks: All unique steps still covered
+   - Status: PASSED/FAILED
+
+2. Flow Coverage (CRITICAL)
+   - Threshold: 90%
+   - Checks: All flows still covered
+   - Status: PASSED/FAILED
+
+3. Scenario Coverage (CRITICAL)
+   - Checks: All test scenarios covered
+   - Status: PASSED/FAILED
+
+4. Element Coverage (WARNING)
+   - Threshold: 90%
+   - Checks: UI elements still tested
+   - Status: WARNING (not blocking)
+
+5. Data Coverage (WARNING)
+   - Threshold: 90%
+   - Checks: Test data still used
+   - Status: WARNING (not blocking)
+
+OVERALL VALIDATION:
+-------------------
+overall_valid = (
+    step_validation["passed"] and
+    flow_validation["is_valid"] and
+    scenario_validation["passed"]
+)
+
+Element and data coverage failures are warnings, not blocking errors.
+
+KEY METHOD: comprehensive_validation()
+-------------------------------------
+def comprehensive_validation(self, original, optimized):
+    """Perform comprehensive validation."""
+    # Step coverage
+    step_validation = self.validate_step_coverage(original, optimized)
+    
+    # Flow coverage
+    flow_validation = self.validate_flow_coverage(original, optimized)
+    
+    # Element coverage
+    element_validation = self.validate_element_coverage(original, optimized)
+    
+    # Scenario coverage
+    scenario_validation = self.validate_scenario_coverage(original, optimized)
+    
+    # Data coverage
+    data_validation = self.validate_data_coverage(original, optimized)
+    
+    # Overall
+    overall_valid = (
+        step_validation["passed"] and
+        flow_validation["is_valid"] and
+        scenario_validation["passed"]
+    )
+    
+    return {
+        "overall_valid": overall_valid,
+        "step_validation": step_validation,
+        "flow_validation": flow_validation,
+        "element_validation": element_validation,
+        "scenario_validation": scenario_validation,
+        "data_validation": data_validation,
+        "errors": [...],
+        "warnings": [...]
+    }
+
+================================================================================
+SLIDE 12: OUTPUT GENERATION
+================================================================================
+
+FILE: output/output_generator.py
+CLASS: OutputGenerator
+
+WHAT IT DOES:
+-------------
+Generates optimized output files in the same format as input files.
+
+OUTPUT FILES:
+-------------
+1. test_cases/TC*.json
+   - One file per optimized test case
+   - Same structure as input
+   - All metadata preserved
+
+2. steps_in_test_cases/*.json
+   - One file per test case's steps
+   - Includes "pageable" information
+   - Same structure as input
+
+3. admin_optimized_tests.json
+   - List of admin test case IDs
+
+4. user_optimized_tests.json
+   - List of user test case IDs
+
+5. execution_order.json
+   - Execution plan with priorities
+
+KEY METHOD: generate_optimized_test_case_files()
+------------------------------------------------
+def generate_optimized_test_case_files(self, optimized_test_cases, original_test_cases):
+    """Generate optimized test case JSON files."""
+    for test_id, test_case in optimized_test_cases.items():
+        # Get original raw_data for metadata
+        original_raw = original_test_cases.get(test_id, {}).raw_data if test_id in original_test_cases else {}
+        
+        # Build output JSON
+        output_data = {
+            "id": test_case.id,
+            "name": test_case.name,
+            "description": test_case.description,
+            # ... all fields ...
+            # Preserve original metadata
+            "version": original_raw.get("version"),
+            "workspace": original_raw.get("workspace"),
+            "testData": original_raw.get("testData"),
+            "testConfiguration": original_raw.get("testConfiguration")
+        }
+        
+        # Write to file
+        output_path = self.output_dir / "test_cases" / f"{test_id:05d}.json"
+        with open(output_path, 'w') as f:
+            json.dump(output_data, f, indent=2)
+
+METADATA PRESERVATION:
+----------------------
+The system preserves ALL original metadata:
+- version, workspace, testData, testConfiguration
+- All test case properties
+- Pageable information in step files
+
+This ensures output files are compatible with original system.
+
+================================================================================
+SLIDE 13: MAIN ORCHESTRATION FLOW
+================================================================================
+
+FILE: main.py
+FUNCTION: main()
+
+EXECUTION FLOW:
+--------------
+1. Parse command-line arguments
+2. Phase 1: Load test cases (DataLoader)
+3. Phase 2: Analyze steps (StepUniquenessAnalyzer, StepCoverageTracker)
+4. Phase 2b: Detect duplicates (DuplicateDetector)
+5. Phase 3: Analyze flows (CoverageAnalyzer, FlowClassifier)
+6. Phase 4: AI analysis (optional, OptimizationAdvisor)
+7. Phase 5: Optimize (OptimizationEngine.optimize_test_suite_iteratively)
+8. Phase 5b: Validate (CoverageValidator.comprehensive_validation)
+9. Phase 6: Generate execution plan (ExecutionPlanGenerator)
+10. Phase 7: Finalize optimized test cases
+11. Phase 8: Generate output files (OutputGenerator)
+
+CODE STRUCTURE:
+---------------
+def main():
+    # Phase 1
+    loader = DataLoader(...)
+    test_cases = loader.load_all()
+    
+    # Phase 2
+    step_uniqueness_analyzer = StepUniquenessAnalyzer()
+    step_coverage_tracker = StepCoverageTracker()
+    coverage_map = step_coverage_tracker.build_step_coverage_map(test_cases)
+    
+    # Phase 2b
+    duplicate_detector = DuplicateDetector()
+    duplicate_groups = duplicate_detector.detect_duplicates(test_cases)
+    
+    # Phase 3
+    coverage_analyzer = CoverageAnalyzer()
+    flow_coverage = coverage_analyzer.calculate_flow_coverage(test_cases)
+    
+    # Phase 4 (optional)
+    if phase4_enabled:
+        optimization_advisor = OptimizationAdvisor()
+        ai_recommendations = optimization_advisor.get_batch_recommendations(...)
+    
+    # Phase 5
+    optimization_engine = OptimizationEngine()
+    optimization_result = optimization_engine.optimize_test_suite(
+        test_cases,
+        ai_recommendations,
+        use_iterative=True
+    )
+    
+    # Phase 5b
+    coverage_validator = CoverageValidator()
+    validation = coverage_validator.comprehensive_validation(
+        test_cases,
+        optimized_test_cases
+    )
+    
+    # Phase 8
+    output_generator = OutputGenerator(...)
+    output_generator.generate_optimized_test_case_files(...)
+    output_generator.generate_optimized_step_files(...)
+
+================================================================================
+SLIDE 14: KEY ALGORITHMS AND TECHNIQUES
+================================================================================
+
+1. LEVENSHTEIN DISTANCE
+-----------------------
+Purpose: Measure similarity between two sequences
+
+Algorithm:
+- Calculate minimum edits needed to transform seq1 → seq2
+- Edits: insert, delete, substitute
+- Similarity = 1.0 - (distance / max_length)
+
+Example:
+seq1 = "click type click verify"
+seq2 = "click type verify"
+distance = 1 (one deletion)
+similarity = 1.0 - (1/4) = 0.75
+
+Implementation: python-Levenshtein library
+
+2. LONGEST COMMON SUBSEQUENCE (LCS)
+------------------------------------
+Purpose: Find common parts between sequences
+
+Algorithm:
+- Find longest subsequence present in both sequences
+- Similarity = (2 * LCS_length) / (len1 + len2)
+
+Example:
+seq1 = [A, B, C, D, E]
+seq2 = [A, C, D, F]
+LCS = [A, C, D]
+similarity = (2 * 3) / (5 + 4) = 0.67
+
+3. GRAPH ALGORITHMS (NetworkX)
+-------------------------------
+Purpose: Find groups of similar test cases
+
+Algorithm:
+- Build graph: nodes = test cases, edges = similarity
+- Find connected components (groups)
+- Each component = group of similar test cases
+
+Example:
+TC11 -- TC12 -- TC36
+TC13 -- TC14
+TC15 -- TC17
+
+Components: [TC11, TC12, TC36], [TC13, TC14], [TC15, TC17]
+
+4. STEP FINGERPRINTING
+----------------------
+Purpose: Identify unique steps
+
+Algorithm:
+- Create hash of (action + element + description)
+- Track which test cases contain each fingerprint
+- If fingerprint appears only once → unique step
+
+5. ITERATIVE OPTIMIZATION WITH ROLLBACK
+---------------------------------------
+Purpose: Safe optimization (one change at a time)
+
+Algorithm:
+For each candidate:
+    1. Snapshot current state
+    2. Apply change
+    3. Check coverage
+    4. If coverage OK → Keep change
+    5. If coverage drops → Rollback to snapshot
+
+================================================================================
+SLIDE 15: AI INTEGRATION DETAILS
+================================================================================
+
+CLAUDE API CLIENT:
+------------------
+FILE: ai/claude_client.py
+CLASS: ClaudeClient
+
+FEATURES:
+---------
+- Rate limiting (12 seconds between calls)
+- Retry logic (exponential backoff)
+- Error handling
+- Prompt templates
+
+KEY METHOD: generate_response()
+------------------------------
+def generate_response(self, prompt, system_prompt=None):
+    """Call Claude API with rate limiting."""
+    # Wait for rate limit
+    time.sleep(self.rate_limit_delay)
+    
+    # Call API
+    response = self.client.messages.create(
+        model=self.model,  # "claude-3-5-haiku-20241022"
+        max_tokens=1024,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    
+    return response.content[0].text
+
+CACHING:
+--------
+FILE: ai/cache_manager.py
+CLASS: AICacheManager
+
+Purpose: Avoid redundant API calls
+
+Process:
+1. Create cache key = hash(test_case_ids + content)
+2. Check cache
+3. If found → Return cached result
+4. If not found → Call API, cache result
+
+Cache location: test_optimizer/.ai_cache/
+Cache expiry: Configurable (default: 30 days)
+
+SEMANTIC ANALYZER:
+------------------
+FILE: ai/semantic_analyzer.py
+CLASS: SemanticAnalyzer
+
+Process:
+1. Extract test case information
+2. Detect websites/domains
+3. Build prompt with context
+4. Call Claude API
+5. Parse response (similarity, recommendation, reasoning)
+6. If different websites → Force "keep_both"
+
+PROMPT TEMPLATE:
+---------------
+"Compare these two test cases and determine if they are semantically similar.
+CRITICAL: Check if these test cases target DIFFERENT websites/domains.
+If they target different websites, they are NOT duplicates even if steps are identical.
+
+Test Case 1:
+ID: {tc1_id}
+Name: {tc1_name}
+Steps: {tc1_steps}
+Detected Websites: {tc1_websites}
+
+Test Case 2:
+ID: {tc2_id}
+Name: {tc2_name}
+Steps: {tc2_steps}
+Detected Websites: {tc2_websites}
+
+Provide:
+1. Semantic similarity (0-100%)
+2. Are they testing the same functionality?
+3. Are they targeting different websites/domains? (YES/NO)
+4. Recommendation: Keep both, merge, or remove one
+5. Reasoning"
+
+================================================================================
+SLIDE 16: CONFIGURATION AND SETTINGS
+================================================================================
+
+FILE: config/ai_config.py
+CLASS: AIConfig
+
+CONFIGURABLE SETTINGS:
+----------------------
+- RATE_LIMIT_DELAY: 12.0 seconds (between API calls)
+- SEMANTIC_DUPLICATE_CANDIDATE_LIMIT: 30 (max AI checks)
+- SEMANTIC_DUPLICATE_SIMILARITY_THRESHOLD: 0.75 (75%)
+- CACHE_ENABLED: True
+- CACHE_DIR: "test_optimizer/.ai_cache"
+- PHASE4_ENABLED: False (disabled by default)
+
+OPTIMIZATION THRESHOLDS:
+------------------------
+- exact_threshold: 1.0 (100% similarity)
+- near_duplicate_threshold: 0.90 (90%)
+- highly_similar_threshold: 0.75 (75%)
+- min_coverage_percentage: 0.90 (90% flow coverage)
+- min_step_coverage_percentage: 0.95 (95% step coverage)
+
+COMMAND-LINE ARGUMENTS:
+-----------------------
+--input-test-cases: Path to test cases directory
+--input-steps: Path to steps directory
+--output-dir: Path to output directory
+--min-coverage: Minimum coverage (default: 0.90)
+--skip-ai: Skip all AI analysis
+--skip-phase4: Skip Phase 4 AI only
+--ai-limit: Limit number of test cases for AI analysis
+
+================================================================================
+SLIDE 17: SAFETY MECHANISMS
+================================================================================
+
+1. BASELINE COMPARISON
+----------------------
+Every optimization is compared against the ORIGINAL baseline, not the
+current snapshot. This prevents cumulative coverage loss.
+
+Code:
+baseline = original_test_cases  # Never changes
+optimized = current_test_cases   # Changes with each optimization
+
+_validate_coverage(baseline, optimized, ...)  # Compare against baseline
+
+2. ITERATIVE PROCESSING
+-----------------------
+One change at a time, with rollback if coverage drops.
+
+Code:
+for candidate in candidates:
+    snapshot = current_test_cases.copy()
+    result = _try_optimize(snapshot, candidate, baseline)
+    if result["coverage_maintained"]:
+        current_test_cases = result["optimized_test_cases"]
+    else:
+        # Rollback (snapshot is unchanged)
+        pass
+
+3. MULTIPLE COVERAGE METRICS
+----------------------------
+- Step coverage (most critical)
+- Flow coverage (critical)
+- Element coverage (warning)
+- Scenario coverage (critical)
+- Data coverage (warning)
+
+4. UNIQUE STEP PROTECTION
+--------------------------
+System tracks which test cases have unique steps. Won't remove a test
+case if it's the only one with a unique step.
+
+Code:
+unique_steps = step_uniqueness_analyzer.identify_unique_steps(test_cases)
+# unique_steps = {"step_hash": [test_case_id]}  # Only one test case has this step
+
+if len(unique_steps[step_hash]) == 1:
+    # This test case has a unique step → DON'T REMOVE
+
+5. CRITICAL FLOW PROTECTION
+---------------------------
+System ensures critical flows are always covered.
+
+Code:
+critical_flows = coverage_analyzer.identify_critical_flow_coverage(test_cases)
+if not critical_flows["all_critical_covered"]:
+    # Don't remove test cases that cover critical flows
+
+6. WEBSITE/DOMAIN PROTECTION
+----------------------------
+Test cases targeting different websites are never considered duplicates,
+even if steps are identical.
+
+Code:
+if different_websites:
+    similarity *= 0.3  # Heavy penalty
+    recommendation = "keep_both"  # Force keep both
+
+================================================================================
+SLIDE 18: EXAMPLE EXECUTION FLOW
+================================================================================
+
+INPUT:
+------
+43 test cases in json-data/test_cases/
+43 step files in json-data/steps_in_test_cases/
+
+EXECUTION:
+---------
+$ cd test_optimizer
+$ python3 main.py
+
+OUTPUT:
+-------
+Phase 1: Loading Test Cases...
+  ✓ Loaded 43 test cases
+
+Phase 2: Analyzing Step-Level Uniqueness...
+  ✓ Identified 213 unique steps
+  ✓ Step coverage: 100.0%
+
+Phase 2b: Detecting Duplicates...
+  ✓ Found 4 duplicate groups
+    - Exact duplicates: 3
+    - Highly similar: 1
+    - AI semantic duplicates found: 9
+
+Phase 3: Analyzing User Flows...
+  ✓ Identified 7 unique flows
+  ✓ Coverage: 100.0%
+
+Phase 4: Skipped (disabled by default)
+
+Phase 5: Optimizing Test Suite...
+  [OPTIMIZATION ENGINE] Starting iterative optimization...
+  [OPTIMIZATION ENGINE] Step 1: Calculating baseline coverage...
+    Baseline flow coverage: 100.0%
+    Baseline step coverage: 100.0%
+  [OPTIMIZATION ENGINE] Step 2: Getting optimization candidates...
+    Found 24 optimization candidates
+  [OPTIMIZATION ENGINE] Step 3: Iteratively optimizing...
+    [1/24] TC45 → REMOVE... ✗ SKIPPED (coverage would drop)
+    [2/24] TC53 → REMOVE... ✓ REMOVED
+    [3/24] TC17 → REMOVE... ✓ REMOVED
+    [4/24] TC32 → MERGE... ✓ MERGED → TC20346
+    ...
+  ✓ Optimization completed
+    Original: 43 test cases
+    Optimized: 30 test cases
+    Reduction: 13 (30.2%)
+    Merged: 3 test cases merged
+    Step Coverage: 95.3%
+
+Phase 5b: Comprehensive Validation...
+  Overall Validation: ✓ PASSED
+  Step Coverage: 95.3% (Threshold: 95.0%) ✓
+  Flow Coverage: 100.0% ✓
+
+Phase 8: Generating Output Files...
+  ✓ All output files generated
+
+RESULT:
+-------
+30 optimized test cases in json-data/output/
+- 27 kept test cases
+- 3 merged test cases (TC20346, TC72901, TC14330)
+
+================================================================================
+SLIDE 19: EXTENDING THE SYSTEM
+================================================================================
+
+HOW TO ADD NEW SIMILARITY METRICS:
+-----------------------------------
+1. Edit: analysis/similarity_analyzer.py
+2. Add new method:
+   def calculate_custom_similarity(self, tc1, tc2):
+       # Your algorithm
+       return similarity_score
+3. Update: calculate_comprehensive_similarity()
+   Add your metric with a weight
+
+HOW TO ADD NEW FLOW TYPES:
+--------------------------
+1. Edit: flows/flow_analyzer.py
+2. Update: identify_flow_type() method
+3. Add pattern matching for your flow type
+
+HOW TO CUSTOMIZE AI PROMPTS:
+-----------------------------
+1. Edit: ai/claude_client.py
+2. Update prompt templates in create_prompt_template()
+3. Add new prompt types as needed
+
+HOW TO ADD NEW VALIDATION METRICS:
+----------------------------------
+1. Edit: optimization/coverage_validator.py
+2. Add new validation method:
+   def validate_custom_metric(self, original, optimized):
+       # Your validation logic
+       return {"passed": True, ...}
+3. Update: comprehensive_validation()
+   Add your metric to the validation
+
+HOW TO CHANGE OPTIMIZATION STRATEGY:
+-------------------------------------
+1. Edit: optimization/optimization_engine.py
+2. Modify: _get_optimization_candidates()
+   Change prioritization logic
+3. Modify: _try_optimize()
+   Change optimization logic
+
+HOW TO ADD NEW OUTPUT FORMATS:
+------------------------------
+1. Edit: output/output_generator.py
+2. Add new method:
+   def generate_custom_format(self, test_cases):
+       # Your format generation
+3. Call from main.py
+
+================================================================================
+SLIDE 20: TESTING AND DEBUGGING
+================================================================================
+
+RUNNING THE SYSTEM:
+-------------------
+cd test_optimizer
+python3 main.py
+
+WITH CUSTOM PATHS:
+------------------
+python3 main.py \
+  --input-test-cases /path/to/test_cases \
+  --input-steps /path/to/steps \
+  --output-dir /path/to/output
+
+SKIPPING AI (FASTER):
+---------------------
+python3 main.py --skip-ai
+
+ENABLING PHASE 4 AI:
+-------------------
+python3 main.py --enable-phase4
+
+DEBUGGING:
+----------
+1. Check print statements (verbose output)
+2. Check output files in json-data/output/
+3. Check AI cache: test_optimizer/.ai_cache/
+4. Review validation reports
+
+COMMON ISSUES:
+--------------
+1. "ModuleNotFoundError: No module named 'Levenshtein'"
+   → pip install python-Levenshtein
+
+2. "Rate limit error" from Claude API
+   → Increase RATE_LIMIT_DELAY in config/ai_config.py
+
+3. "Coverage dropped below threshold"
+   → System is working correctly (safety mechanism)
+   → Check which test cases were skipped
+
+4. "AI cache directory created outside test_optimizer"
+   → Fixed: Cache is now in test_optimizer/.ai_cache/
+
+VALIDATION:
+-----------
+The system validates:
+- Input data (Phase 1)
+- Coverage after optimization (Phase 5b)
+- Output files (Phase 8)
+
+All validations must pass for successful optimization.
+
+================================================================================
+SLIDE 21: PERFORMANCE CONSIDERATIONS
+================================================================================
+
+OPTIMIZATION TECHNIQUES:
+------------------------
+1. AI Caching
+   - Results cached to avoid redundant API calls
+   - Saves time and API costs
+
+2. Smart Candidate Selection
+   - Limits AI checks to top N candidates
+   - Scales with test suite size
+
+3. Iterative Processing
+   - One change at a time
+   - Early termination if coverage drops
+
+4. Graph Algorithms
+   - Efficient duplicate group detection
+   - NetworkX for graph operations
+
+PERFORMANCE METRICS:
+--------------------
+- 43 test cases: ~2-3 minutes (without AI Phase 4)
+- 43 test cases: ~10-15 minutes (with AI Phase 4)
+- AI API calls: ~30-50 calls (with caching)
+
+SCALABILITY:
+------------
+- Tested with 43 test cases
+- Should work with 100+ test cases
+- AI candidate limit scales with size
+
+BOTTLENECKS:
+------------
+1. AI API calls (if Phase 4 enabled)
+   - Solution: Caching, rate limiting
+2. Similarity calculations (O(n²) complexity)
+   - Solution: Efficient algorithms, early termination
+3. Coverage validation (after each change)
+   - Solution: Optimized coverage tracking
+
+================================================================================
+SLIDE 22: SUMMARY AND KEY TAKEAWAYS
+================================================================================
+
+WHAT WE BUILT:
+--------------
+- Complete test case optimization system
+- Reduces test cases while maintaining coverage
+- Supports merging (not just removal)
+- AI-powered semantic duplicate detection
+- Iterative optimization with rollback safety
+- Comprehensive validation
+
+KEY TECHNICAL DECISIONS:
+------------------------
+1. Iterative optimization (one change at a time)
+   - Safe, predictable, debuggable
+
+2. Baseline comparison (not snapshot)
+   - Prevents cumulative coverage loss
+
+3. Step-level coverage tracking
+   - Ensures no unique steps are lost
+
+4. Merging similar test cases
+   - Preserves unique functionality
+
+5. AI semantic detection (optional)
+   - Finds duplicates algorithms miss
+
+6. Multiple coverage metrics
+   - Step, flow, element, scenario, data
+
+ARCHITECTURE STRENGTHS:
+-----------------------
+- Modular design (easy to extend)
+- Clear separation of concerns
+- Well-documented code
+- Comprehensive validation
+- Safety mechanisms at every level
+
+FUTURE ENHANCEMENTS:
+-------------------
+- Parallel processing for similarity calculations
+- More sophisticated merging strategies
+- Custom similarity metrics
+- Integration with test execution frameworks
+- Real-time optimization during test development
+
+QUESTIONS?
+----------
+[End of presentation script]
+
+================================================================================
+END OF PRESENTATION SCRIPT
+================================================================================
+
+This script covers:
+- System overview and architecture

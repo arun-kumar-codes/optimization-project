@@ -1,0 +1,83 @@
+================================================================================
+STEP 2: CREATE STEP-LEVEL COVERAGE TRACKER
+================================================================================
+
+OBJECTIVE:
+Track which specific steps are covered across all test cases.
+This enables validation that step-level coverage is maintained after optimization.
+
+WHAT NEEDS TO BE DONE:
+----------------------
+1. Create new module: `optimization/step_coverage_tracker.py`
+2. Implement coverage tracking at step level (not just flow level)
+3. Track unique step signatures across test suite
+4. Calculate step coverage percentage
+
+KEY FUNCTIONS TO IMPLEMENT:
+---------------------------
+1. `build_step_coverage_map(test_cases) -> Dict`
+   - Maps each unique step signature to list of test cases that cover it
+   - Step signature: hash of (action_name, element, description, test_data)
+   - Returns: {step_signature: [test_case_ids]}
+
+2. `calculate_step_coverage(test_cases) -> Dict`
+   - Total unique steps across all test cases
+   - Covered steps count
+   - Coverage percentage
+   - Uncovered steps (if any)
+
+3. `get_steps_covered_by_test_case(test_case_id, test_cases) -> Set`
+   - Returns set of step signatures covered by this test case
+
+4. `check_coverage_loss(original_test_cases, optimized_test_cases) -> Dict`
+   - Compares step coverage before and after optimization
+   - Identifies lost steps
+   - Calculates coverage delta
+
+5. `validate_step_coverage_maintained(original, optimized, threshold=0.95) -> bool`
+   - Validates that step coverage is maintained above threshold
+   - Returns True if coverage maintained, False otherwise
+
+IMPLEMENTATION DETAILS:
+------------------------
+- Create step signature using hash of key attributes
+- Normalize step data before hashing (use normalizers)
+- Track both exact matches and semantic matches
+- Consider step context (position in sequence)
+- Handle edge cases (empty steps, null values)
+
+STEP SIGNATURE FORMAT:
+----------------------
+{
+  "action_name": "click",
+  "element": "button#submit",
+  "description_hash": "abc123...",
+  "test_data": "user@example.com",
+  "position_context": "after_login"  # optional context
+}
+
+FILES TO CREATE:
+----------------
+- test_optimizer/optimization/step_coverage_tracker.py
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/__init__.py (add import)
+
+DEPENDENCIES:
+-------------
+- data.models (TestCase, TestStep)
+- data.normalizers (for step normalization)
+- hashlib (for step signature hashing)
+
+OUTPUT:
+-------
+Module that tracks step-level coverage and validates it's maintained.
+
+NEXT STEP:
+----------
+After this, move to Step 3: Enhance Optimization Engine
+
+================================================================================
+
+

@@ -1,0 +1,128 @@
+================================================================================
+STEP 6: CREATE NEW OPTIMIZED TEST CASE GENERATOR
+================================================================================
+
+OBJECTIVE:
+Create a generator that produces new optimized test cases (merged, AI-optimized,
+or restructured) with new IDs and properly formatted output files.
+
+WHAT NEEDS TO BE DONE:
+----------------------
+1. Create new module: `optimization/optimized_test_case_generator.py`
+2. Generate new test cases from optimization results
+3. Assign new test case IDs
+4. Create properly formatted test case and step files
+5. Maintain all metadata structure
+
+KEY FUNCTIONS TO IMPLEMENT:
+---------------------------
+1. `generate_optimized_test_cases(optimization_result) -> Dict[int, TestCase]`
+   - Takes optimization result (merged, AI-optimized, etc.)
+   - Generates new TestCase objects
+   - Assigns new IDs (sequential starting from 1000 or max_id + 1)
+   - Returns dictionary of new test cases
+
+2. `create_merged_test_case(source_test_cases, merged_data) -> TestCase`
+   - Creates TestCase from merged data
+   - Combines metadata from sources
+   - Generates new ID
+   - Preserves raw_data structure
+
+3. `create_ai_optimized_test_case(ai_response) -> TestCase`
+   - Converts AI response to TestCase object
+   - Validates structure
+   - Generates new ID
+   - Preserves all required fields
+
+4. `assign_new_test_case_id(existing_ids) -> int`
+   - Generates new unique ID
+   - Avoids conflicts with existing IDs
+   - Uses sequential numbering or hash-based
+
+5. `generate_test_case_metadata(test_case, source_ids) -> Dict`
+   - Generates metadata for new test case
+   - Includes source test case references
+   - Preserves original structure
+   - Adds optimization metadata
+
+6. `generate_step_file_content(test_case) -> Dict`
+   - Generates step file JSON structure
+   - Maintains exact format as input
+   - Includes pageable metadata
+   - Preserves all step fields
+
+ID GENERATION STRATEGY:
+-----------------------
+Option 1: Sequential (Recommended)
+- Start from max(existing_ids) + 1
+- Or use 1000+ range for optimized test cases
+- Simple and predictable
+
+Option 2: Hash-based
+- Hash of source test case IDs
+- Deterministic but less readable
+
+Option 3: Negative IDs (temporary)
+- Use negative IDs during generation
+- Convert to positive in final output
+
+METADATA PRESERVATION:
+----------------------
+1. Preserve all original fields:
+   - version, workspace, testData, etc.
+   - Use from first source test case or merge intelligently
+
+2. Add optimization metadata:
+   - "optimizationSource": "merged" | "ai_optimized" | "restructured"
+   - "sourceTestCases": [list of source IDs]
+   - "optimizationDate": timestamp
+   - "optimizationReason": description
+
+3. Maintain structure:
+   - All nested objects preserved
+   - All arrays maintained
+   - All null values preserved
+
+STEP FILE GENERATION:
+---------------------
+1. Generate step content array:
+   - All steps from merged/optimized test case
+   - Preserve step IDs (use new sequential IDs)
+   - Maintain position order
+   - Preserve all step fields
+
+2. Add pageable metadata:
+   - totalElements: number of steps
+   - pageable: {sorted: true, pageSize: 2000, ...}
+   - last, first, empty flags
+   - sort information
+
+3. Maintain exact structure:
+   - Same as input format
+   - All fields present
+   - Proper nesting
+
+FILES TO CREATE:
+----------------
+- test_optimizer/optimization/optimized_test_case_generator.py
+
+FILES TO USE:
+-------------
+- data.models (TestCase, TestStep)
+- output.output_generator (for file writing)
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/__init__.py (add import)
+
+OUTPUT:
+-------
+New optimized test cases with proper IDs and metadata, ready for output.
+
+NEXT STEP:
+----------
+After this, move to Step 7: Preserve All Metadata in Output
+
+================================================================================
+
+

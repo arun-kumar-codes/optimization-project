@@ -1,0 +1,139 @@
+# Eraser.io Diagram Code for Test Case Optimization System
+
+## Copy this code into Eraser.io to generate the visual diagram
+
+```mermaid
+graph TB
+    Start([Start: Input Test Cases]) --> Load[Phase 1: Data Loading]
+    
+    Load --> LoadFiles[Load JSON Files<br/>Test Cases + Steps]
+    LoadFiles --> Validate[Validate Data<br/>Completeness Check]
+    Validate --> Normalize[Normalize Data<br/>Standardize Formats]
+    
+    Normalize --> Phase2[Phase 2: Step Analysis]
+    
+    Phase2 --> StepUniq[Step Uniqueness Analyzer<br/>Identify Unique Steps]
+    StepUniq --> StepCov[Step Coverage Tracker<br/>Build Coverage Map]
+    StepCov --> DupDetect[Duplicate Detector<br/>Find Similar Test Cases]
+    
+    DupDetect --> Phase3[Phase 3: Flow Analysis]
+    
+    Phase3 --> FlowAnalyze[Flow Analyzer<br/>Identify Flow Types]
+    FlowAnalyze --> FlowGraph[Flow Graph Builder<br/>NetworkX Graph]
+    FlowGraph --> FlowCov[Coverage Analyzer<br/>Calculate Flow Coverage]
+    FlowCov --> FlowClass[Flow Classifier<br/>Admin vs User]
+    
+    FlowClass --> Phase4{AI Analysis?}
+    Phase4 -->|Yes| AI[Phase 4: AI Analysis<br/>Claude API]
+    Phase4 -->|No| Phase5[Phase 5: Optimization]
+    
+    AI --> Semantic[Semantic Analyzer<br/>Business Value]
+    Semantic --> Advisor[Optimization Advisor<br/>Recommendations]
+    Advisor --> Phase5
+    
+    Phase5 --> GetCandidates[Get Optimization Candidates<br/>Sorted by Priority]
+    GetCandidates --> IterLoop{For Each Candidate}
+    
+    IterLoop --> TryOpt[Try Optimization<br/>Create Snapshot]
+    TryOpt --> CheckCov{Check Coverage}
+    
+    CheckCov -->|Step >= 95%<br/>Flow >= 90%<br/>Critical OK| Apply[Apply Change]
+    CheckCov -->|Coverage Drops| Rollback[Rollback & Skip]
+    
+    Apply --> CheckMerge{Both Have<br/>Unique Steps?}
+    CheckMerge -->|Yes| Merge[TestCase Merger<br/>Merge Test Cases<br/>New ID 10000+]
+    CheckMerge -->|No| Keep[Keep Best One]
+    
+    Merge --> IterLoop
+    Keep --> IterLoop
+    Rollback --> IterLoop
+    
+    IterLoop -->|All Processed| FinalOpt[Final Optimized<br/>Test Cases]
+    
+    FinalOpt --> Phase6[Phase 6: Validation]
+    
+    Phase6 --> ValStep[Step Coverage<br/>Validation >= 95%]
+    ValStep --> ValFlow[Flow Coverage<br/>Validation >= 90%]
+    ValFlow --> ValElem[Element Coverage<br/>Validation]
+    ValElem --> ValScen[Scenario Coverage<br/>Validation]
+    ValScen --> ValData[Data Coverage<br/>Validation]
+    ValData --> ValReport[Generate Validation<br/>Report]
+    
+    ValReport --> Phase7[Phase 7: Execution Plan]
+    
+    Phase7 --> ExecPlan[Execution Plan Generator<br/>Priority Ordering<br/>Parallel Groups]
+    
+    ExecPlan --> Phase8[Phase 8: Output Generation]
+    
+    Phase8 --> GenTC[Generate Test Case<br/>JSON Files]
+    GenTC --> GenSteps[Generate Step<br/>JSON Files]
+    GenSteps --> PreserveMeta[Preserve All Metadata<br/>Same Format as Input]
+    PreserveMeta --> GenSummary[Generate Summary<br/>Reports]
+    
+    GenSummary --> End([End: Optimized Output<br/>Ready to Use])
+    
+    style Start fill:#e1f5ff
+    style End fill:#d4edda
+    style Phase5 fill:#fff3cd
+    style Phase6 fill:#f8d7da
+    style Merge fill:#d1ecf1
+    style CheckCov fill:#ffeaa7
+```
+
+## Alternative: Simplified Client-Facing Diagram
+
+```mermaid
+graph LR
+    A[Input:<br/>Test Cases<br/>43 Files] --> B[Data Loading<br/>& Validation]
+    B --> C[Step Analysis<br/>& Duplicate Detection]
+    C --> D[Flow Analysis<br/>& Coverage Mapping]
+    D --> E{AI Analysis<br/>Optional}
+    E --> F[Iterative Optimization<br/>With Safety Checks]
+    F --> G[Intelligent Merging<br/>Preserve Unique Steps]
+    G --> H[Comprehensive<br/>Validation]
+    H --> I[Execution Plan<br/>Generation]
+    I --> J[Output Generation<br/>Same Format]
+    J --> K[Output:<br/>Optimized Test Cases<br/>17 Files + Reports]
+    
+    style A fill:#e1f5ff
+    style K fill:#d4edda
+    style F fill:#fff3cd
+    style G fill:#d1ecf1
+    style H fill:#f8d7da
+```
+
+## Key Metrics Box
+
+```
+┌─────────────────────────────────────────┐
+│  OPTIMIZATION RESULTS                   │
+├─────────────────────────────────────────┤
+│  Input:  43 test cases                  │
+│  Output: 17 test cases                  │
+│  Reduction: 60.5%                       │
+│                                         │
+│  Coverage Maintained:                   │
+│  • Flow Coverage: 100%                  │
+│  • Step Coverage: 95%+                  │
+│                                         │
+│  Time Saved: 50.9%                      │
+│  Merged Cases: 1                        │
+└─────────────────────────────────────────┘
+```
+
+## Technology Stack
+
+```
+┌─────────────────────────────────────────┐
+│  TECHNOLOGIES USED                      │
+├─────────────────────────────────────────┤
+│  • Python 3.x                           │
+│  • Claude API (Anthropic)               │
+│  • NetworkX (Graph Analysis)           │
+│  • Levenshtein (Similarity)             │
+│  • Pydantic (Data Validation)          │
+│  • JSON (Data Format)                   │
+└─────────────────────────────────────────┘
+```
+
+

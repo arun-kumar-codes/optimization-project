@@ -1,0 +1,103 @@
+================================================================================
+STEP 3: ENHANCE OPTIMIZATION ENGINE WITH STEP-LEVEL CHECKS
+================================================================================
+
+OBJECTIVE:
+Fix the optimization engine to check step-level uniqueness and coverage
+before removing test cases. This prevents coverage loss.
+
+WHAT NEEDS TO BE DONE:
+----------------------
+1. Recreate/Modify: `optimization/optimization_engine.py`
+2. Integrate step-level checks before removal
+3. Fix near duplicate removal (add coverage check)
+4. Fix highly similar removal (check each individually)
+5. Add step-level validation
+
+KEY CHANGES TO MAKE:
+--------------------
+1. Import new modules:
+   - from analysis.step_uniqueness_analyzer import StepUniquenessAnalyzer
+   - from optimization.step_coverage_tracker import StepCoverageTracker
+
+2. Fix Near Duplicate Removal (lines 84-99):
+   BEFORE: Remove without checking
+   AFTER: 
+   - Identify unique steps in test case to remove
+   - Check if unique steps are covered elsewhere
+   - Only remove if unique steps are covered OR not critical
+   - Validate step coverage is maintained
+
+3. Fix Highly Similar Removal (lines 101-129):
+   BEFORE: Only check first test case, then remove all
+   AFTER:
+   - Check EACH test case individually
+   - For each removal candidate:
+     * Identify unique steps
+     * Check coverage of unique steps
+     * Validate step coverage maintained
+     * Only remove if safe
+
+4. Add Step-Level Validation:
+   - Before final removal, validate step coverage
+   - If step coverage drops below threshold, skip removal
+   - Track which steps would be lost
+
+5. Add Iterative Removal:
+   - Remove one test case at a time
+   - Check coverage after each removal
+   - If coverage drops, undo that removal
+   - Continue with next candidate
+
+NEW METHODS TO ADD:
+-------------------
+1. `_identify_unique_steps(test_case1, test_case2) -> Dict`
+   - Uses StepUniquenessAnalyzer
+   - Returns unique steps for each test case
+
+2. `_check_step_coverage(unique_steps, other_test_cases) -> bool`
+   - Uses StepCoverageTracker
+   - Returns True if unique steps are covered elsewhere
+
+3. `_validate_step_coverage(test_cases) -> Dict`
+   - Calculates step coverage percentage
+   - Returns coverage metrics
+
+4. `_should_remove_test_case(test_case_id, test_cases, to_remove) -> Dict`
+   - Comprehensive check before removal
+   - Returns: can_remove (bool), reason, unique_steps_lost
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/optimization_engine.py (recreate with fixes)
+
+FILES TO USE:
+-------------
+- analysis.step_uniqueness_analyzer (from Step 1)
+- optimization.step_coverage_tracker (from Step 2)
+
+IMPLEMENTATION FLOW:
+--------------------
+1. Calculate baseline step coverage
+2. For each duplicate group:
+   a. Identify unique steps in each test case
+   b. Check if unique steps are covered elsewhere
+   c. If covered, mark for removal
+   d. If not covered, keep or merge
+3. Remove test cases one at a time
+4. After each removal, check step coverage
+5. If coverage drops, undo removal
+6. Continue until all candidates processed
+
+OUTPUT:
+-------
+Enhanced optimization engine that safely removes test cases without
+losing step-level coverage.
+
+NEXT STEP:
+----------
+After this, move to Step 4: Implement Merging Functionality
+
+================================================================================
+
+

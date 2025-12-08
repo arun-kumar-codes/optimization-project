@@ -1,0 +1,136 @@
+================================================================================
+STEP 7: PRESERVE ALL METADATA IN OUTPUT
+================================================================================
+
+OBJECTIVE:
+Ensure output files maintain exact structure as input files, including
+all metadata like pageable, version info, etc. Nothing should be removed.
+
+WHAT NEEDS TO BE DONE:
+----------------------
+1. Modify: `output/output_generator.py`
+2. Preserve all metadata from original files
+3. Ensure pageable metadata is included in step files
+4. Preserve all nested structures
+
+KEY CHANGES TO MAKE:
+--------------------
+1. Modify `generate_optimized_step_files()`:
+   BEFORE:
+   ```python
+   steps_json = {"content": steps_data}
+   ```
+   
+   AFTER:
+   ```python
+   # Load original file to get metadata
+   original_file = original_steps_dir / f"{test_id:02d}.json"
+   if original_file.exists():
+       with open(original_file, 'r') as f:
+           original_data = json.load(f)
+           # Preserve all metadata
+           steps_json = {
+               "content": steps_data,
+               "pageable": original_data.get("pageable", {}),
+               "totalElements": len(steps_data),
+               "totalPages": 1 if len(steps_data) > 0 else 0,
+               "last": True,
+               "first": True,
+               "size": 2000,
+               "number": 0,
+               "numberOfElements": len(steps_data),
+               "empty": len(steps_data) == 0,
+               "sort": original_data.get("sort", {})
+           }
+   else:
+       # Generate default metadata if original not found
+       steps_json = {
+           "content": steps_data,
+           "pageable": {
+               "sort": {"sorted": True, "unsorted": False, "empty": False},
+               "offset": 0,
+               "pageNumber": 0,
+               "pageSize": 2000,
+               "paged": True,
+               "unpaged": False
+           },
+           "totalElements": len(steps_data),
+           "totalPages": 1 if len(steps_data) > 0 else 0,
+           "last": True,
+           "first": True,
+           "size": 2000,
+           "number": 0,
+           "numberOfElements": len(steps_data),
+           "empty": len(steps_data) == 0,
+           "sort": {
+               "sorted": True,
+               "unsorted": False,
+               "empty": False
+           }
+       }
+   ```
+
+2. Preserve Test Case Metadata:
+   - Load original test case file
+   - Preserve all fields (version, workspace, testData, etc.)
+   - Only update: id, name, description (if merged/optimized)
+   - Keep all other fields as-is
+
+3. Handle New Test Cases:
+   - For merged/optimized test cases (new IDs):
+     * Use metadata from first source test case
+     * Or merge metadata intelligently
+     * Preserve structure
+
+METADATA TO PRESERVE:
+---------------------
+Test Case Files:
+- version (with nested workspace)
+- testData (with nested data array)
+- testConfiguration
+- files, tags, suites
+- All other fields
+
+Step Files:
+- pageable (with nested sort)
+- totalElements, totalPages
+- last, first, empty
+- size, number, numberOfElements
+- sort (with nested structure)
+
+VALIDATION:
+-----------
+1. Compare output structure with input structure
+2. Ensure all fields present
+3. Verify nested objects preserved
+4. Check array structures maintained
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/output/output_generator.py
+
+KEY METHODS TO UPDATE:
+---------------------
+1. `generate_optimized_test_case_files()`
+   - Preserve all test case metadata
+
+2. `generate_optimized_step_files()`
+   - Add pageable and all metadata
+
+3. `_test_case_to_json()`
+   - Preserve raw_data structure
+
+4. `_test_step_to_json()`
+   - Preserve all step fields
+
+OUTPUT:
+-------
+Output files with exact same structure as input, all metadata preserved.
+
+NEXT STEP:
+----------
+After this, move to Step 8: Add Iterative Optimization Loop
+
+================================================================================
+
+

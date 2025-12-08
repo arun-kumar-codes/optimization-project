@@ -1,0 +1,152 @@
+================================================================================
+STEP 10: UPDATE MAIN ORCHESTRATION
+================================================================================
+
+OBJECTIVE:
+Update main.py to integrate all new functionality: step-level analysis,
+merging, AI optimization, iterative optimization, and comprehensive validation.
+
+WHAT NEEDS TO BE DONE:
+----------------------
+1. Modify: `test_optimizer/main.py`
+2. Integrate all new modules
+3. Update optimization flow
+4. Add comprehensive reporting
+5. Ensure output generation works with new test cases
+
+KEY CHANGES TO MAKE:
+--------------------
+1. Import New Modules:
+   ```python
+   from analysis.step_uniqueness_analyzer import StepUniquenessAnalyzer
+   from optimization.step_coverage_tracker import StepCoverageTracker
+   from optimization.optimized_test_case_generator import OptimizedTestCaseGenerator
+   from optimization.ai_test_case_optimizer import AITestCaseOptimizer
+   ```
+
+2. Update Optimization Flow:
+   BEFORE:
+   - Load test cases
+   - Detect duplicates
+   - Remove duplicates
+   - Generate output
+   
+   AFTER:
+   - Load test cases
+   - Analyze step-level uniqueness
+   - Build step coverage map
+   - Detect duplicates
+   - Run iterative optimization (with merging)
+   - Use AI for optimization (optional)
+   - Generate new optimized test cases
+   - Comprehensive validation
+   - Generate output
+
+3. Add Step-Level Analysis:
+   ```python
+   print("Analyzing Step-Level Uniqueness...")
+   uniqueness_analyzer = StepUniquenessAnalyzer()
+   step_coverage_tracker = StepCoverageTracker()
+   
+   # Build coverage map
+   coverage_map = step_coverage_tracker.build_step_coverage_map(test_cases)
+   print(f"✓ Identified {len(coverage_map)} unique steps")
+   ```
+
+4. Update Optimization Call:
+   ```python
+   # Use iterative optimization
+   optimization_result = optimization_engine.optimize_test_suite_iteratively(
+       test_cases,
+       ai_recommendations
+   )
+   ```
+
+5. Add Merging Integration:
+   ```python
+   # Try merging before removing
+   test_case_merger = TestCaseMerger()
+   merge_candidates = test_case_merger.identify_merge_candidates(test_cases)
+   
+   # Merge test cases
+   merged_test_cases = []
+   for candidate in merge_candidates:
+       if candidate['can_merge']:
+           merged = test_case_merger.generate_merged_test_case(...)
+           merged_test_cases.append(merged)
+   ```
+
+6. Add AI Optimization (Optional):
+   ```python
+   if not args.skip_ai:
+       print("Using AI for Advanced Optimization...")
+       ai_optimizer = AITestCaseOptimizer()
+       ai_optimized = ai_optimizer.generate_optimized_test_suite_with_ai(
+           optimized_test_cases
+       )
+       optimized_test_cases = ai_optimized
+   ```
+
+7. Generate New Test Cases:
+   ```python
+   generator = OptimizedTestCaseGenerator()
+   new_test_cases = generator.generate_optimized_test_cases(
+       optimization_result
+   )
+   ```
+
+8. Comprehensive Validation:
+   ```python
+   validator = CoverageValidator()
+   validation = validator.comprehensive_validation(
+       test_cases,
+       final_optimized_test_cases
+   )
+   
+   if not validation['overall_valid']:
+       print("⚠ Validation failed!")
+       # Handle validation failures
+   ```
+
+9. Update Output Generation:
+   ```python
+   # Generate output for both kept and new test cases
+   output_generator.generate_optimized_test_case_files(
+       final_test_cases,  # Includes both kept and new
+       test_cases  # Original for metadata
+   )
+   ```
+
+MAIN FLOW:
+----------
+1. Load test cases
+2. Validate data
+3. Analyze step uniqueness
+4. Build step coverage map
+5. Detect duplicates
+6. Analyze flows
+7. AI analysis (optional)
+8. Iterative optimization (with merging)
+9. AI optimization (optional)
+10. Generate new optimized test cases
+11. Comprehensive validation
+12. Generate execution plan
+13. Generate output files
+14. Generate reports
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/main.py
+
+OUTPUT:
+-------
+Complete orchestration that uses all new functionality to create optimized
+test cases while maintaining coverage.
+
+NEXT STEP:
+----------
+After all steps, test the complete system and validate results.
+
+================================================================================
+
+

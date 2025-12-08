@@ -1,0 +1,25 @@
+{
+  "flow_coverage": {
+    "total_unique_flows": 0,
+    "covered_flows": 0,
+    "uncovered_flows": 0,
+    "coverage_percentage": 0.0,
+    "all_flows": [],
+    "covered_flows_list": [],
+    "uncovered_flows_list": []
+  },
+  "flow_classifications": {
+    "classifications": {},
+    "category_groups": {},
+    "summary": {
+      "total_test_cases": 0,
+      "categories": {},
+      "multi_flow_count": 0
+    }
+  },
+  "summary": {
+    "total_flows": 0,
+    "covered_flows": 0,
+    "coverage_percentage": 0.0
+  }
+}

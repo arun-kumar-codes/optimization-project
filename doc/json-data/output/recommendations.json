@@ -1,0 +1,14 @@
+{
+  "removed_test_cases": [],
+  "kept_test_cases": [],
+  "ai_recommendations": {},
+  "summary": {
+    "optimization_successful": true,
+    "test_cases_reduced": 0,
+    "reduction_percentage": 0,
+    "coverage_maintained": false,
+    "critical_flows_maintained": false,
+    "time_saved_seconds": 0,
+    "time_saved_percentage": 0
+  }
+}

@@ -1,0 +1,971 @@
+================================================================================
+TEST CASE OPTIMIZATION SYSTEM - IMPLEMENTATION FLOW EXPLANATION
+================================================================================
+
+This document explains the complete flow of how test cases are processed
+from input to output, detailing what happens at each stage.
+
+================================================================================
+INPUT STAGE
+================================================================================
+
+What We Start With:
+-------------------
+1. Test Case Files (JSON format)
+   - Location: json-data/test_cases/
+   - Files: 01.json, 02.json, 03.json, ... up to 55.json (or more)
+   - Contains: Test case metadata (id, name, description, priority, status, etc.)
+   - Also includes: version info, workspace info, testData, testConfiguration
+
+2. Step Files (JSON format)
+   - Location: json-data/steps_in_test_cases/
+   - Files: 01.json, 02.json, 03.json, ... matching test case IDs
+   - Contains: All steps for each test case
+   - Structure: { "content": [step1, step2, ...], "pageable": {...} }
+   - Each step has: action, element, description, testData, position, etc.
+
+Example Input:
+--------------
+- 43 test cases (or 55, or 100+ - system handles any number)
+- Each test case has multiple steps (ranging from 5 to 200+ steps)
+- Total: ~213 unique steps across all test cases
+
+================================================================================
+PHASE 1: DATA LOADING AND PREPARATION
+================================================================================
+
+What Happens:
+-------------
+1. DataLoader reads all JSON files
+   - Scans test_cases/ directory
+   - Scans steps_in_test_cases/ directory
+   - Matches test cases with their corresponding step files
+   - Parses JSON into Python objects
+
+2. Data Models Created
+   - Each test case becomes a "TestCase" object
+   - Each step becomes a "TestStep" object
+   - Objects have all properties from JSON files
+   - Raw JSON data is preserved for later output
+
+3. Data Validation
+   - Checks if all required fields are present
+   - Validates data types
+   - Reports any missing or invalid data
+   - Ensures test cases have corresponding step files
+
+4. Data Normalization
+   - Standardizes action names (e.g., "click" vs "CLICK" → both become "click")
+   - Normalizes element identifiers
+   - Cleans descriptions (removes extra spaces, special chars)
+   - Standardizes test data formats
+
+Result After Phase 1:
+---------------------
+- All test cases loaded into memory as structured objects
+- Data validated and normalized
+- Ready for analysis
+- Original raw data preserved for output generation
+
+================================================================================
+PHASE 2: STEP-LEVEL ANALYSIS AND DUPLICATE DETECTION
+================================================================================
+
+What Happens:
+-------------
+
+Step 1: Step Uniqueness Analysis
+----------------------------------
+- For each test case, we identify which steps are unique
+- Creates a "signature" (hash) for each step based on:
+  * Action name
+  * Element identifier
+  * Description
+  * Test data
+- Compares steps across test cases to find duplicates
+- Calculates how unique each test case is
+
+Example:
+--------
+Test Case 1 has steps: [Login, Click Dashboard, View Profile]
+Test Case 2 has steps: [Login, Click Dashboard, View Settings]
+
+Unique to TC1: [View Profile]
+Unique to TC2: [View Settings]
+Common: [Login, Click Dashboard]
+
+Step 2: Step Coverage Mapping
+------------------------------
+- Builds a map showing which test cases cover which steps
+- Tracks: Step Signature → [List of Test Case IDs that contain this step]
+- Calculates total unique steps across entire suite
+- Identifies steps that are only covered by one test case (critical steps)
+
+Result:
+-------
+- We know exactly which steps are unique to which test cases
+- We know which steps would be lost if we remove a test case
+- We have a coverage map showing step distribution
+
+Step 3: Duplicate Detection
+-----------------------------
+- Extracts sequences from each test case:
+  * Sequence of actions
+  * Sequence of elements
+  * Sequence of descriptions
+  * Flow patterns (page transitions)
+
+- Calculates similarity between test cases using:
+  * Levenshtein distance (string similarity)
+  * Longest Common Subsequence (LCS)
+  * Step-by-step comparison
+  * Flow pattern matching
+
+- Groups test cases into:
+  * Exact Duplicates (100% similar) - Safe to remove one
+  * Near Duplicates (90-99% similar) - Consider merging
+  * Highly Similar (75-89% similar) - May have unique value
+
+Example:
+--------
+Test Case A: [Login, Dashboard, View Profile, Logout]
+Test Case B: [Login, Dashboard, View Profile, Logout]
+Similarity: 100% → Exact Duplicate
+
+Test Case C: [Login, Dashboard, View Profile, Edit Profile]
+Test Case D: [Login, Dashboard, View Profile, Delete Profile]
+Similarity: 85% → Highly Similar (but different actions at end)
+
+Result After Phase 2:
+----------------------
+- List of duplicate groups identified
+- Each group has: test case IDs, similarity score, recommended action
+- Step coverage map built
+- Uniqueness scores calculated for each test case
+
+================================================================================
+PHASE 3: USER FLOW ANALYSIS
+================================================================================
+
+What Happens:
+-------------
+
+Step 1: Flow Type Identification
+---------------------------------
+- Analyzes each test case to identify what type of flow it represents:
+  * Authentication (Login, Logout)
+  * CRUD operations (Create, Read, Update, Delete)
+  * Navigation (Page transitions)
+  * Form submissions
+  * Data validation
+  * etc.
+
+Step 2: Flow Graph Building
+-----------------------------
+- Creates a graph where:
+  * Nodes = Pages/States (e.g., "Login Page", "Dashboard", "Profile Page")
+  * Edges = Transitions (e.g., "Login Page → Dashboard")
+- Uses NetworkX library for graph analysis
+- Identifies critical paths (must-have flows)
+- Finds dead ends and isolated flows
+
+Step 3: Coverage Analysis
+---------------------------
+- Calculates how many unique flows are covered
+- Identifies which flows are critical (must be maintained)
+- Creates coverage matrix: Flow → [Test Cases that cover it]
+- Calculates coverage percentage
+
+Step 4: Flow Classification
+----------------------------
+- Classifies test cases as:
+  * Admin flows (user management, system configuration)
+  * User/Employee flows (regular user actions)
+- Groups test cases by flow category
+- Identifies primary vs secondary flows
+
+Result After Phase 3:
+---------------------
+- Complete flow map of the application
+- Coverage percentage for flows
+- Critical flows identified
+- Test cases classified by flow type and role (admin/user)
+
+================================================================================
+PHASE 4: AI-POWERED ANALYSIS (Optional)
+================================================================================
+
+What Happens (if AI is enabled):
+---------------------------------
+
+Step 1: Semantic Analysis
+--------------------------
+- Sends test case information to Claude API
+- AI analyzes:
+  * Business purpose of each test case
+  * Criticality level
+  * Business value
+  * Dependencies
+
+Step 2: Optimization Recommendations
+-------------------------------------
+- AI provides recommendations:
+  * "Keep" - Important test case
+  * "Remove" - Redundant or low value
+  * "Merge" - Can be combined with another
+- Each recommendation includes:
+  * Justification
+  * Estimated coverage impact
+  * Risk assessment
+
+Result After Phase 4:
+---------------------
+- AI recommendations for each test case
+- Business value scores
+- Prioritized list of test cases
+
+WHY AI IS OPTIONAL:
+-------------------
+
+1. API Costs
+   ----------
+   - Claude API charges per request (costs money)
+   - For 100 test cases, could cost $5-20+ depending on analysis depth
+   - Optional to save costs for large test suites
+
+2. System Works Without AI
+   ------------------------
+   - Core optimization uses algorithmic approaches:
+     * Levenshtein distance (string similarity)
+     * Longest Common Subsequence (LCS)
+     * Step-by-step comparison
+     * Flow pattern matching
+   - These algorithms are free and effective
+   - AI enhances but doesn't replace algorithmic analysis
+
+3. AI Adds Value But Not Required
+   --------------------------------
+   - AI provides:
+     * Business context understanding
+     * Semantic similarity (beyond literal matching)
+     * Intelligent recommendations with justifications
+   - But the system can optimize effectively without it:
+     * Duplicate detection works algorithmically
+     * Step uniqueness analysis is algorithmic
+     * Coverage validation is algorithmic
+     * Merging logic works without AI
+
+4. AI Usage in System:
+   --------------------
+   a) Phase 4: Semantic Analysis (OPTIONAL)
+      - Can be skipped with --skip-ai flag
+      - Provides business value insights
+      - Enhances recommendations
+   
+   b) Test Case Merging: Step Order Optimization (OPTIONAL)
+      - AI can optimize step sequence when merging
+      - Has fallback to rule-based optimization
+      - Works fine without AI
+   
+   c) Advanced Optimization: AITestCaseOptimizer (NOT USED IN MAIN FLOW)
+      - Available for future enhancements
+      - Not currently in main execution path
+
+5. When to Use AI:
+   ---------------
+   - Use AI when:
+     * You want business context in recommendations
+     * You need semantic understanding (not just literal matching)
+     * You have budget for API costs
+     * You want detailed justifications for decisions
+   
+   - Skip AI when:
+     * You want to minimize costs
+     * Algorithmic analysis is sufficient
+     * You're processing very large test suites (100+ test cases)
+     * You want faster execution
+
+6. Current Implementation:
+   ------------------------
+   - Default: AI is ENABLED (if API key is set)
+   - Can disable with: --skip-ai flag
+   - Can limit with: --ai-limit N (analyze only N test cases)
+   - System continues normally even if AI fails
+   - All core functionality works without AI
+
+================================================================================
+PHASE 5: ITERATIVE OPTIMIZATION ENGINE
+================================================================================
+
+This is the CORE of the system - where actual optimization happens.
+
+What Happens:
+-------------
+
+Step 1: Get Optimization Candidates
+------------------------------------
+- Takes duplicate groups from Phase 2
+- Sorts them by priority:
+  1. Exact duplicates (highest priority - safest to remove)
+  2. Near duplicates (medium priority)
+  3. Highly similar (lowest priority - need careful checking)
+- Within each group, sorts by similarity (higher = safer)
+
+Step 2: Iterative Processing Loop
+-----------------------------------
+For each candidate pair of similar test cases:
+
+  a) Create Snapshot
+     - Save current state of test suite
+     - This allows rollback if needed
+
+  b) Try Optimization
+     - Option 1: Remove one test case
+     - Option 2: Merge both test cases (if both have unique steps)
+
+  c) Validate Coverage (CRITICAL STEP)
+     - Check Step Coverage: Is it still >= 95%?
+     - Check Flow Coverage: Is it still >= 90%?
+     - Check Critical Flows: Are all critical flows still covered?
+     - Check Unique Steps: Are any unique steps lost?
+
+  d) Decision:
+     - If ALL checks pass → Apply the change
+     - If ANY check fails → Rollback to snapshot, skip this candidate
+
+Step 3: Intelligent Merging (When Both Have Unique Steps)
+----------------------------------------------------------
+When two similar test cases both have unique steps:
+
+  a) Combine Steps
+     - Take all steps from both test cases
+     - Remove duplicate steps (using step signatures)
+     - Maintain logical order
+
+  b) Optimize Step Sequence
+     - Remove redundant consecutive actions
+     - Optimize wait times
+     - Use AI to optimize order (if available)
+
+  c) Combine Metadata
+     - Merge names: "Merged: Test Case A + Test Case B"
+     - Combine descriptions
+     - Merge tags
+     - Take highest priority
+     - Combine test data
+
+  d) Create New Test Case
+     - Assign new ID (starting from 10000+ to avoid conflicts)
+     - Preserve all original metadata structure
+     - Mark as "merged" with source IDs
+
+Example of Merging:
+-------------------
+Test Case 13: "CRM <> Change Password"
+  Steps: [Login, Navigate to CRM, Change Password, Verify]
+
+Test Case 14: "CRM <> Add Employee"
+  Steps: [Login, Navigate to CRM, Add Employee, Verify]
+
+Similarity: 85% (both have Login, Navigate to CRM, Verify)
+
+Unique to TC13: [Change Password]
+Unique to TC14: [Add Employee]
+
+Merged Test Case 14330: "Merged: CRM <> Change Password + CRM <> Add Employee"
+  Steps: [Login, Navigate to CRM, Change Password, Add Employee, Verify]
+  (No duplicates, all unique steps preserved)
+
+Step 4: Final Optimization Set
+-------------------------------
+After processing all candidates:
+- Final list of test cases to keep (original IDs)
+- List of new merged test cases (new IDs like 14330)
+- List of test cases removed
+- Reasons for each removal/merge
+
+Result After Phase 5:
+----------------------
+- Optimized test suite (fewer test cases)
+- Coverage maintained (95%+ step coverage, 90%+ flow coverage)
+- Merged test cases created (if applicable)
+- Detailed log of all changes made
+
+================================================================================
+PHASE 6: COMPREHENSIVE VALIDATION
+================================================================================
+
+What Happens:
+-------------
+
+Step 1: Step Coverage Validation
+---------------------------------
+- Compares original step coverage vs optimized
+- Checks: Are >= 95% of original unique steps still covered?
+- Identifies any lost steps
+- Reports coverage percentage
+
+Step 2: Flow Coverage Validation
+---------------------------------
+- Compares original flow coverage vs optimized
+- Checks: Are >= 90% of flows still covered?
+- Verifies all critical flows are covered
+- Reports coverage percentage
+
+Step 3: Element Coverage Validation
+------------------------------------
+- Tracks which UI elements are tested
+- Checks: Are all elements still covered?
+- Identifies lost element coverage
+
+Step 4: Scenario Coverage Validation
+-------------------------------------
+- Tracks test scenarios (happy path, error cases, edge cases)
+- Checks: Are all critical scenarios covered?
+- Identifies lost scenarios
+
+Step 5: Data Coverage Validation
+---------------------------------
+- Tracks test data usage
+- Checks: Are all test data profiles still used?
+- Identifies lost data coverage
+
+Step 6: Generate Validation Report
+------------------------------------
+- Creates comprehensive report
+- Shows pass/fail for each validation type
+- Lists warnings and errors
+- Provides overall validation status
+
+Result After Phase 6:
+---------------------
+- Complete validation report
+- Confirmation that coverage is maintained
+- List of any issues or warnings
+- Overall validation status (PASS/FAIL)
+
+================================================================================
+PHASE 7: EXECUTION PLAN GENERATION
+================================================================================
+
+What Happens:
+-------------
+
+Step 1: Dependency Analysis
+-----------------------------
+- Identifies test case dependencies
+- Maps prerequisites
+- Finds test cases that must run before others
+
+Step 2: Priority Calculation
+-----------------------------
+- Calculates priority score for each test case based on:
+  * Business criticality
+  * Historical defect density
+  * Flow criticality
+  * Execution time
+
+Step 3: Execution Order Creation
+---------------------------------
+- Creates optimal execution order:
+  1. Smoke Tests (critical, fast tests)
+  2. High-Risk Tests (important business flows)
+  3. Regression Core (standard functionality)
+  4. Nice-to-Have (additional coverage)
+
+Step 4: Parallel Execution Groups
+-----------------------------------
+- Groups test cases that can run in parallel
+- Considers dependencies
+- Optimizes for execution time
+
+Result After Phase 7:
+---------------------
+- Execution plan with ordered test cases
+- Parallel execution groups
+- Estimated execution time
+- Dependency map
+
+================================================================================
+PHASE 8: OUTPUT GENERATION
+================================================================================
+
+What Happens:
+-------------
+
+Step 1: Generate Optimized Test Case Files
+-------------------------------------------
+For each test case in optimized suite:
+
+  a) If it's an original test case (kept):
+     - Load original JSON file
+     - Update only if metadata changed (e.g., if merged)
+     - Preserve ALL original fields:
+       * version, workspaceVersionId
+       * testData, testConfiguration
+       * files, tags, suites
+       * All other metadata
+     - Write to output/test_cases/XX.json
+
+  b) If it's a merged test case (new):
+     - Create new JSON structure
+     - Use metadata from source test cases
+     - Add optimization metadata:
+       * source_test_case_ids
+       * optimization_date
+       * optimization_reason
+     - Assign new ID (e.g., 14330)
+     - Write to output/test_cases/14330.json
+
+Step 2: Generate Optimized Step Files
+--------------------------------------
+For each test case in optimized suite:
+
+  a) Collect all steps:
+     - If original test case: Use original steps (may be optimized)
+     - If merged test case: Use merged steps from multiple sources
+     - Preserve step raw_data if available
+     - Update step positions sequentially (1, 2, 3, ...)
+     - Update testCaseId to match parent test case
+
+  b) Create step file structure:
+     - Structure: { "content": [steps], "pageable": {...}, ... }
+     - Load original step file for metadata (if available)
+     - Preserve pageable structure:
+       * sort, offset, pageNumber, pageSize
+       * totalElements, totalPages
+       * last, first, empty, numberOfElements
+     - If original not available, create default metadata
+
+  c) Write step file:
+     - Write to output/steps_in_test_cases/XX.json
+     - Format matches input exactly
+     - All step fields preserved
+
+Step 3: Generate Summary Files
+-------------------------------
+Creates additional JSON files for reporting:
+
+  a) optimization_summary.json:
+     - Overall statistics
+     - Before/after comparison
+     - Coverage metrics
+     - Time savings
+     - Reduction percentage
+
+  b) execution_order.json:
+     - Ordered list of test cases to execute
+     - Priority levels
+     - Parallel execution groups
+     - Estimated execution time
+     - Dependencies
+
+  c) duplicate_analysis.json:
+     - All duplicate groups found
+     - Similarity scores
+     - Recommended actions
+     - Grouped by type (exact, near, highly similar)
+
+  d) admin_optimized_tests.json:
+     - List of admin test case IDs
+     - Count of admin tests
+     - Description
+
+  e) user_optimized_tests.json:
+     - List of user/employee test case IDs
+     - Count of user tests
+     - Description
+
+  f) user_flows.json:
+     - Flow coverage analysis
+     - Flow classifications
+     - Coverage summary
+
+  g) recommendations.json:
+     - AI recommendations (if used)
+     - Removal reasons
+     - Kept test cases list
+     - Summary
+
+Result After Phase 8:
+---------------------
+- Complete output directory structure:
+  * output/test_cases/ - Optimized test case JSON files
+  * output/steps_in_test_cases/ - Optimized step JSON files
+  * output/*.json - Summary and analysis files
+
+- All files in same format as input
+- All metadata preserved
+- Ready to use in your application
+
+================================================================================
+OUTPUT STAGE
+================================================================================
+
+What We End Up With:
+--------------------
+
+1. Optimized Test Case Files
+   - Location: json-data/output/test_cases/
+   - Format: Same as input (JSON)
+   - Contains: 
+     * Original test cases that were kept (same IDs)
+     * New merged test cases (new IDs like 14330)
+   - All metadata preserved (version, workspace, testData, etc.)
+
+2. Optimized Step Files
+   - Location: json-data/output/steps_in_test_cases/
+   - Format: Same as input (JSON with pageable)
+   - Contains:
+     * Steps for kept test cases
+     * Steps for merged test cases
+   - All step fields preserved
+
+3. Summary Reports
+   - optimization_summary.json - Overall stats
+   - execution_order.json - Execution plan
+   - duplicate_analysis.json - Duplicate groups
+   - admin_optimized_tests.json - Admin test IDs
+   - user_optimized_tests.json - User test IDs
+   - user_flows.json - Flow analysis
+   - recommendations.json - Recommendations
+
+Example Output:
+---------------
+Input:  43 test cases
+Output: 17 test cases
+
+Breakdown:
+- 16 original test cases kept (IDs: 1, 7, 8, 9, 10, 15, 16, 18, 21, 30, 34, 39, 40, 41, 51, 52)
+- 1 merged test case created (ID: 14330, merged from 13 and 14)
+- 26 test cases removed (duplicates or redundant)
+
+Coverage:
+- Flow Coverage: 100% (maintained)
+- Step Coverage: 95%+ (maintained)
+- Critical Flows: All covered
+- Unique Steps: Preserved
+
+Time Savings:
+- Original execution time: 32.8 minutes
+- Optimized execution time: 16.1 minutes
+- Time saved: 16.7 minutes (50.9%)
+
+================================================================================
+KEY FEATURES OF THE APPROACH
+================================================================================
+
+1. Safety First
+   ------------
+   - Every change is validated before applying
+   - Multiple coverage checks (step, flow, element, scenario, data)
+   - Automatic rollback if coverage drops
+   - Iterative process (one change at a time)
+
+2. Intelligent Merging
+   --------------------
+   - Doesn't just remove duplicates
+   - Merges test cases when both have unique value
+   - Preserves all unique steps
+   - Creates new test cases with new IDs
+   - Maintains traceability (source IDs tracked)
+
+3. Step-Level Granularity
+   -----------------------
+   - Tracks coverage at individual step level
+   - Identifies unique steps in each test case
+   - Prevents loss of unique functionality
+   - More accurate than test-case-level analysis
+
+4. Comprehensive Validation
+   -------------------------
+   - Validates at multiple levels:
+     * Step coverage
+     * Flow coverage
+     * Element coverage
+     * Scenario coverage
+     * Data coverage
+   - Detailed validation reports
+   - Clear pass/fail status
+
+5. Format Preservation
+   -------------------
+   - Output format matches input exactly
+   - All metadata preserved
+   - Same JSON structure
+   - Ready to use without modification
+
+6. AI-Powered (Optional)
+   ---------------------
+   - Uses Claude API for semantic analysis
+   - Provides business value assessment
+   - Intelligent recommendations
+   - Can be disabled to save costs
+
+7. Iterative Optimization
+   ----------------------
+   - Processes one candidate at a time
+   - Validates after each change
+   - Rolls back if coverage drops
+   - Safe optimization guaranteed
+
+================================================================================
+HOW THE SYSTEM HANDLES DIFFERENT SCENARIOS
+================================================================================
+
+Scenario 1: Exact Duplicates (100% Similar)
+--------------------------------------------
+Example: Test Case A and Test Case B are identical
+
+Process:
+1. Detected as exact duplicates
+2. Highest priority for removal
+3. Keep one (usually the one with better metadata)
+4. Remove the other
+5. Coverage check: Pass (identical, so no loss)
+6. Result: One test case removed, coverage maintained
+
+Scenario 2: Near Duplicates with Unique Steps
+-----------------------------------------------
+Example: Test Case C and Test Case D are 92% similar, but each has unique steps
+
+Process:
+1. Detected as near duplicates
+2. Step uniqueness analysis shows both have unique steps
+3. Decision: Merge instead of remove
+4. Combine steps from both
+5. Remove duplicate steps
+6. Create new merged test case (ID: 14330)
+7. Remove original test cases (C and D)
+8. Coverage check: Pass (all unique steps preserved)
+9. Result: Two test cases merged into one, coverage maintained
+
+Scenario 3: Highly Similar but Different Flows
+-----------------------------------------------
+Example: Test Case E and Test Case F are 80% similar, but cover different flows
+
+Process:
+1. Detected as highly similar
+2. Flow analysis shows different flows
+3. Step uniqueness shows unique steps
+4. Coverage check: Would lose flow coverage if removed
+5. Decision: Keep both (coverage check fails)
+6. Result: Both test cases kept, coverage maintained
+
+Scenario 4: Test Case with No Unique Steps
+-------------------------------------------
+Example: Test Case G has all steps covered by other test cases
+
+Process:
+1. Step uniqueness analysis shows 0% uniqueness
+2. Coverage check: All steps covered elsewhere
+3. Decision: Safe to remove
+4. Remove test case G
+5. Coverage check: Pass (no unique steps lost)
+6. Result: Test case removed, coverage maintained
+
+================================================================================
+DATA FLOW SUMMARY
+================================================================================
+
+Input Files (JSON)
+       │
+       ▼
+[DataLoader] → Parse into Objects
+       │
+       ▼
+[DataValidator] → Validate & Normalize
+       │
+       ▼
+[StepUniquenessAnalyzer] → Identify Unique Steps
+       │
+       ▼
+[StepCoverageTracker] → Build Coverage Map
+       │
+       ▼
+[DuplicateDetector] → Find Similar Test Cases
+       │
+       ▼
+[FlowAnalyzer] → Identify Flows
+       │
+       ▼
+[CoverageAnalyzer] → Calculate Coverage
+       │
+       ▼
+       ├─────────────────────────────────────┐
+       │                                     │
+       ▼                                     │
+[AI Analysis] (OPTIONAL)                     │
+       │                                     │
+       ├─→ [SemanticAnalyzer] → Business    │
+       │    Context & Value Analysis         │
+       │                                     │
+       └─→ [OptimizationAdvisor] → AI        │
+            Recommendations                  │
+       │                                     │
+       └─────────────────────────────────────┘
+       │
+       ▼
+[OptimizationEngine] → Iterative Optimization
+       │
+       ├─→ [TestCaseMerger] → Merge Test Cases
+       │    │
+       │    └─→ [AI Step Optimization] (OPTIONAL)
+       │         → Optimize step order (if AI enabled)
+       │         → Falls back to rule-based if AI disabled
+       │
+       └─→ [CoverageValidator] → Validate Changes
+       │
+       ▼
+[CoverageValidator] → Comprehensive Validation
+       │
+       ▼
+[ExecutionPlanGenerator] → Create Execution Plan
+       │
+       ▼
+[OutputGenerator] → Generate Output Files
+       │
+       ▼
+Output Files (JSON) - Same Format as Input
+
+================================================================================
+AI USAGE IN THE FLOW (Optional Paths)
+================================================================================
+
+AI appears in TWO places in the flow:
+
+1. PHASE 4: AI Analysis (Optional Branch)
+   ---------------------------------------
+   Location: After CoverageAnalyzer, before OptimizationEngine
+   
+   Flow:
+   [CoverageAnalyzer] 
+         │
+         ├─→ [AI Analysis] (if --skip-ai NOT used)
+         │    │
+         │    ├─→ [SemanticAnalyzer] → Uses Claude API
+         │    │    • Analyzes business purpose
+         │    │    • Determines criticality
+         │    │    • Assesses business value
+         │    │
+         │    └─→ [OptimizationAdvisor] → Uses Claude API
+         │         • Provides keep/remove/merge recommendations
+         │         • Justifies decisions
+         │         • Estimates coverage impact
+         │
+         └─→ [OptimizationEngine] (continues with or without AI)
+   
+   If AI is skipped:
+   [CoverageAnalyzer] → [OptimizationEngine] (direct path)
+
+2. TEST CASE MERGING: AI Step Optimization (Optional)
+   ---------------------------------------------------
+   Location: Inside TestCaseMerger during merge process
+   
+   Flow:
+   [TestCaseMerger] 
+         │
+         ├─→ Merge steps from multiple test cases
+         │
+         ├─→ [AI Step Optimization] (if AI client available)
+         │    │
+         │    └─→ Uses Claude API to optimize step sequence
+         │         • Removes redundant steps
+         │         • Optimizes order for efficiency
+         │         • Maintains logical flow
+         │
+         └─→ [Rule-Based Optimization] (fallback if AI not available)
+              • Simple rule-based step ordering
+              • Removes consecutive duplicates
+   
+   Note: Merging works fine without AI, just uses rule-based optimization
+
+================================================================================
+COMPLETE FLOW WITH AI PATHS SHOWN
+================================================================================
+
+Input Files (JSON)
+       │
+       ▼
+[DataLoader] → Parse into Objects
+       │
+       ▼
+[DataValidator] → Validate & Normalize
+       │
+       ▼
+[StepUniquenessAnalyzer] → Identify Unique Steps (Algorithmic)
+       │
+       ▼
+[StepCoverageTracker] → Build Coverage Map (Algorithmic)
+       │
+       ▼
+[DuplicateDetector] → Find Similar Test Cases (Algorithmic)
+       │
+       ▼
+[FlowAnalyzer] → Identify Flows (Algorithmic)
+       │
+       ▼
+[CoverageAnalyzer] → Calculate Coverage (Algorithmic)
+       │
+       ▼
+       ├──────────────────────────────────────────────┐
+       │                                              │
+       │  OPTIONAL AI PATH (Phase 4)                  │
+       │                                              │
+       ▼                                              │
+   {AI Enabled?}                                      │
+       │                                              │
+       ├─ YES ─→ [SemanticAnalyzer] ─→ [OptimizationAdvisor]
+       │         (Claude API)         (Claude API)
+       │              │                      │
+       │              └──────────┬───────────┘
+       │                         ▼
+       │              AI Recommendations
+       │                         │
+       └─ NO ───────────────────┘
+              │
+              ▼
+[OptimizationEngine] → Iterative Optimization
+       │
+       ├─→ For each candidate:
+       │    │
+       │    ├─→ Try Remove/Merge
+       │    │
+       │    └─→ [TestCaseMerger] (if merging)
+       │         │
+       │         ├─→ Merge steps
+       │         │
+       │         ├─→ {AI Available?}
+       │         │    │
+       │         │    ├─ YES ─→ [AI Step Optimization] (Claude API)
+       │         │    │         Optimize step sequence
+       │         │    │
+       │         │    └─ NO ─→ [Rule-Based Optimization]
+       │         │              Simple step ordering
+       │         │
+       │         └─→ Create merged test case
+       │
+       └─→ [CoverageValidator] → Validate Changes
+            │
+            ▼
+[CoverageValidator] → Comprehensive Validation (Algorithmic)
+       │
+       ▼
+[ExecutionPlanGenerator] → Create Execution Plan (Algorithmic)
+       │
+       ▼
+[OutputGenerator] → Generate Output Files
+       │
+       ▼
+Output Files (JSON) - Same Format as Input
+
+KEY:
+----
+(Algorithmic) = Works without AI, uses algorithms
+(Claude API) = Requires AI, uses Claude API
+{AI Enabled?} = Optional branch - can skip
+{AI Available?} = Optional enhancement - has fallback
+
+================================================================================
+END OF IMPLEMENTATION FLOW EXPLANATION
+================================================================================

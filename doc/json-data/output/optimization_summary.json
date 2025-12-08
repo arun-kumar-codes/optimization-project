@@ -1,0 +1,41 @@
+{
+  "optimization_date": true,
+  "original_test_cases": 0,
+  "optimized_test_cases": 0,
+  "reduction": 0,
+  "reduction_percentage": 0,
+  "coverage": {
+    "before": {
+      "total_flows": 0,
+      "covered_flows": 0,
+      "coverage_percentage": 0.0,
+      "critical_flows_covered": false,
+      "step_coverage": {
+        "total_unique_steps": 0,
+        "coverage_percentage": 0.0
+      }
+    },
+    "after": {
+      "total_flows": 0,
+      "covered_flows": 0,
+      "coverage_percentage": 0.0,
+      "critical_flows_covered": false,
+      "step_coverage": {
+        "total_unique_steps": 0,
+        "covered_steps": 0,
+        "coverage_percentage": 0.0
+      }
+    }
+  },
+  "time_savings": {
+    "original_time_ms": 0,
+    "optimized_time_ms": 0,
+    "time_saved_ms": 0,
+    "time_saved_percentage": 0,
+    "time_saved_seconds": 0
+  },
+  "breakdown": {
+    "admin_test_cases": "See admin_optimized_tests.json",
+    "user_test_cases": "See user_optimized_tests.json"
+  }
+}

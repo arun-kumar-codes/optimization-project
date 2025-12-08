@@ -1,0 +1,105 @@
+================================================================================
+STEP 4: IMPLEMENT MERGING FUNCTIONALITY
+================================================================================
+
+OBJECTIVE:
+Instead of just removing similar test cases, merge them to preserve
+all unique steps. Create new optimized test cases that combine coverage.
+
+WHAT NEEDS TO BE DONE:
+----------------------
+1. Enhance: `optimization/test_case_merger.py`
+2. Integrate merging into optimization engine
+3. Create merged test case generator
+4. Handle merged test case output (new IDs, combined steps)
+
+KEY FUNCTIONS TO ENHANCE:
+--------------------------
+1. `generate_merged_test_case(test_case1, test_case2) -> TestCase`
+   - Create actual TestCase object (not just proposal)
+   - Combine steps intelligently (preserve order, remove duplicates)
+   - Merge metadata (name, description, priority, etc.)
+   - Generate new test case ID (use max_id + 1 or negative IDs temporarily)
+
+2. `merge_test_cases_intelligently(test_cases_list) -> TestCase`
+   - Merge multiple test cases into one
+   - Preserve all unique steps
+   - Maintain logical step order
+   - Combine flows and coverage
+
+3. `should_merge_instead_of_remove(test_case1, test_case2) -> bool`
+   - Decision logic: merge vs remove
+   - Merge if: unique steps exist in both
+   - Remove if: one is complete subset of other
+
+4. `create_optimized_merged_test_case(source_test_cases) -> TestCase`
+   - Create new optimized test case
+   - Combine all unique steps
+   - Optimize step order (remove redundant waits, combine similar actions)
+   - Use AI to optimize step sequence if needed
+
+INTEGRATION INTO OPTIMIZATION ENGINE:
+-------------------------------------
+1. Before removing similar test cases:
+   - Check if they should be merged instead
+   - If yes, merge them into new test case
+   - Add merged test case to optimized set
+   - Remove original test cases
+
+2. Track merged test cases:
+   - Store mapping: merged_id -> [source_ids]
+   - Document which test cases were merged
+   - Preserve source test case metadata
+
+STEP MERGING LOGIC:
+-------------------
+1. Identify common steps (exact matches)
+2. Identify unique steps in each test case
+3. Merge steps maintaining logical order:
+   - Common steps: keep once
+   - Unique steps: add in logical position
+   - Preserve dependencies (prerequisites)
+4. Optimize step sequence:
+   - Remove redundant waits
+   - Combine similar actions
+   - Maintain flow logic
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/test_case_merger.py (enhance existing)
+- test_optimizer/optimization/optimization_engine.py (integrate merging)
+
+NEW METHODS TO ADD:
+-------------------
+1. `merge_with_ai_optimization(test_cases, claude_client) -> TestCase`
+   - Use AI to optimize merged test case
+   - AI suggests best step order
+   - AI identifies redundant steps
+   - AI optimizes test data usage
+
+2. `generate_merged_test_case_id(source_ids) -> int`
+   - Generate new ID for merged test case
+   - Use format: 10000 + hash(source_ids) or sequential
+
+3. `preserve_merged_metadata(source_test_cases) -> Dict`
+   - Combine metadata from source test cases
+   - Merge tags, priorities, descriptions
+   - Preserve test data profiles
+
+FILES TO USE:
+-------------
+- ai.claude_client (for AI optimization)
+- analysis.step_uniqueness_analyzer (to identify unique steps)
+- flows.flow_analyzer (to maintain flow logic)
+
+OUTPUT:
+-------
+Merged test cases that preserve all unique coverage from source test cases.
+
+NEXT STEP:
+----------
+After this, move to Step 5: AI-Powered Test Case Optimizer
+
+================================================================================
+
+

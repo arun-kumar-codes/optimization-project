@@ -1,0 +1,71 @@
+================================================================================
+STEP 1: CREATE STEP-LEVEL UNIQUENESS ANALYZER
+================================================================================
+
+OBJECTIVE:
+Identify which specific steps are unique to each test case before removal.
+This prevents losing critical coverage when removing similar test cases.
+
+WHAT NEEDS TO BE DONE:
+----------------------
+1. Create new module: `analysis/step_uniqueness_analyzer.py`
+2. Implement functions to:
+   - Compare steps between two test cases
+   - Identify unique steps in each test case
+   - Calculate step-level similarity and uniqueness
+   - Generate uniqueness report
+
+KEY FUNCTIONS TO IMPLEMENT:
+---------------------------
+1. `identify_unique_steps(test_case1, test_case2) -> Dict`
+   - Returns: unique steps in test_case1, unique steps in test_case2
+   - Compares steps by: action_name, element, description, test_data
+   - Uses fuzzy matching for descriptions
+
+2. `calculate_step_uniqueness_score(test_case, all_test_cases) -> float`
+   - Calculates how unique a test case is (0.0 to 1.0)
+   - Higher score = more unique steps not covered elsewhere
+
+3. `check_step_coverage(unique_steps, other_test_cases) -> Dict`
+   - Checks if unique steps are covered by other test cases
+   - Returns: which steps are covered, which are not
+
+4. `generate_uniqueness_report(test_case_id, test_cases) -> Dict`
+   - Comprehensive report of unique steps
+   - Coverage status of each unique step
+   - Recommendations
+
+IMPLEMENTATION DETAILS:
+------------------------
+- Use step signatures: (action_name, element, description_hash)
+- Compare test_data if present
+- Consider step position/sequence context
+- Use fuzzy matching for similar but not identical steps
+- Track both exact matches and near matches
+
+FILES TO CREATE:
+----------------
+- test_optimizer/analysis/step_uniqueness_analyzer.py
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/analysis/__init__.py (add import)
+
+DEPENDENCIES:
+-------------
+- data.models (TestCase, TestStep)
+- analysis.sequence_extractor (for step comparison)
+- Levenshtein (for fuzzy matching)
+
+OUTPUT:
+-------
+Module that can be imported and used by optimization_engine to check
+step-level uniqueness before removing test cases.
+
+NEXT STEP:
+----------
+After this, move to Step 2: Step-Level Coverage Tracker
+
+================================================================================
+
+

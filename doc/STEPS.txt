@@ -1,0 +1,1712 @@
+================================================================================
+TEST CASE OPTIMIZATION SYSTEM - STEP-BY-STEP DATA FLOW
+================================================================================
+
+This document explains the complete data flow step-by-step, showing:
+- Input: What data/files come into each step
+- Process: What algorithm/operation is applied
+- Output: What data structure/result is produced
+- Dependencies: Which previous steps this step depends on
+
+================================================================================
+INITIAL INPUT
+================================================================================
+
+INPUT FILES:
+------------
+Location: json-data/test_cases/ and json-data/steps_in_test_cases/
+
+Example Files:
+- json-data/test_cases/01.json
+- json-data/test_cases/02.json
+- json-data/test_cases/03.json
+- ... (up to 55.json or more)
+
+- json-data/steps_in_test_cases/01.json
+- json-data/steps_in_test_cases/02.json
+- json-data/steps_in_test_cases/03.json
+- ... (matching test case IDs)
+
+Example Content of 01.json (test case):
+{
+  "id": 1,
+  "name": "Default - Test Case (OrangeHRM)...",
+  "description": "...",
+  "priority": 5,
+  "status": "READY",
+  "lastRun": {
+    "duration": 45000,
+    "result": "PASSED",
+    "passCount": 10,
+    "failCount": 0
+  },
+  "version": 1,
+  "workspace": {...},
+  "testData": {...},
+  "testConfiguration": {...}
+}
+
+Example Content of 01.json (steps):
+{
+  "content": [
+    {
+      "id": 1,
+      "position": 1,
+      "action": "navigateTo",
+      "actionName": "Navigate To",
+      "element": null,
+      "description": "Navigate to https://opensource-demo.orangehrmlive.com/",
+      "testData": {"url": "https://opensource-demo.orangehrmlive.com/"},
+      "waitTime": 0
+    },
+    {
+      "id": 2,
+      "position": 2,
+      "action": "click",
+      "actionName": "Click",
+      "element": "input[name='username']",
+      "description": "Click on username input field",
+      "testData": null,
+      "waitTime": 0
+    },
+    ... (more steps)
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 20,
+    "totalElements": 20,
+    "totalPages": 1
+  }
+}
+
+================================================================================
+STEP 1: DISCOVER TEST CASE IDs
+================================================================================
+
+INPUT:
+------
+- Directory path: json-data/test_cases/
+- Directory path: json-data/steps_in_test_cases/
+
+PROCESS:
+--------
+- Scan both directories for *.json files
+- Extract numeric IDs from filenames (e.g., "01.json" → 1, "02.json" → 2)
+- Combine IDs from both directories
+- Sort IDs in ascending order
+
+ALGORITHM:
+----------
+```python
+def _discover_test_case_ids():
+    test_case_ids = set()
+    # Scan test_cases directory
+    for file in test_cases_dir.glob("*.json"):
+        test_id = int(file.stem)  # "01" → 1
+        test_case_ids.add(test_id)
+    # Scan steps directory
+    for file in steps_dir.glob("*.json"):
+        test_id = int(file.stem)
+        test_case_ids.add(test_id)
+    return sorted(list(test_case_ids))
+```
+
+OUTPUT:
+-------
+List of test case IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, ... 55]
+
+Example: [1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21, 26, 29, 30, 31, 32, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]
+
+DEPENDENCIES:
+-------------
+- None (initial step)
+
+================================================================================
+STEP 2: LOAD TEST CASE JSON FILES
+================================================================================
+
+INPUT:
+------
+- From Step 1: List of test case IDs [1, 2, 3, ...]
+- Files: json-data/test_cases/01.json, 02.json, 03.json, ...
+
+PROCESS:
+--------
+- For each test case ID, read the corresponding JSON file
+- Parse JSON into Python dictionary
+- Extract test case metadata (id, name, description, priority, status, etc.)
+- Preserve raw JSON data for later use
+
+ALGORITHM:
+----------
+```python
+for test_id in test_case_ids:
+    file_path = test_cases_dir / f"{test_id:02d}.json"
+    with open(file_path) as f:
+        data = json.load(f)
+    # Extract fields
+    test_case_data = {
+        "id": data["id"],
+        "name": data["name"],
+        "description": data.get("description"),
+        "priority": data.get("priority"),
+        "status": data.get("status"),
+        "raw_data": data  # Preserve original
+    }
+```
+
+OUTPUT:
+-------
+Dictionary of test case metadata:
+{
+    1: {
+        "id": 1,
+        "name": "Default - Test Case (OrangeHRM)...",
+        "description": "...",
+        "priority": 5,
+        "status": "READY",
+        "raw_data": {...}  # Full original JSON
+    },
+    2: {
+        "id": 2,
+        "name": "Salesforce - Login ...",
+        ...
+    },
+    ... (43 test cases total)
+}
+
+DEPENDENCIES:
+-------------
+- Step 1: Test case IDs list
+
+================================================================================
+STEP 3: LOAD STEP JSON FILES
+================================================================================
+
+INPUT:
+------
+- From Step 1: List of test case IDs [1, 2, 3, ...]
+- Files: json-data/steps_in_test_cases/01.json, 02.json, 03.json, ...
+
+PROCESS:
+--------
+- For each test case ID, read the corresponding steps JSON file
+- Parse JSON to extract "content" array (list of steps)
+- Extract "pageable" information (preserve for output)
+- For each step, extract: id, position, action, element, description, testData, etc.
+
+ALGORITHM:
+----------
+```python
+for test_id in test_case_ids:
+    file_path = steps_dir / f"{test_id:02d}.json"
+    with open(file_path) as f:
+        data = json.load(f)
+    steps_data = data["content"]  # Array of step objects
+    pageable = data.get("pageable")  # Preserve this
+    # Parse each step
+    steps = []
+    for step_data in steps_data:
+        step = {
+            "id": step_data["id"],
+            "position": step_data["position"],
+            "action": step_data["action"],
+            "element": step_data.get("element"),
+            "description": step_data.get("description"),
+            "testData": step_data.get("testData")
+        }
+        steps.append(step)
+```
+
+OUTPUT:
+-------
+Dictionary of steps per test case:
+{
+    1: {
+        "steps": [
+            {
+                "id": 1,
+                "position": 1,
+                "action": "navigateTo",
+                "element": null,
+                "description": "Navigate to https://opensource-demo.orangehrmlive.com/",
+                "testData": {"url": "..."}
+            },
+            {
+                "id": 2,
+                "position": 2,
+                "action": "click",
+                "element": "input[name='username']",
+                "description": "Click on username input field",
+                "testData": null
+            },
+            ... (20 steps total for TC1)
+        ],
+        "pageable": {...}
+    },
+    2: {
+        "steps": [...],  # 7 steps for TC2
+        "pageable": {...}
+    },
+    ... (43 test cases)
+}
+
+DEPENDENCIES:
+-------------
+- Step 1: Test case IDs list
+
+================================================================================
+STEP 4: COMBINE TEST CASE AND STEP DATA INTO TESTCASE OBJECTS
+================================================================================
+
+INPUT:
+------
+- From Step 2: Test case metadata dictionary
+- From Step 3: Steps dictionary per test case
+
+PROCESS:
+--------
+- For each test case ID, combine metadata + steps
+- Create TestCase Pydantic model objects
+- Normalize data (actions, elements, descriptions)
+- Create TestStep objects for each step
+- Preserve raw_data for output generation
+
+ALGORITHM:
+----------
+```python
+from data.models import TestCase, TestStep
+from data.normalizers import normalize_action_name, normalize_element_identifier
+
+for test_id in test_case_ids:
+    metadata = test_case_metadata[test_id]
+    steps_data = steps_dict[test_id]["steps"]
+    
+    # Normalize and create TestStep objects
+    test_steps = []
+    for step_data in steps_data:
+        step = TestStep(
+            id=step_data["id"],
+            position=step_data["position"],
+            action=normalize_action_name(step_data["action"]),  # "Click" → "click"
+            element=normalize_element_identifier(step_data.get("element")),
+            description=clean_description(step_data.get("description")),
+            test_data=normalize_test_data(step_data.get("testData"))
+        )
+        test_steps.append(step)
+    
+    # Create TestCase object
+    test_case = TestCase(
+        id=metadata["id"],
+        name=metadata["name"],
+        description=metadata.get("description"),
+        priority=metadata.get("priority"),
+        status=metadata.get("status"),
+        steps=test_steps,
+        raw_data=metadata["raw_data"]  # Preserve original JSON
+    )
+```
+
+OUTPUT:
+-------
+Dictionary of TestCase objects:
+{
+    1: TestCase(
+        id=1,
+        name="Default - Test Case (OrangeHRM)...",
+        steps=[
+            TestStep(id=1, position=1, action="navigateto", element=None, ...),
+            TestStep(id=2, position=2, action="click", element="input[name='username']", ...),
+            ... (20 steps)
+        ],
+        raw_data={...}
+    ),
+    2: TestCase(
+        id=2,
+        name="Salesforce - Login ...",
+        steps=[...],  # 7 steps
+        raw_data={...}
+    ),
+    ... (43 TestCase objects total)
+}
+
+DEPENDENCIES:
+-------------
+- Step 2: Test case metadata
+- Step 3: Steps data
+
+================================================================================
+STEP 5: VALIDATE TEST CASE DATA
+================================================================================
+
+INPUT:
+------
+- From Step 4: Dictionary of TestCase objects {1: TestCase(...), 2: TestCase(...), ...}
+
+PROCESS:
+--------
+- Check each TestCase has required fields (id, name, steps)
+- Validate steps are not empty
+- Check data types are correct
+- Identify invalid/malformed test cases
+
+ALGORITHM:
+----------
+```python
+def validate_all(test_cases):
+    invalid = []
+    for test_id, test_case in test_cases.items():
+        if not test_case.id:
+            invalid.append(test_id)
+        if not test_case.name:
+            invalid.append(test_id)
+        if not test_case.steps or len(test_case.steps) == 0:
+            invalid.append(test_id)
+    return {
+        "valid_test_cases": len(test_cases) - len(invalid),
+        "invalid_test_cases": len(invalid),
+        "invalid_ids": invalid
+    }
+```
+
+OUTPUT:
+-------
+Validation result:
+{
+    "valid_test_cases": 43,
+    "invalid_test_cases": 0,
+    "invalid_ids": []
+}
+
+Note: Invalid test cases are removed from further processing.
+
+DEPENDENCIES:
+-------------
+- Step 4: TestCase objects
+
+================================================================================
+STEP 6: EXTRACT ACTION SEQUENCES FROM ALL TEST CASES
+================================================================================
+
+INPUT:
+------
+- From Step 4: Dictionary of TestCase objects {1: TestCase(...), 2: TestCase(...), ...}
+
+PROCESS:
+--------
+- For each TestCase, extract the sequence of actions from its steps
+- Create a list of action names in order: ["navigateto", "click", "type", "click", "verify", ...]
+- This sequence represents the "flow" of the test case
+
+ALGORITHM:
+----------
+```python
+def extract_action_sequence(test_case):
+    sequence = []
+    for step in test_case.steps:
+        if step.action:
+            sequence.append(step.action.lower())  # Normalize to lowercase
+    return sequence
+```
+
+OUTPUT:
+-------
+Dictionary of action sequences per test case:
+{
+    1: ["navigateto", "click", "type", "click", "type", "click", "verify", ...],  # 20 actions
+    2: ["navigateto", "type", "type", "click", "verify", "click", "verify"],  # 7 actions
+    3: ["navigateto", "click", "type", "click", "verify", ...],  # 11 actions
+    ... (43 test cases)
+}
+
+DEPENDENCIES:
+-------------
+- Step 4: TestCase objects
+
+================================================================================
+STEP 7: CREATE STEP FINGERPRINTS (UNIQUE IDENTIFIERS)
+================================================================================
+
+INPUT:
+------
+- From Step 4: Dictionary of TestCase objects with steps
+
+PROCESS:
+--------
+- For each step in each test case, create a unique "fingerprint"
+- Fingerprint = MD5 hash of (action + element + description)
+- This identifies unique steps across all test cases
+
+ALGORITHM:
+----------
+```python
+import hashlib
+
+def _create_step_fingerprint(step):
+    key_parts = [
+        step.action or "",
+        step.element or "",
+        step.description or ""
+    ]
+    key_string = "|".join(key_parts)
+    return hashlib.md5(key_string.encode()).hexdigest()
+
+# For all test cases
+for test_id, test_case in test_cases.items():
+    for step in test_case.steps:
+        fingerprint = _create_step_fingerprint(step)
+        # Store: fingerprint → test_case_id
+```
+
+OUTPUT:
+-------
+Dictionary mapping step fingerprints to test case IDs:
+{
+    "a3f5b2c1d4e6f7g8h9i0j1k2l3m4n5o6": [1, 11, 12, 36],  # This step appears in TC1, TC11, TC12, TC36
+    "b4g6c3e5f8h0i1j2k3l4m5n6o7p8q9r0": [2, 5],  # This step appears in TC2, TC5
+    "c5h7d4f6g9i1j2k3l4m5n6o7p8q9r0s1": [1],  # This step appears ONLY in TC1 (UNIQUE!)
+    ... (213 unique fingerprints total)
+}
+
+DEPENDENCIES:
+-------------
+- Step 4: TestCase objects
+
+================================================================================
+STEP 8: IDENTIFY UNIQUE STEPS (STEPS THAT APPEAR ONLY ONCE)
+================================================================================
+
+INPUT:
+------
+- From Step 7: Dictionary of step fingerprints → test case IDs
+
+PROCESS:
+--------
+- Find fingerprints that map to only ONE test case ID
+- These are "unique steps" that must be preserved
+- Track which test cases have unique steps
+
+ALGORITHM:
+----------
+```python
+unique_steps = {}
+for fingerprint, test_case_ids in step_fingerprints.items():
+    if len(test_case_ids) == 1:
+        # This step appears only once - it's unique!
+        test_id = test_case_ids[0]
+        if test_id not in unique_steps:
+            unique_steps[test_id] = []
+        unique_steps[test_id].append(fingerprint)
+```
+
+OUTPUT:
+-------
+Dictionary of unique steps per test case:
+{
+    1: ["c5h7d4f6g9i1j2k3l4m5n6o7p8q9r0s1", "d6i8e5g7h0j2k3l4m5n6o7p8q9r0s1t2"],  # TC1 has 2 unique steps
+    6: ["e7j9f6h8i1k3l4m5n6o7p8q9r0s1t2u3"],  # TC6 has 1 unique step
+    21: ["f8k0g7i9j2l4m5n6o7p8q9r0s1t2u3v4", ...],  # TC21 has 5 unique steps
+    ... (test cases with unique steps)
+}
+
+Total unique steps: 213 (each fingerprint appears at least once)
+
+DEPENDENCIES:
+-------------
+- Step 7: Step fingerprints
+
+================================================================================
+STEP 9: BUILD STEP COVERAGE MAP
+================================================================================
+
+INPUT:
+------
+- From Step 7: Dictionary of step fingerprints → test case IDs
+
+PROCESS:
+--------
+- Create reverse mapping: for each test case, which steps does it cover?
+- This map is used later to check if removing a test case would lose coverage
+
+ALGORITHM:
+----------
+```python
+coverage_map = {}  # fingerprint → set of test_case_ids
+for fingerprint, test_case_ids in step_fingerprints.items():
+    coverage_map[fingerprint] = set(test_case_ids)
+
+# Also create reverse: test_case_id → set of fingerprints
+test_case_coverage = {}
+for test_id, test_case in test_cases.items():
+    test_case_coverage[test_id] = set()
+    for step in test_case.steps:
+        fingerprint = _create_step_fingerprint(step)
+        test_case_coverage[test_id].add(fingerprint)
+```
+
+OUTPUT:
+-------
+Step coverage map:
+{
+    "a3f5b2c1d4e6f7g8h9i0j1k2l3m4n5o6": {1, 11, 12, 36},  # This step is covered by TC1, TC11, TC12, TC36
+    "b4g6c3e5f8h0i1j2k3l4m5n6o7p8q9r0": {2, 5},  # This step is covered by TC2, TC5
+    "c5h7d4f6g9i1j2k3l4m5n6o7p8q9r0s1": {1},  # This step is ONLY covered by TC1
+    ... (213 entries)
+}
+
+Test case coverage (reverse map):
+{
+    1: {"a3f5b2c1...", "c5h7d4f6...", "d6i8e5g7...", ...},  # TC1 covers 20 unique step fingerprints
+    2: {"b4g6c3e5...", "e7j9f6h8...", ...},  # TC2 covers 7 unique step fingerprints
+    ... (43 test cases)
+}
+
+DEPENDENCIES:
+-------------
+- Step 7: Step fingerprints
+
+================================================================================
+STEP 10: CALCULATE INITIAL STEP COVERAGE
+================================================================================
+
+INPUT:
+------
+- From Step 9: Step coverage map (fingerprint → test_case_ids)
+- From Step 8: Unique steps count
+
+PROCESS:
+--------
+- Count total unique steps (total fingerprints)
+- Count how many are covered (all are covered initially)
+- Calculate coverage percentage
+
+ALGORITHM:
+----------
+```python
+total_unique_steps = len(coverage_map)  # 213
+covered_steps = total_unique_steps  # All are covered initially
+coverage_percentage = (covered_steps / total_unique_steps) * 100
+```
+
+OUTPUT:
+-------
+Step coverage metrics:
+{
+    "total_unique_steps": 213,
+    "covered_steps": 213,
+    "coverage_percentage": 100.0
+}
+
+DEPENDENCIES:
+-------------
+- Step 9: Step coverage map
+
+================================================================================
+STEP 11: EXTRACT ELEMENT SEQUENCES
+================================================================================
+
+INPUT:
+------
+- From Step 4: Dictionary of TestCase objects
+
+PROCESS:
+--------
+- For each TestCase, extract the sequence of elements from its steps
+- Create a list: ["input[name='username']", "input[name='password']", "button#login", ...]
+- This helps identify test cases that interact with the same UI elements
+
+ALGORITHM:
+----------
+```python
+def extract_element_sequence(test_case):
+    sequence = []
+    for step in test_case.steps:
+        if step.element:
+            sequence.append(step.element)
+    return sequence
+```
+
+OUTPUT:
+-------
+Dictionary of element sequences per test case:
+{
+    1: ["input[name='username']", "input[name='password']", "button#login", ...],
+    2: ["input[name='username']", "input[name='password']", "button#login"],
+    11: ["input[name='username']", "input[name='password']", "button#login"],
+    ... (43 test cases)
+}
+
+DEPENDENCIES:
+-------------
+- Step 4: TestCase objects
+
+================================================================================
+STEP 12: EXTRACT URLS AND DETECT WEBSITES/DOMAINS
+================================================================================
+
+INPUT:
+------
+- From Step 4: Dictionary of TestCase objects
+- From steps: testData fields that may contain URLs
+
+PROCESS:
+--------
+- Look for "navigateTo" actions with URLs in testData
+- Extract domain from URLs (e.g., "https://example.com/login" → "example.com")
+- Check test case names/descriptions for website keywords
+- Build set of domains per test case
+
+ALGORITHM:
+----------
+```python
+def _extract_domains(test_case):
+    domains = set()
+    for step in test_case.steps:
+        if step.action == "navigateto" and step.test_data:
+            url = step.test_data.get("url", "")
+            if url:
+                domain = url.split("//")[-1].split("/")[0]  # Extract domain
+                domains.add(domain)
+    
+    # Also check name/description for keywords
+    text = (test_case.name + " " + (test_case.description or "")).lower()
+    website_keywords = ["orangehrm", "salesforce", "amazon", "github", ...]
+    for keyword in website_keywords:
+        if keyword in text:
+            domains.add(keyword + ".com")
+    
+    return domains
+```
+
+OUTPUT:
+-------
+Dictionary of domains per test case:
+{
+    1: {"opensource-demo.orangehrmlive.com", "orangehrm.com"},
+    2: {"login.salesforce.com", "salesforce.com"},
+    15: {"example.com", "ecommerce.com"},
+    ... (43 test cases)
+}
+
+DEPENDENCIES:
+-------------
+- Step 4: TestCase objects
+
+================================================================================
+STEP 13: CALCULATE SEQUENCE SIMILARITY (LEVENSHTEIN DISTANCE)
+================================================================================
+
+INPUT:
+------
+- From Step 6: Action sequences for all test cases
+- Pairs: Compare every test case with every other test case
+
+PROCESS:
+--------
+- For each pair (TC1, TC2), convert action sequences to strings
+- Calculate Levenshtein distance (minimum edits to transform seq1 → seq2)
+- Convert distance to similarity score: similarity = 1.0 - (distance / max_length)
+
+ALGORITHM:
+----------
+```python
+from Levenshtein import distance as levenshtein_distance
+
+def calculate_sequence_similarity(tc1_seq, tc2_seq):
+    # Convert to strings
+    str1 = " ".join(tc1_seq)  # "navigateto click type click verify"
+    str2 = " ".join(tc2_seq)  # "navigateto click type verify"
+    
+    # Calculate distance
+    max_len = max(len(str1), len(str2))
+    if max_len == 0:
+        return 1.0
+    
+    distance = levenshtein_distance(str1, str2)
+    similarity = 1.0 - (distance / max_len)
+    
+    return max(0.0, similarity)
+
+# Compare all pairs
+similarity_matrix = {}
+for tc1_id, tc1_seq in action_sequences.items():
+    for tc2_id, tc2_seq in action_sequences.items():
+        if tc1_id < tc2_id:  # Avoid duplicate comparisons
+            similarity = calculate_sequence_similarity(tc1_seq, tc2_seq)
+            similarity_matrix[(tc1_id, tc2_id)] = similarity
+```
+
+OUTPUT:
+-------
+Similarity matrix (sequence similarity):
+{
+    (11, 12): 1.0,  # TC11 and TC12 have identical sequences (100% similar)
+    (11, 36): 1.0,  # TC11 and TC36 have identical sequences
+    (11, 37): 0.95,  # TC11 and TC37 are 95% similar
+    (13, 14): 0.77,  # TC13 and TC14 are 77% similar
+    (1, 2): 0.15,  # TC1 and TC2 are 15% similar (very different)
+    ... (all pairs: 43 * 42 / 2 = 903 pairs)
+}
+
+DEPENDENCIES:
+-------------
+- Step 6: Action sequences
+
+================================================================================
+STEP 14: CALCULATE LCS SIMILARITY (LONGEST COMMON SUBSEQUENCE)
+================================================================================
+
+INPUT:
+------
+- From Step 6: Action sequences for all test cases
+- Pairs: Same pairs as Step 13
+
+PROCESS:
+--------
+- For each pair, find the Longest Common Subsequence (LCS)
+- LCS = longest sequence that appears in both sequences in the same order
+- Similarity = (2 * LCS_length) / (len1 + len2)
+
+ALGORITHM:
+----------
+```python
+def lcs_length(seq1, seq2):
+    """Calculate LCS length using dynamic programming."""
+    m, n = len(seq1), len(seq2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if seq1[i-1] == seq2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    
+    return dp[m][n]
+
+def calculate_lcs_similarity(tc1_seq, tc2_seq):
+    lcs_len = lcs_length(tc1_seq, tc2_seq)
+    total_len = len(tc1_seq) + len(tc2_seq)
+    if total_len == 0:
+        return 1.0
+    similarity = (2 * lcs_len) / total_len
+    return similarity
+```
+
+OUTPUT:
+-------
+LCS similarity matrix:
+{
+    (11, 12): 1.0,  # LCS length = 6, both sequences length 6 → 100% similar
+    (11, 36): 1.0,
+    (13, 14): 0.82,  # LCS length = 9, total length 22 → 82% similar
+    (1, 2): 0.25,  # Very different sequences
+    ... (903 pairs)
+}
+
+DEPENDENCIES:
+-------------
+- Step 6: Action sequences
+
+================================================================================
+STEP 15: CALCULATE STEP-LEVEL SIMILARITY
+================================================================================
+
+INPUT:
+------
+- From Step 4: TestCase objects with steps
+- Pairs: Same pairs as Step 13
+
+PROCESS:
+--------
+- For each pair, compare steps one-by-one
+- Match steps by: action, element, description
+- Count matching steps
+- Similarity = matching_steps / max(total_steps_in_tc1, total_steps_in_tc2)
+
+ALGORITHM:
+----------
+```python
+def calculate_step_level_similarity(tc1, tc2):
+    matches = 0
+    tc1_steps = {(s.action, s.element, s.description) for s in tc1.steps}
+    tc2_steps = {(s.action, s.element, s.description) for s in tc2.steps}
+    
+    # Count matching steps
+    matches = len(tc1_steps & tc2_steps)  # Intersection
+    
+    max_steps = max(len(tc1.steps), len(tc2.steps))
+    if max_steps == 0:
+        return 1.0
+    
+    similarity = matches / max_steps
+    return similarity
+```
+
+OUTPUT:
+-------
+Step-level similarity matrix:
+{
+    (11, 12): 1.0,  # All 6 steps match
+    (11, 36): 1.0,  # All 6 steps match
+    (13, 14): 0.75,  # 9 out of 12 steps match
+    (1, 2): 0.10,  # Very few steps match
+    ... (903 pairs)
+}
+
+DEPENDENCIES:
+-------------
+- Step 4: TestCase objects
+
+================================================================================
+STEP 16: CALCULATE FLOW PATTERN SIMILARITY
+================================================================================
+
+INPUT:
+------
+- From Step 6: Action sequences
+- Flow patterns: Identify patterns like "login → navigate → action → verify"
+
+PROCESS:
+--------
+- Identify flow patterns in each test case
+- Compare patterns between test cases
+- Similarity based on pattern matching
+
+ALGORITHM:
+----------
+```python
+def identify_flow_pattern(sequence):
+    """Identify flow pattern from action sequence."""
+    pattern = []
+    for action in sequence:
+        if action == "navigateto":
+            pattern.append("navigate")
+        elif action in ["click", "type"]:
+            pattern.append("interact")
+        elif action == "verify":
+            pattern.append("verify")
+    return pattern
+
+def calculate_flow_pattern_similarity(tc1_seq, tc2_seq):
+    pattern1 = identify_flow_pattern(tc1_seq)
+    pattern2 = identify_flow_pattern(tc2_seq)
+    # Compare patterns (similar to sequence similarity)
+    return calculate_sequence_similarity(pattern1, pattern2)
+```
+
+OUTPUT:
+-------
+Flow pattern similarity matrix:
+{
+    (11, 12): 1.0,  # Same flow pattern
+    (13, 14): 0.80,  # Similar flow patterns
+    (1, 2): 0.30,  # Different flow patterns
+    ... (903 pairs)
+}
+
+DEPENDENCIES:
+-------------
+- Step 6: Action sequences
+
+================================================================================
+STEP 17: CHECK IF TEST CASES TARGET DIFFERENT WEBSITES
+================================================================================
+
+INPUT:
+------
+- From Step 12: Domains per test case
+- Pairs: Same pairs as Step 13
+
+PROCESS:
+--------
+- For each pair, compare their domain sets
+- If domains don't overlap → different websites
+- Apply penalty if different websites
+
+ALGORITHM:
+----------
+```python
+def check_different_websites(tc1_domains, tc2_domains):
+    """Check if test cases target different websites."""
+    if not tc1_domains or not tc2_domains:
+        return False
+    
+    # Check if domains overlap
+    overlap = tc1_domains & tc2_domains
+    return len(overlap) == 0  # No overlap = different websites
+
+# For each pair
+for (tc1_id, tc2_id), similarity in similarity_matrix.items():
+    tc1_domains = domains_per_test_case[tc1_id]
+    tc2_domains = domains_per_test_case[tc2_id]
+    
+    if check_different_websites(tc1_domains, tc2_domains):
+        # Apply heavy penalty
+        similarity_matrix[(tc1_id, tc2_id)] *= 0.3
+        different_websites[(tc1_id, tc2_id)] = True
+```
+
+OUTPUT:
+-------
+Different websites flag:
+{
+    (11, 12): False,  # Same website (orangehrm)
+    (1, 2): True,  # Different websites (orangehrm vs salesforce)
+    (15, 18): True,  # Different websites (ecommerce vs amazon)
+    ... (903 pairs)
+}
+
+Updated similarity matrix (with website penalty applied):
+{
+    (1, 2): 0.045,  # Was 0.15, now 0.15 * 0.3 = 0.045 (heavy penalty)
+    (15, 18): 0.09,  # Was 0.30, now 0.30 * 0.3 = 0.09
+    ... (similarities reduced for different websites)
+}
+
+DEPENDENCIES:
+-------------
+- Step 12: Domains per test case
+- Step 13-16: Similarity matrices
+
+================================================================================
+STEP 18: CALCULATE COMPREHENSIVE SIMILARITY (WEIGHTED COMBINATION)
+================================================================================
+
+INPUT:
+------
+- From Step 13: Sequence similarity matrix
+- From Step 14: LCS similarity matrix
+- From Step 15: Step-level similarity matrix
+- From Step 16: Flow pattern similarity matrix
+- From Step 17: Different websites flags
+
+PROCESS:
+--------
+- Combine all similarity metrics with weights
+- Apply website penalty if different websites
+- Calculate final comprehensive similarity score
+
+ALGORITHM:
+----------
+```python
+def calculate_comprehensive_similarity(tc1, tc2, weights):
+    # Get individual similarities
+    seq_sim = sequence_similarity[(tc1.id, tc2.id)]
+    lcs_sim = lcs_similarity[(tc1.id, tc2.id)]
+    step_sim = step_level_similarity[(tc1.id, tc2.id)]
+    flow_sim = flow_pattern_similarity[(tc1.id, tc2.id)]
+    
+    # Weighted combination
+    total = (
+        weights["sequence"] * seq_sim +
+        weights["lcs"] * lcs_sim +
+        weights["step_level"] * step_sim +
+        weights["flow_pattern"] * flow_sim
+    )
+    
+    # Apply website penalty
+    if different_websites[(tc1.id, tc2.id)]:
+        total *= 0.3  # Heavy penalty
+    
+    return {
+        "similarity": total,
+        "different_websites": different_websites[(tc1.id, tc2.id)],
+        "sequence_similarity": seq_sim,
+        "lcs_similarity": lcs_sim,
+        "step_similarity": step_sim,
+        "flow_similarity": flow_sim
+    }
+```
+
+OUTPUT:
+-------
+Comprehensive similarity matrix:
+{
+    (11, 12): {
+        "similarity": 1.0,
+        "different_websites": False,
+        "sequence_similarity": 1.0,
+        "lcs_similarity": 1.0,
+        "step_similarity": 1.0,
+        "flow_similarity": 1.0
+    },
+    (13, 14): {
+        "similarity": 0.77,
+        "different_websites": False,
+        "sequence_similarity": 0.75,
+        "lcs_similarity": 0.82,
+        "step_similarity": 0.75,
+        "flow_similarity": 0.80
+    },
+    (1, 2): {
+        "similarity": 0.045,  # Low due to different websites
+        "different_websites": True,
+        ...
+    },
+    ... (903 pairs)
+}
+
+DEPENDENCIES:
+-------------
+- Steps 13-17: All similarity metrics
+
+================================================================================
+STEP 19: BUILD SIMILARITY GRAPH (NETWORKX)
+================================================================================
+
+INPUT:
+------
+- From Step 18: Comprehensive similarity matrix
+- Threshold: 0.75 (75% similarity to create edge)
+
+PROCESS:
+--------
+- Create graph where nodes = test cases
+- Add edge between two nodes if similarity >= threshold
+- Find connected components (groups of similar test cases)
+
+ALGORITHM:
+----------
+```python
+import networkx as nx
+
+# Create graph
+G = nx.Graph()
+
+# Add nodes (all test cases)
+for test_id in test_cases.keys():
+    G.add_node(test_id)
+
+# Add edges (if similar enough)
+for (tc1_id, tc2_id), similarity_data in comprehensive_similarity.items():
+    similarity = similarity_data["similarity"]
+    if similarity >= 0.75:  # Threshold
+        G.add_edge(tc1_id, tc2_id, weight=similarity)
+
+# Find connected components (groups)
+components = list(nx.connected_components(G))
+```
+
+OUTPUT:
+-------
+Similarity graph:
+- Nodes: 28 test cases (some test cases are not similar to any others)
+- Edges: 46 edges (connections between similar test cases)
+- Connected components (groups):
+  [
+    {11, 12, 36, 37, 38, 42, 43, 50, 51},  # Group 1: Login-related test cases
+    {13, 14},  # Group 2: Password change test cases
+    {29, 31, 32, 2, 5},  # Group 3: Impact analysis test cases
+    {15, 17},  # Group 4: E-commerce login test cases
+    ... (18 groups total)
+  ]
+
+DEPENDENCIES:
+-------------
+- Step 18: Comprehensive similarity matrix
+
+================================================================================
+STEP 20: CATEGORIZE DUPLICATE GROUPS
+================================================================================
+
+INPUT:
+------
+- From Step 19: Connected components (groups of similar test cases)
+- From Step 18: Comprehensive similarity scores
+
+PROCESS:
+--------
+- For each group, find the maximum similarity within the group
+- Categorize:
+  - Exact duplicates: similarity = 100% (1.0)
+  - Near duplicates: similarity 90-99% (0.90-0.99)
+  - Highly similar: similarity 75-89% (0.75-0.89)
+
+ALGORITHM:
+----------
+```python
+def categorize_group(group, similarity_matrix):
+    """Categorize a group of similar test cases."""
+    max_similarity = 0.0
+    for tc1_id in group:
+        for tc2_id in group:
+            if tc1_id < tc2_id:
+                sim = similarity_matrix.get((tc1_id, tc2_id), {}).get("similarity", 0)
+                max_similarity = max(max_similarity, sim)
+    
+    if max_similarity >= 1.0:
+        return "exact_duplicate"
+    elif max_similarity >= 0.90:
+        return "near_duplicate"
+    elif max_similarity >= 0.75:
+        return "highly_similar"
+    else:
+        return None
+
+# Categorize all groups
+exact_duplicates = []
+near_duplicates = []
+highly_similar = []
+
+for group in connected_components:
+    category = categorize_group(group, comprehensive_similarity)
+    group_data = {
+        "test_case_ids": list(group),
+        "max_similarity": max_similarity,
+        "representative_id": min(group)  # Keep the one with lowest ID
+    }
+    
+    if category == "exact_duplicate":
+        exact_duplicates.append(group_data)
+    elif category == "near_duplicate":
+        near_duplicates.append(group_data)
+    elif category == "highly_similar":
+        highly_similar.append(group_data)
+```
+
+OUTPUT:
+-------
+Categorized duplicate groups:
+{
+    "exact_duplicates": [
+        {
+            "test_case_ids": [11, 12, 36, 37, 38, 42, 43, 50, 51],
+            "max_similarity": 1.0,
+            "representative_id": 11
+        },
+        {
+            "test_case_ids": [15, 17],
+            "max_similarity": 1.0,
+            "representative_id": 15
+        },
+        {
+            "test_case_ids": [29, 31, 32, 2, 5],
+            "max_similarity": 1.0,
+            "representative_id": 2
+        }
+    ],
+    "near_duplicates": [],
+    "highly_similar": [
+        {
+            "test_case_ids": [13, 14],
+            "max_similarity": 0.77,
+            "representative_id": 13
+        }
+    ],
+    "total_groups": 4
+}
+
+DEPENDENCIES:
+-------------
+- Step 19: Connected components
+- Step 18: Similarity scores
+
+================================================================================
+STEP 21: SELECT CANDIDATE PAIRS FOR AI SEMANTIC ANALYSIS
+================================================================================
+
+INPUT:
+------
+- From Step 20: Categorized duplicate groups
+- From Step 18: Comprehensive similarity matrix
+- Configuration: max_ai_checks = 30 (configurable)
+
+PROCESS:
+--------
+- Select top N similar pairs that are NOT already exact duplicates
+- Prioritize pairs with similarity 75-95% (ambiguous cases)
+- Limit to max_ai_checks to save API costs
+
+ALGORITHM:
+----------
+```python
+# Get all pairs with similarity 75-95% (ambiguous)
+candidate_pairs = []
+for (tc1_id, tc2_id), sim_data in comprehensive_similarity.items():
+    similarity = sim_data["similarity"]
+    # Skip exact duplicates (AI not needed)
+    # Skip very different (AI not needed)
+    if 0.75 <= similarity < 1.0:
+        candidate_pairs.append({
+            "tc1_id": tc1_id,
+            "tc2_id": tc2_id,
+            "similarity": similarity
+        })
+
+# Sort by similarity (descending)
+candidate_pairs.sort(key=lambda x: x["similarity"], reverse=True)
+
+# Take top N
+ai_candidates = candidate_pairs[:max_ai_checks]  # Top 30
+```
+
+OUTPUT:
+-------
+List of candidate pairs for AI analysis:
+[
+    {"tc1_id": 13, "tc2_id": 14, "similarity": 0.77},
+    {"tc1_id": 38, "tc2_id": 44, "similarity": 0.85},
+    {"tc1_id": 11, "tc2_id": 49, "similarity": 0.85},
+    ... (30 pairs total)
+]
+
+DEPENDENCIES:
+-------------
+- Step 20: Duplicate groups
+- Step 18: Similarity matrix
+
+================================================================================
+STEP 22: AI SEMANTIC DUPLICATE DETECTION (FOR EACH CANDIDATE PAIR)
+================================================================================
+
+INPUT:
+------
+- From Step 21: Candidate pairs list
+- From Step 4: TestCase objects (to get names, descriptions, steps)
+- From Step 12: Domains per test case
+- Claude API: API key and model (claude-3-5-haiku-20241022)
+
+PROCESS:
+--------
+- For each candidate pair, prepare prompt with:
+  - Test case names, descriptions, steps
+  - Detected websites/domains
+- Send to Claude API
+- Parse response: similarity, recommendation, reasoning
+- Cache result to avoid redundant calls
+
+ALGORITHM:
+----------
+```python
+for candidate in ai_candidates:
+    tc1_id = candidate["tc1_id"]
+    tc2_id = candidate["tc2_id"]
+    
+    tc1 = test_cases[tc1_id]
+    tc2 = test_cases[tc2_id]
+    
+    # Prepare steps summary
+    tc1_steps = "\n".join([f"{i+1}. {s.action} {s.element or ''} - {s.description}" 
+                           for i, s in enumerate(tc1.steps)])
+    tc2_steps = "\n".join([f"{i+1}. {s.action} {s.element or ''} - {s.description}" 
+                           for i, s in enumerate(tc2.steps)])
+    
+    # Get domains
+    tc1_websites = ", ".join(domains_per_test_case[tc1_id])
+    tc2_websites = ", ".join(domains_per_test_case[tc2_id])
+    
+    # Build prompt
+    prompt = f"""
+    Compare these two test cases and determine if they are semantically similar.
+    CRITICAL: Check if these test cases target DIFFERENT websites/domains.
+    If they target different websites, they are NOT duplicates even if steps are identical.
+    
+    Test Case 1:
+    ID: {tc1_id}
+    Name: {tc1.name}
+    Description: {tc1.description}
+    Steps: {tc1_steps}
+    Detected Websites: {tc1_websites}
+    
+    Test Case 2:
+    ID: {tc2_id}
+    Name: {tc2.name}
+    Description: {tc2.description}
+    Steps: {tc2_steps}
+    Detected Websites: {tc2_websites}
+    
+    Provide:
+    1. Semantic similarity (0-100%)
+    2. Are they testing the same functionality?
+    3. Are they targeting different websites/domains? (YES/NO)
+    4. Recommendation: Keep both, merge, or remove one
+    5. Reasoning
+    """
+    
+    # Check cache first
+    cache_key = hash(f"{tc1_id}_{tc2_id}_{tc1_steps}_{tc2_steps}")
+    cached_result = cache_manager.get(cache_key)
+    
+    if cached_result:
+        result = cached_result
+    else:
+        # Call Claude API
+        response = claude_client.generate_response(prompt)
+        result = parse_ai_response(response)
+        cache_manager.set(cache_key, result)
+    
+    # If different websites detected → Force "keep_both"
+    if check_different_websites(domains_per_test_case[tc1_id], 
+                                domains_per_test_case[tc2_id]):
+        result["semantic_similarity"] = 0.3
+        result["recommendation"] = "keep_both"
+    
+    ai_results[(tc1_id, tc2_id)] = result
+```
+
+OUTPUT:
+-------
+AI semantic analysis results:
+{
+    (13, 14): {
+        "semantic_similarity": 85.0,
+        "recommendation": "merge",
+        "reasoning": "Both test password change flow with slight variations",
+        "different_websites": False
+    },
+    (11, 49): {
+        "semantic_similarity": 85.0,
+        "recommendation": "merge",
+        "reasoning": "Both test login functionality",
+        "different_websites": False
+    },
+    (12, 51): {
+        "semantic_similarity": 90.0,
+        "recommendation": "remove",
+        "reasoning": "TC51 is redundant, TC12 covers the same functionality",
+        "different_websites": False
+    },
+    ... (30 pairs analyzed)
+}
+
+AI semantic duplicate pairs found: 9 pairs
+
+DEPENDENCIES:
+-------------
+- Step 21: Candidate pairs
+- Step 4: TestCase objects
+- Step 12: Domains
+- Claude API (external)
+
+================================================================================
+STEP 23: COMBINE ALGORITHMIC AND AI RESULTS
+================================================================================
+
+INPUT:
+------
+- From Step 20: Algorithmic duplicate groups
+- From Step 22: AI semantic duplicate pairs
+
+PROCESS:
+--------
+- Merge AI-found pairs into duplicate groups
+- Update groups if AI finds additional similarities
+- Combine results into final duplicate groups structure
+
+ALGORITHM:
+----------
+```python
+# Start with algorithmic groups
+final_duplicate_groups = {
+    "exact_duplicates": exact_duplicates.copy(),
+    "near_duplicates": near_duplicates.copy(),
+    "highly_similar": highly_similar.copy()
+}
+
+# Add AI-found semantic duplicates
+ai_semantic_pairs = []
+for (tc1_id, tc2_id), ai_result in ai_results.items():
+    if ai_result["semantic_similarity"] >= 0.75:
+        # Check if this pair is already in a group
+        found = False
+        for group_type, groups in final_duplicate_groups.items():
+            for group in groups:
+                if tc1_id in group["test_case_ids"] and tc2_id in group["test_case_ids"]:
+                    found = True
+                    break
+            if found:
+                break
+        
+        if not found:
+            # New semantic duplicate pair
+            ai_semantic_pairs.append({
+                "test_case_ids": [tc1_id, tc2_id],
+                "semantic_similarity": ai_result["semantic_similarity"],
+                "recommendation": ai_result["recommendation"]
+            })
+
+# Update final groups
+final_duplicate_groups["ai_semantic_pairs"] = ai_semantic_pairs
+final_duplicate_groups["ai_semantic_pairs_found"] = len(ai_semantic_pairs)
+final_duplicate_groups["total_groups"] = (
+    len(exact_duplicates) + 
+    len(near_duplicates) + 
+    len(highly_similar) + 
+    len(ai_semantic_pairs)
+)
+```
+
+OUTPUT:
+-------
+Final duplicate groups (combined):
+{
+    "exact_duplicates": [
+        {"test_case_ids": [11, 12, 36, ...], "max_similarity": 1.0, ...},
+        {"test_case_ids": [15, 17], "max_similarity": 1.0, ...},
+        {"test_case_ids": [29, 31, 32, 2, 5], "max_similarity": 1.0, ...}
+    ],
+    "near_duplicates": [],
+    "highly_similar": [
+        {"test_case_ids": [13, 14], "max_similarity": 0.77, ...}
+    ],
+    "ai_semantic_pairs": [
+        {"test_case_ids": [12, 51], "semantic_similarity": 90.0, ...},
+        {"test_case_ids": [50, 51], "semantic_similarity": 85.0, ...},
+        ... (9 pairs)
+    ],
+    "ai_semantic_pairs_found": 9,
+    "total_groups": 4
+}
+
+DEPENDENCIES:
+-------------
+- Step 20: Algorithmic duplicate groups
+- Step 22: AI semantic results
+
+================================================================================
+STEP 24: IDENTIFY USER FLOWS
+================================================================================
+
+INPUT:
+------
+- From Step 4: TestCase objects
+- From Step 6: Action sequences
+
+PROCESS:
+--------
+- Analyze action sequences to identify flow types
+- Classify flows: login, navigation, data_entry, verification, logout, etc.
+- Build flow graph (pages → transitions)
+
+ALGORITHM:
+----------
+```python
+def identify_flow_type(test_case):
+    """Identify flow types in a test case."""
+    flow_types = []
+    sequence = action_sequences[test_case.id]
+    
+    if "navigateto" in sequence and "login" in test_case.name.lower():
+        flow_types.append("login")
+    
+    if "navigateto" in sequence and sequence.count("navigateto") > 1:
+        flow_types.append("navigation")
+    
+    if "type" in sequence:
+        flow_types.append("data_entry")
+    
+    if "verify" in sequence:
+        flow_types.append("verification")
+    
+    return flow_types
+
+# Identify flows for all test cases
+flows_per_test_case = {}
+for test_id, test_case in test_cases.items():
+    flows_per_test_case[test_id] = identify_flow_type(test_case)
+```
+
+OUTPUT:
+-------
+Flows per test case:
+{
+    1: ["login", "navigation", "data_entry", "verification"],
+    2: ["login", "verification"],
+    11: ["login", "verification"],
+    13: ["data_entry", "verification"],
+    ... (43 test cases)
+}
+
+Unique flows identified: 7 flows
+- login
+- navigation
+- data_entry
+- verification
+- logout
+- search
+- profile_update
+
+DEPENDENCIES:
+-------------
+- Step 4: TestCase objects
+- Step 6: Action sequences
+
+================================================================================
+STEP 25: CALCULATE FLOW COVERAGE
+================================================================================
+
+INPUT:
+------
+- From Step 24: Flows per test case
+- From Step 24: Unique flows list
+
+PROCESS:
+--------
+- Count how many unique flows are covered by test cases
+- Calculate coverage percentage
+- Identify critical flows (must be maintained)
+
+ALGORITHM:
+----------
+```python
+# Get all unique flows
+all_flows = set()
+for flows in flows_per_test_case.values():
+    all_flows.update(flows)
+
+unique_flows = list(all_flows)  # 7 unique flows
+
+# Count covered flows (all are covered initially)
+covered_flows = len(unique_flows)  # 7
+
+# Calculate coverage
+coverage_percentage = (covered_flows / len(unique_flows)) * 100  # 100%
+
+# Identify critical flows
+critical_flows = ["login", "verification"]  # Must be tested
+critical_covered = all(flow in all_flows for flow in critical_flows)
+```
+
+OUTPUT:
+-------
+Flow coverage metrics:
+{
+    "total_unique_flows": 7,
+    "covered_flows": 7,
+    "coverage_percentage": 100.0,
+    "critical_flows": ["login", "verification"],
+    "all_critical_covered": True
+}
+
+DEPENDENCIES:
+-------------
+- Step 24: Flows per test case
+
+================================================================================
+STEP 26: CLASSIFY TEST CASES AS ADMIN VS USER
+================================================================================
+
+INPUT:
+------
+- From Step 4: TestCase objects (names, descriptions, steps)
+
+PROCESS:
+--------
+- Analyze test case content for admin vs user keywords
+- Classify each test case
+
+ALGORITHM:
+----------
+```python
+def classify_test_case(test_case):
+    """Classify test case as admin or user."""
+    text = (test_case.name + " " + (test_case.description or "")).lower()
+    
+    admin_keywords = ["admin", "administrator", "system user", "manage"]
+    user_keywords = ["user", "customer", "login", "profile"]
+    
+    admin_score = sum(1 for keyword in admin_keywords if keyword in text)
+    user_score = sum(1 for keyword in user_keywords if keyword in text)
+    
+    if admin_score > user_score:
+        return "admin"
+    else:
+        return "user"
+
+# Classify all
+classifications = {}
+for test_id, test_case in test_cases.items():
+    classifications[test_id] = classify_test_case(test_case)
+```
+
+OUTPUT:
+-------
+Test case classifications:
+{
+    1: "admin",
+    2: "user",
+    6: "admin",
+    7: "user",
+    ... (43 test cases)
+}
+
+Admin test cases: 15
+User test cases: 28
+
+DEPENDENCIES:
+-------------
+- Step 4: TestCase objects
+
+================================================================================
+STEP 27: CALCULATE BASELINE COVERAGE (BEFORE OPTIMIZATION)
+================================================================================
+
+INPUT:
+------
+- From Step 4: All TestCase objects (43 test cases)
+- From Step 10: Step coverage (100%)
+- From Step 25: Flow coverage (100%)
+
+PROCESS:
+--------
+- Calculate baseline metrics that must be maintained
+- Store for comparison during optimization
+
+ALGORITHM:
+----------
+```python
+baseline_coverage = {
+    "flow_coverage": calculate_flow_coverage(test_cases),  # 100%
+    "step_coverage": calculate_step_coverage(test_cases),  # 100% (213/213)
+    "critical_flows": identify_critical_flow_coverage(test_cases)  # True
+}
+```
+
+OUTPUT:
+-------
+Baseline coverage:
+{
+    "flow_coverage": {
+        "total_unique_flows": 7,
+        "covered_flows": 7,
+        "coverage_percentage": 100.0
+    },
+    "step_coverage": {
+        "total_unique_steps": 213,
+        "covered_steps": 213,
+        "coverage_percentage": 100.0
+    },
+    "critical_flows_covered": True
+}
+
+DEPENDENCIES:
+-------------
+- Step 4: TestCase objects
+- Step 10: Step coverage
+- Step 25: Flow coverage
+
+================================================================================
+STEP 28: GET OPTIMIZATION CANDIDATES
+================================================================================
+
+INPUT:
+------
+- From Step 23: Final duplicate groups
+- From Step 4: TestCase objects
+- From Step 8: Unique steps per test case
+
+PROCESS:
+--------
+- Extract test cases from duplicate groups
+- Determine action: "remove" or "merge"
+  - If both have unique steps → "merge"
+  - If one has no unique steps → "remove"
+- Sort by priority (exact duplicates first)
+
+ALGORITHM:
+----------
+```python
+candidates = []
+
+# Pr

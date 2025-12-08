@@ -1,0 +1,55 @@
+{
+  "execution_order": [],
+  "parallel_groups": [],
+  "priorities": {},
+  "priority_categories": {
+    "smoke": [],
+    "high": [],
+    "medium": [],
+    "low": []
+  },
+  "estimated_times": {
+    "total_time_ms": 0,
+    "total_time_seconds": 0.0,
+    "total_time_minutes": 0.0,
+    "per_test_case": {}
+  },
+  "checkpoints": [],
+  "rollback_points": [],
+  "plan_by_category": {
+    "smoke": {
+      "test_case_ids": [],
+      "test_cases": [],
+      "total_count": 0,
+      "estimated_time_seconds": 0
+    },
+    "high": {
+      "test_case_ids": [],
+      "test_cases": [],
+      "total_count": 0,
+      "estimated_time_seconds": 0
+    },
+    "medium": {
+      "test_case_ids": [],
+      "test_cases": [],
+      "total_count": 0,
+      "estimated_time_seconds": 0
+    },
+    "low": {
+      "test_case_ids": [],
+      "test_cases": [],
+      "total_count": 0,
+      "estimated_time_seconds": 0
+    }
+  },
+  "summary": {
+    "total_test_cases": 0,
+    "total_execution_time_seconds": 0.0,
+    "total_execution_time_minutes": 0.0,
+    "smoke_tests": 0,
+    "high_priority_tests": 0,
+    "medium_priority_tests": 0,
+    "low_priority_tests": 0,
+    "parallel_groups_count": 0
+  }
+}
