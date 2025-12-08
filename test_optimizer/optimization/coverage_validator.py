@@ -12,6 +12,8 @@ from flows.flow_analyzer import FlowAnalyzer
 from optimization.step_coverage_tracker import StepCoverageTracker
 from analysis.step_uniqueness_analyzer import StepUniquenessAnalyzer
 from analysis.sequence_extractor import SequenceExtractor
+from analysis.role_classifier import RoleClassifier
+from analysis.website_grouper import WebsiteGrouper
 from execution.dependency_analyzer import DependencyAnalyzer
 
 
@@ -36,6 +38,8 @@ class CoverageValidator:
         self.step_uniqueness_analyzer = StepUniquenessAnalyzer()
         self.sequence_extractor = SequenceExtractor()
         self.dependency_analyzer = DependencyAnalyzer()
+        self.role_classifier = RoleClassifier()
+        self.website_grouper = WebsiteGrouper()
         self.min_coverage = min_coverage_percentage
         self.min_step_coverage = min_step_coverage_percentage
     
@@ -65,7 +69,6 @@ class CoverageValidator:
         # Validate coverage percentage
         coverage_maintained = optimized_coverage["coverage_percentage"] >= (self.min_coverage * 100)
         
-        # Check if all critical flows are still covered
         all_critical_covered = optimized_critical["all_critical_covered"]
         
         # Find lost flows
@@ -288,13 +291,11 @@ class CoverageValidator:
                 if step.element:
                     original_elements.add(step.element.lower().strip())
                 if step.locator:
-                    # Extract from locator
                     if isinstance(step.locator, dict):
                         for key in ["label", "id", "name", "placeholder", "xpath", "selector"]:
                             if key in step.locator:
                                 original_elements.add(str(step.locator[key]).lower().strip())
         
-        # Extract all elements from optimized
         optimized_elements = set()
         for test_case in optimized_test_cases.values():
             for step in test_case.steps:
@@ -306,17 +307,14 @@ class CoverageValidator:
                             if key in step.locator:
                                 optimized_elements.add(str(step.locator[key]).lower().strip())
         
-        # Find lost elements
         lost_elements = original_elements - optimized_elements
         
-        # Calculate coverage
         original_count = len(original_elements)
         optimized_count = len(optimized_elements)
         coverage_percentage = (optimized_count / original_count * 100) if original_count > 0 else 0.0
         
-        # Element coverage threshold: 90% (more lenient than step coverage)
-        # Elements can be lost when removing duplicates - this is acceptable
-        threshold = 90.0  # 90% element coverage (lower threshold for less critical metric)
+        
+        threshold = 90.0  
         passed = coverage_percentage >= threshold
         
         return {
@@ -347,7 +345,6 @@ class CoverageValidator:
         # Identify scenarios from test case names and descriptions
         original_scenarios = set()
         for test_case in original_test_cases.values():
-            # Extract scenario type from name/description
             text = f"{test_case.name} {test_case.description or ''}".lower()
             
             if any(keyword in text for keyword in ["error", "fail", "invalid", "exception"]):
@@ -359,7 +356,6 @@ class CoverageValidator:
             if any(keyword in text for keyword in ["alternative", "different", "other"]):
                 original_scenarios.add("alternative_flow")
             
-            # Default to happy path if no keywords
             if not original_scenarios:
                 original_scenarios.add("happy_path")
         
@@ -379,10 +375,8 @@ class CoverageValidator:
             if not optimized_scenarios:
                 optimized_scenarios.add("happy_path")
         
-        # Find lost scenarios
         lost_scenarios = original_scenarios - optimized_scenarios
         
-        # Critical scenarios must be covered
         critical_scenarios = {"happy_path", "error_scenario"}
         lost_critical = critical_scenarios.intersection(lost_scenarios)
         
@@ -422,7 +416,6 @@ class CoverageValidator:
             if test_case.test_data_id:
                 optimized_data_ids.add(test_case.test_data_id)
         
-        # Extract test data from steps
         original_step_data = set()
         for test_case in original_test_cases.values():
             for step in test_case.steps:
@@ -435,16 +428,12 @@ class CoverageValidator:
                 if step.test_data:
                     optimized_step_data.add(str(step.test_data).lower().strip())
         
-        # Find lost data
         lost_data_ids = original_data_ids - optimized_data_ids
         lost_step_data = original_step_data - optimized_step_data
         
-        # Calculate coverage
         data_id_coverage = (len(optimized_data_ids) / len(original_data_ids) * 100) if original_data_ids else 100.0
         step_data_coverage = (len(optimized_step_data) / len(original_step_data) * 100) if original_step_data else 100.0
         
-        # Data coverage threshold: 90% (more lenient than step coverage)
-        # Test data can be lost when removing duplicates - this is acceptable
         data_id_threshold = 90.0
         step_data_threshold = 90.0
         passed = data_id_coverage >= data_id_threshold and step_data_coverage >= step_data_threshold
@@ -483,31 +472,27 @@ class CoverageValidator:
         """
         # Define critical sequences that must be preserved
         critical_sequences = [
-            ["navigateto", "click", "enter", "click"],  # Login pattern
-            ["navigateto", "click", "enter", "click", "verify"],  # Login with verification
-            ["click", "enter", "click"],  # Form fill pattern
-            ["click", "enter", "click", "verify"],  # Form fill with verification
+            ["navigateto", "click", "enter", "click"], 
+            ["navigateto", "click", "enter", "click", "verify"],
+            ["click", "enter", "click"], 
+            ["click", "enter", "click", "verify"],
         ]
         
-        # Extract sequences from original test cases
         original_sequences = {}
         for test_id, test_case in original_test_cases.items():
             sequence = self.sequence_extractor.extract_action_sequence(test_case)
             original_sequences[test_id] = sequence
         
-        # Extract sequences from optimized test cases
         optimized_sequences = {}
         for test_id, test_case in optimized_test_cases.items():
             sequence = self.sequence_extractor.extract_action_sequence(test_case)
             optimized_sequences[test_id] = sequence
         
-        # Check for broken sequences
         broken_sequences = []
         lost_sequences = []
         
         # Check each original sequence
         for test_id, original_seq in original_sequences.items():
-            # Check if this sequence matches any critical pattern
             matches_critical = False
             for critical_seq in critical_sequences:
                 if self._sequence_contains_pattern(original_seq, critical_seq):
@@ -515,11 +500,9 @@ class CoverageValidator:
                     break
             
             if matches_critical:
-                # Check if this sequence is preserved in optimized
                 preserved = False
                 for opt_id, opt_seq in optimized_sequences.items():
                     if self._sequence_contains_pattern(opt_seq, critical_seq):
-                        # Check if order is maintained
                         if self._check_sequence_order(original_seq, opt_seq, critical_seq):
                             preserved = True
                             break
@@ -535,7 +518,7 @@ class CoverageValidator:
                     if sequence_exists:
                         broken_sequences.append({
                             "test_case_id": test_id,
-                            "original_sequence": "->".join(original_seq[:10]),  # First 10 steps
+                            "original_sequence": "->".join(original_seq[:10]),  
                             "issue": "Sequence order broken"
                         })
                     else:
@@ -576,8 +559,7 @@ class CoverageValidator:
         if not orig_positions or not opt_positions:
             return False
         
-        # Check if relative order is maintained
-        # For now, just check if pattern exists in both
+        
         return True
     
     def _find_pattern_positions(self, sequence: List[str], pattern: List[str]) -> List[int]:
@@ -630,8 +612,6 @@ class CoverageValidator:
                         "issue": f"TC{test_id} depends on TC{dep_id} which was removed/merged"
                     })
         
-        # Check for implicit dependencies (shared data/state)
-        # Test cases that create data vs test cases that use it
         implicit_broken = self._check_implicit_dependencies(
             original_test_cases,
             optimized_test_cases
@@ -653,8 +633,7 @@ class CoverageValidator:
     ) -> List[Dict]:
         """Check for implicit dependencies (e.g., create user vs use user)."""
         broken = []
-        
-        # Identify test cases that create entities (e.g., "create user", "add employee")
+      
         creators = {}
         users = {}
         
@@ -663,16 +642,13 @@ class CoverageValidator:
             desc_lower = (test_case.description or "").lower()
             text = f"{name_lower} {desc_lower}"
             
-            # Check if creates something
             if any(keyword in text for keyword in ["create", "add", "new", "register"]):
-                # Extract what it creates
                 entity = self._extract_entity(text)
                 if entity:
                     if entity not in creators:
                         creators[entity] = []
                     creators[entity].append(test_id)
             
-            # Check if uses something created
             if any(keyword in text for keyword in ["use", "with", "login as", "as user"]):
                 entity = self._extract_entity(text)
                 if entity:
@@ -680,13 +656,11 @@ class CoverageValidator:
                         users[entity] = []
                     users[entity].append(test_id)
         
-        # Check if creators are removed but users remain
         for entity, creator_ids in creators.items():
             # Check if any creator is still in optimized
             creator_exists = any(cid in optimized_test_cases for cid in creator_ids)
             
             if not creator_exists and entity in users:
-                # Creators removed but users remain - potential issue
                 user_ids = users[entity]
                 for user_id in user_ids:
                     if user_id in optimized_test_cases:
@@ -723,16 +697,13 @@ class CoverageValidator:
         Returns:
             Flow transition validation result
         """
-        # Extract transitions from original
         original_transitions = set()
         for test_case in original_test_cases.values():
             transitions = self.flow_analyzer.extract_page_transitions(test_case)
             for trans in transitions:
-                # Create transition signature
                 sig = f"{trans['from']}->{trans['to']}"
                 original_transitions.add(sig)
         
-        # Extract transitions from optimized
         optimized_transitions = set()
         for test_case in optimized_test_cases.values():
             transitions = self.flow_analyzer.extract_page_transitions(test_case)
@@ -740,22 +711,18 @@ class CoverageValidator:
                 sig = f"{trans['from']}->{trans['to']}"
                 optimized_transitions.add(sig)
         
-        # Find lost transitions
         lost_transitions = original_transitions - optimized_transitions
         
-        # Also check for broken transition chains
         broken_chains = []
         
         # Check if critical transition chains are broken
         for test_case in original_test_cases.values():
             transitions = self.flow_analyzer.extract_page_transitions(test_case)
             if len(transitions) >= 2:
-                # Check if this chain is preserved in optimized
                 chain_preserved = False
                 for opt_tc in optimized_test_cases.values():
                     opt_transitions = self.flow_analyzer.extract_page_transitions(opt_tc)
                     if len(opt_transitions) >= len(transitions):
-                        # Check if all transitions exist
                         opt_sigs = {f"{t['from']}->{t['to']}" for t in opt_transitions}
                         orig_sigs = {f"{t['from']}->{t['to']}" for t in transitions}
                         if orig_sigs.issubset(opt_sigs):
@@ -807,11 +774,9 @@ class CoverageValidator:
             
             # Create combination signature
             if len(data_values) >= 2:
-                # For multi-step data combinations
-                combo_sig = "|".join(sorted(data_values[:5]))  # First 5 values
+                combo_sig = "|".join(sorted(data_values[:5]))  
                 original_combinations.add(combo_sig)
             elif len(data_values) == 1:
-                # Single value - check if it's an edge case
                 value = data_values[0]
                 if any(keyword in value for keyword in ["invalid", "error", "empty", "null", "expired", "wrong"]):
                     original_combinations.add(f"edge_case:{value}")
@@ -838,7 +803,7 @@ class CoverageValidator:
         # Check for edge case data loss
         edge_cases_lost = [c for c in lost_combinations if c.startswith("edge_case:")]
         
-        passed = len(edge_cases_lost) == 0  # Only fail if edge cases are lost
+        passed = len(edge_cases_lost) == 0 
         
         return {
             "passed": passed,
@@ -904,10 +869,8 @@ class CoverageValidator:
                 if "unauthorized" in step_text or "403" in step_text:
                     optimized_error_conditions.add("unauthorized")
         
-        # Find lost error conditions
         lost_error_conditions = original_error_conditions - optimized_error_conditions
         
-        # Critical error conditions that must be preserved
         critical_errors = {"invalid_password", "expired_session", "unauthorized"}
         lost_critical = critical_errors.intersection(lost_error_conditions)
         
@@ -918,6 +881,176 @@ class CoverageValidator:
             "lost_error_conditions": list(lost_error_conditions),
             "lost_critical_errors": list(lost_critical),
             "total_issues": len(lost_error_conditions)
+        }
+    
+    def validate_role_consistency(
+        self,
+        merged_test_case: TestCase,
+        source_test_cases: List[TestCase]
+    ) -> Dict:
+        """
+        Validate that all source test cases have the same role.
+        
+        Args:
+            merged_test_case: The merged test case
+            source_test_cases: List of source test cases that were merged
+            
+        Returns:
+            Role consistency validation result
+        """
+        if not source_test_cases:
+            return {
+                "passed": True,
+                "issue": None
+            }
+        
+        # Classify roles for all source test cases
+        roles = []
+        for tc in source_test_cases:
+            role = self.role_classifier.classify_role(tc)
+            roles.append(role)
+        
+        # Check if all roles are the same
+        unique_roles = set(roles)
+        
+        if len(unique_roles) > 1:
+            role_counts = {role: roles.count(role) for role in unique_roles}
+            return {
+                "passed": False,
+                "issue": f"Mixed roles detected: {role_counts}. Cannot merge admin and user test cases.",
+                "roles": list(unique_roles),
+                "role_counts": role_counts
+            }
+        
+        if "unknown" in unique_roles:
+            return {
+                "passed": True,
+                "issue": "Some test cases have unknown role classification",
+                "roles": list(unique_roles)
+            }
+        
+        return {
+            "passed": True,
+            "issue": None,
+            "role": list(unique_roles)[0]
+        }
+    
+    def validate_website_consistency(
+        self,
+        merged_test_case: TestCase,
+        source_test_cases: List[TestCase]
+    ) -> Dict:
+        """
+        Validate that all source test cases have the same website/domain.
+        
+        Args:
+            merged_test_case: The merged test case
+            source_test_cases: List of source test cases that were merged
+            
+        Returns:
+            Website consistency validation result
+        """
+        if not source_test_cases:
+            return {
+                "passed": True,
+                "issue": None
+            }
+        
+        # Extract websites for all source test cases
+        websites = []
+        for tc in source_test_cases:
+            website = self.website_grouper.extract_website(tc)
+            websites.append(website)
+        
+        # Check if all websites are the same
+        unique_websites = set(websites)
+        
+        if len(unique_websites) > 1:
+            # Different websites detected
+            website_counts = {website: websites.count(website) for website in unique_websites}
+            return {
+                "passed": False,
+                "issue": f"Mixed websites detected: {website_counts}. Cannot merge test cases from different websites.",
+                "websites": list(unique_websites),
+                "website_counts": website_counts
+            }
+        
+        if "unknown" in unique_websites:
+            return {
+                "passed": True,
+                "issue": "Some test cases have unknown website classification",
+                "websites": list(unique_websites)
+            }
+        
+        return {
+            "passed": True,
+            "issue": None,
+            "website": list(unique_websites)[0]
+        }
+    
+    def validate_merge_safety(
+        self,
+        test_cases: List[TestCase]
+    ) -> Dict:
+        """
+        Validate that test cases can be safely merged.
+        
+        Checks:
+        - Same role (admin vs user)
+        - Same website/domain
+        - No conflicting state dependencies
+        - No circular dependencies
+        
+        Args:
+            test_cases: List of test cases to merge
+            
+        Returns:
+            Merge safety validation result
+        """
+        if not test_cases:
+            return {
+                "passed": False,
+                "issue": "Empty test case list"
+            }
+        
+        if len(test_cases) == 1:
+            return {
+                "passed": True,
+                "issue": None
+            }
+        
+        issues = []
+        
+        # Check role consistency
+        role_validation = self.validate_role_consistency(None, test_cases)
+        if not role_validation["passed"]:
+            issues.append(role_validation["issue"])
+        
+        # Check website consistency
+        website_validation = self.validate_website_consistency(None, test_cases)
+        if not website_validation["passed"]:
+            issues.append(website_validation["issue"])
+        
+        
+        prerequisite_ids = set()
+        for tc in test_cases:
+            if tc.prerequisite_case:
+                prerequisite_ids.add(tc.prerequisite_case)
+        
+        test_case_ids = {tc.id for tc in test_cases}
+        conflicting_deps = prerequisite_ids.intersection(test_case_ids)
+        
+        if conflicting_deps:
+            issues.append(f"Conflicting dependencies: Test cases {conflicting_deps} are prerequisites of others in the merge group")
+        
+        passed = len(issues) == 0
+        
+        return {
+            "passed": passed,
+            "issues": issues,
+            "role_validation": role_validation,
+            "website_validation": website_validation,
+            "conflicting_dependencies": list(conflicting_deps)
         }
     
     def comprehensive_validation(
@@ -942,26 +1075,21 @@ class CoverageValidator:
         scenario_validation = self.validate_scenario_coverage(original_test_cases, optimized_test_cases)
         data_validation = self.validate_data_coverage(original_test_cases, optimized_test_cases)
         
-        # Enhanced validations (NEW)
         sequence_validation = self.validate_step_sequence_preservation(original_test_cases, optimized_test_cases)
         dependency_validation = self.validate_state_dependencies(original_test_cases, optimized_test_cases)
         transition_validation = self.validate_flow_transitions(original_test_cases, optimized_test_cases)
         data_combo_validation = self.validate_data_combinations(original_test_cases, optimized_test_cases)
         scenario_context_validation = self.validate_scenario_context(original_test_cases, optimized_test_cases)
         
-        # Overall validation - CRITICAL metrics only
-        # Step coverage and flow coverage are CRITICAL (must pass)
-        # Element and data coverage are less critical (warnings only, don't block overall)
-        # Enhanced validations are CRITICAL (must pass)
+        
         overall_valid = (
             step_validation["passed"] and
             flow_validation["is_valid"] and
-            scenario_validation["passed"] and  # Critical scenarios must be maintained
-            sequence_validation["passed"] and  # Step sequences must be preserved
-            dependency_validation["passed"] and  # State dependencies must be maintained
-            transition_validation["passed"] and  # Flow transitions must be preserved
-            scenario_context_validation["passed"]  # Error conditions must be preserved
-            # Note: element_validation, data_validation, and data_combo_validation are warnings, not blockers
+            scenario_validation["passed"] and 
+            sequence_validation["passed"] and 
+            dependency_validation["passed"] and 
+            transition_validation["passed"] and 
+            scenario_context_validation["passed"] 
         )
         
         # Collect warnings and errors
@@ -975,7 +1103,7 @@ class CoverageValidator:
             errors.extend(flow_validation["warnings"])
         
         if not element_validation["passed"]:
-            # Element coverage is a warning, not an error (less critical than step coverage)
+            
             warnings.append(f"Element coverage: {element_validation['lost_elements_count']} elements lost (coverage: {element_validation['coverage_percentage']:.1f}%, threshold: {element_validation['threshold']:.1f}%)")
         
         if not scenario_validation["passed"]:
@@ -988,12 +1116,12 @@ class CoverageValidator:
         if not sequence_validation["passed"]:
             errors.append(f"Step sequence issues: {sequence_validation['total_issues']} broken/lost sequences")
             if sequence_validation['broken_sequences']:
-                for broken in sequence_validation['broken_sequences'][:3]:  # Show first 3
+                for broken in sequence_validation['broken_sequences'][:3]:  
                     errors.append(f"  - TC{broken['test_case_id']}: {broken['issue']}")
         
         if not dependency_validation["passed"]:
             errors.append(f"State dependency issues: {dependency_validation['total_issues']} broken dependencies")
-            for broken in dependency_validation['broken_dependencies'][:3]:  # Show first 3
+            for broken in dependency_validation['broken_dependencies'][:3]:  
                 errors.append(f"  - {broken['issue']}")
         
         if not transition_validation["passed"]:
@@ -1103,7 +1231,6 @@ class CoverageValidator:
         report.append(f"  Status: {'✓ PASSED' if data_cov['passed'] else '✗ FAILED'}")
         report.append("")
         
-        # Enhanced validations (NEW)
         report.append("=" * 80)
         report.append("ENHANCED VALIDATION CHECKS")
         report.append("=" * 80)

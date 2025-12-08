@@ -11,23 +11,27 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from data.models import TestCase, TestStep
 from analysis.similarity_analyzer import SimilarityAnalyzer
 from analysis.step_uniqueness_analyzer import StepUniquenessAnalyzer
+from analysis.prefix_analyzer import PrefixAnalyzer
 from flows.flow_analyzer import FlowAnalyzer
 
 
 class TestCaseMerger:
     """Identifies and merges test cases to preserve all unique steps."""
     
-    def __init__(self, merge_threshold: float = 0.70):
+    def __init__(self, merge_threshold: float = 0.70, role_classifications: Dict[int, str] = None):
         """
         Initialize test case merger.
         
         Args:
             merge_threshold: Similarity threshold for considering merge (0.0 to 1.0)
+            role_classifications: Optional dictionary mapping test case ID to role
         """
         self.similarity_analyzer = SimilarityAnalyzer()
         self.step_uniqueness_analyzer = StepUniquenessAnalyzer()
+        self.prefix_analyzer = PrefixAnalyzer()
         self.flow_analyzer = FlowAnalyzer()
         self.merge_threshold = merge_threshold
+        self.role_classifications = role_classifications or {}
     
     def identify_merge_candidates(
         self,
@@ -60,6 +64,11 @@ class TestCaseMerger:
                 
                 # Check if they're mergeable
                 if similarity >= self.merge_threshold:
+                    role1 = self.role_classifications.get(id1, "unknown")
+                    role2 = self.role_classifications.get(id2, "unknown")
+                    if role1 != role2 or role1 == "unknown":
+                        continue
+                    
                     merge_info = self._analyze_merge_feasibility(tc1, tc2, similarity)
                     if merge_info["can_merge"]:
                         merge_candidates.append(merge_info)
@@ -90,11 +99,9 @@ class TestCaseMerger:
             test_case2
         )
         
-        # If both have unique steps, merge
         unique_in_1 = uniqueness_result["unique_in_test_case_1"]["total"]
         unique_in_2 = uniqueness_result["unique_in_test_case_2"]["total"]
         
-        # Merge if both have unique steps (not a complete subset)
         should_merge = unique_in_1 > 0 and unique_in_2 > 0
         
         return should_merge
@@ -118,7 +125,6 @@ class TestCaseMerger:
         """
         print(f"      [MERGER] Merging TC{test_case1.id} ({len(test_case1.steps)} steps) + TC{test_case2.id} ({len(test_case2.steps)} steps)...")
         
-        # Identify unique steps
         uniqueness_result = self.step_uniqueness_analyzer.identify_unique_steps(
             test_case1,
             test_case2
@@ -127,32 +133,25 @@ class TestCaseMerger:
         unique_2 = uniqueness_result["unique_in_test_case_2"]["total"]
         print(f"      [MERGER] Unique steps: TC{test_case1.id} has {unique_1} unique, TC{test_case2.id} has {unique_2} unique")
         
-        # Get steps from both test cases
         steps1 = sorted(test_case1.steps, key=lambda s: s.position)
         steps2 = sorted(test_case2.steps, key=lambda s: s.position)
         
-        # Merge steps intelligently
         merged_steps = self._merge_steps_intelligently(steps1, steps2)
         print(f"      [MERGER] Merged to {len(merged_steps)} steps (from {len(steps1) + len(steps2)} total)")
         
-        # Generate new ID if not provided
         if new_test_case_id is None:
             new_test_case_id = self.generate_merged_test_case_id([test_case1.id, test_case2.id])
         
-        # Merge metadata
         merged_metadata = self.preserve_merged_metadata([test_case1, test_case2])
         
-        # Combine flows
         flows1 = self.flow_analyzer.identify_flow_type(test_case1)
         flows2 = self.flow_analyzer.identify_flow_type(test_case2)
         combined_flows = list(set(flows1 + flows2))
         
-        # Generate merged name
         merged_name = f"Merged: {test_case1.name} + {test_case2.name}"
         if len(merged_name) > 100:
             merged_name = f"Merged Test Case {test_case1.id} + {test_case2.id}"
         
-        # Create merged description
         merged_description = (
             f"Combined test case merging:\n"
             f"- {test_case1.name} (ID: {test_case1.id})\n"
@@ -160,7 +159,6 @@ class TestCaseMerger:
             f"Preserves all unique steps from both test cases."
         )
         
-        # Create merged TestCase object
         merged_test_case = TestCase(
             id=new_test_case_id,
             name=merged_name,
@@ -199,7 +197,7 @@ class TestCaseMerger:
         new_test_case_id: Optional[int] = None
     ) -> TestCase:
         """
-        Merge multiple test cases into one.
+        Merge multiple test cases into one (iterative pair merging).
         
         Args:
             test_cases_list: List of test cases to merge
@@ -224,6 +222,184 @@ class TestCaseMerger:
             )
         
         return merged
+    
+    def merge_multiple_test_cases(
+        self,
+        test_cases: List[TestCase],
+        new_test_case_id: Optional[int] = None
+    ) -> TestCase:
+        """
+        Merge multiple test cases using prefix/suffix strategy (NEW - Phase 4).
+        
+        Strategy: [Common Prefix] + [All Unique Middles] + [Common Suffix]
+        
+        Args:
+            test_cases: List of TestCase objects to merge (3+ test cases)
+            new_test_case_id: Optional new ID for merged test case
+            
+        Returns:
+            Merged TestCase object
+        """
+        if len(test_cases) == 0:
+            raise ValueError("Cannot merge empty list of test cases")
+        
+        if len(test_cases) == 1:
+            return test_cases[0]
+        
+        if len(test_cases) == 2:
+            return self.generate_merged_test_case(test_cases[0], test_cases[1], new_test_case_id)
+        
+        print(f"      [MERGER] Merging {len(test_cases)} test cases using prefix/suffix strategy...")
+        source_ids = [tc.id for tc in test_cases]
+        print(f"      [MERGER] Source test cases: {source_ids}")
+        
+        merge_points = self.prefix_analyzer.find_merge_points(test_cases)
+        
+        prefix_steps = merge_points["prefix"]
+        unique_middles = merge_points["unique_middles"]
+        suffix_steps = merge_points["suffix"]
+        
+        print(f"      [MERGER] Common prefix: {len(prefix_steps)} steps ({merge_points['prefix_actions']})")
+        print(f"      [MERGER] Unique middle sections: {len(unique_middles)}")
+        print(f"      [MERGER] Common suffix: {len(suffix_steps)} steps ({merge_points['suffix_actions']})")
+        
+        merged_steps = []
+        position = 1
+        
+        for step in prefix_steps:
+            new_step = TestStep(
+                id=step.id,
+                position=position,
+                action_name=step.action_name,
+                action=step.action,
+                element=step.element,
+                description=step.description,
+                locator=step.locator,
+                test_data=step.test_data,
+                wait_time=step.wait_time,
+                test_case_id=None, 
+                raw_data=step.raw_data
+            )
+            merged_steps.append(new_step)
+            position += 1
+        
+        seen_middle_signatures = set()
+        for middle in unique_middles:
+            middle_steps = middle["steps"]
+            middle_sig = "->".join(middle["action_sequence"])
+            
+            if middle_sig not in seen_middle_signatures:
+                for step in middle_steps:
+                    new_step = TestStep(
+                        id=step.id,
+                        position=position,
+                        action_name=step.action_name,
+                        action=step.action,
+                        element=step.element,
+                        description=step.description,
+                        locator=step.locator,
+                        test_data=step.test_data,
+                        wait_time=step.wait_time,
+                        test_case_id=None,
+                        raw_data=step.raw_data
+                    )
+                    merged_steps.append(new_step)
+                    position += 1
+                seen_middle_signatures.add(middle_sig)
+        
+        # Add common suffix
+        for step in suffix_steps:
+            new_step = TestStep(
+                id=step.id,
+                position=position,
+                action_name=step.action_name,
+                action=step.action,
+                element=step.element,
+                description=step.description,
+                locator=step.locator,
+                test_data=step.test_data,
+                wait_time=step.wait_time,
+                test_case_id=None,
+                raw_data=step.raw_data
+            )
+            merged_steps.append(new_step)
+            position += 1
+        
+        print(f"      [MERGER] Merged to {len(merged_steps)} steps (from {sum(len(tc.steps) for tc in test_cases)} total)")
+        
+        # Generate new ID if not provided
+        if new_test_case_id is None:
+            new_test_case_id = self.generate_merged_test_case_id(source_ids)
+        
+        merged_metadata = self.preserve_merged_metadata(test_cases)
+        
+        # Combine flows
+        all_flows = set()
+        for tc in test_cases:
+            flows = self.flow_analyzer.identify_flow_type(tc)
+            all_flows.update(flows)
+        combined_flows = list(all_flows)
+        
+        # Generate merged name
+        if len(test_cases) <= 3:
+            names = [tc.name for tc in test_cases]
+            merged_name = f"Merged: {' + '.join(names)}"
+        else:
+            merged_name = f"Consolidated Flow ({len(test_cases)} test cases)"
+        
+        if len(merged_name) > 100:
+            merged_name = f"Merged Test Case {'+'.join(str(tc.id) for tc in test_cases)}"
+        
+        # Create merged description
+        source_names = [f"- {tc.name} (ID: {tc.id})" for tc in test_cases]
+        merged_description = (
+            f"Consolidated test case merging {len(test_cases)} test cases:\n" +
+            "\n".join(source_names) +
+            f"\n\nPreserves all unique steps using prefix/suffix strategy."
+        )
+        
+        priorities = [tc.priority for tc in test_cases if tc.priority is not None]
+        combined_priority = min(priorities) if priorities else None
+        
+        # Combine durations
+        combined_duration = sum(tc.duration or 0 for tc in test_cases)
+        
+        # Combine tags
+        all_tags = set()
+        for tc in test_cases:
+            if tc.tags:
+                all_tags.update(tc.tags)
+        
+        # Create merged TestCase object
+        merged_test_case = TestCase(
+            id=new_test_case_id,
+            name=merged_name,
+            description=merged_description,
+            priority=combined_priority,
+            status=test_cases[0].status or "READY",
+            duration=combined_duration,
+            pass_count=test_cases[0].pass_count,
+            fail_count=test_cases[0].fail_count,
+            tags=list(all_tags),
+            steps=merged_steps,
+            prerequisite_case=test_cases[0].prerequisite_case,
+            test_data_id=test_cases[0].test_data_id,
+            last_run_result=test_cases[0].last_run_result,
+            created_date=min(tc.created_date or 0 for tc in test_cases) if any(tc.created_date for tc in test_cases) else None,
+            updated_date=max(tc.updated_date or 0 for tc in test_cases) if any(tc.updated_date for tc in test_cases) else None,
+            raw_data={
+                "source_test_cases": source_ids,
+                "merged_from": [tc.raw_data for tc in test_cases if tc.raw_data],
+                "merged_metadata": merged_metadata,
+                "combined_flows": combined_flows,
+                "merge_strategy": "prefix_suffix",
+                "prefix_length": len(prefix_steps),
+                "suffix_length": len(suffix_steps),
+                "unique_middle_count": len(unique_middles)
+            }
+        )
+        
+        return merged_test_case
     
     def create_optimized_merged_test_case(
         self,
@@ -336,7 +512,7 @@ class TestCaseMerger:
             if sig not in seen_step_signatures:
                
                 new_step = TestStep(
-                    id=step.id,  # Keep original ID for now
+                    id=step.id, 
                     position=position,
                     action_name=step.action_name,
                     action=step.action,
@@ -425,7 +601,6 @@ class TestCaseMerger:
         flows2 = set(self.flow_analyzer.identify_flow_type(test_case2))
         flow_overlap = len(flows1.intersection(flows2)) > 0
         
-        # Check step compatibility
         steps1 = sorted(test_case1.steps, key=lambda s: s.position)
         steps2 = sorted(test_case2.steps, key=lambda s: s.position)
         sequential = self._check_sequential(steps1, steps2)
@@ -436,7 +611,6 @@ class TestCaseMerger:
             (flow_overlap or sequential or minor_variations)
         )
         
-        # Estimate merged test case properties
         merged_steps = len(steps1) + len(steps2) - self._count_common_steps(steps1, steps2)
         merged_duration = (test_case1.duration or 0) + (test_case2.duration or 0)
         

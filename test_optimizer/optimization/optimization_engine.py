@@ -10,6 +10,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from data.models import TestCase
 from analysis.duplicate_detector import DuplicateDetector
 from analysis.step_uniqueness_analyzer import StepUniquenessAnalyzer
+from analysis.role_classifier import RoleClassifier
+from analysis.website_grouper import WebsiteGrouper
+from analysis.prefix_analyzer import PrefixAnalyzer
 from flows.coverage_analyzer import CoverageAnalyzer
 from flows.flow_analyzer import FlowAnalyzer
 from optimization.step_coverage_tracker import StepCoverageTracker
@@ -46,9 +49,127 @@ class OptimizationEngine:
         self.flow_analyzer = FlowAnalyzer()
         self.step_uniqueness_analyzer = StepUniquenessAnalyzer()
         self.step_coverage_tracker = StepCoverageTracker()
-        self.test_case_merger = TestCaseMerger()
+        self.role_classifier = RoleClassifier()
+        self.website_grouper = WebsiteGrouper()
+        self.prefix_analyzer = PrefixAnalyzer()
+        self.test_case_merger = TestCaseMerger() 
         self.min_coverage = min_coverage_percentage
         self.min_step_coverage = min_step_coverage_percentage
+        self.role_classifications: Dict[int, str] = {} 
+        self.role_website_groups: Dict[Tuple[str, str], List[int]] = {} 
+    def get_test_case_role(
+        self,
+        test_case_id: int
+    ) -> str:
+        """
+        Get role classification for a test case.
+        
+        Args:
+            test_case_id: Test case ID
+            
+        Returns:
+            "admin", "user", or "unknown"
+        """
+        return self.role_classifications.get(test_case_id, "unknown")
+    
+    def have_same_role(
+        self,
+        test_case_id1: int,
+        test_case_id2: int
+    ) -> bool:
+        """
+        Check if two test cases have the same role.
+        
+        Args:
+            test_case_id1: First test case ID
+            test_case_id2: Second test case ID
+            
+        Returns:
+            True if same role (and not "unknown"), False otherwise
+        """
+        role1 = self.get_test_case_role(test_case_id1)
+        role2 = self.get_test_case_role(test_case_id2)
+        
+        return role1 == role2 and role1 != "unknown"
+    
+    def _perform_multi_test_case_merging(
+        self,
+        test_cases: Dict[int, TestCase]
+    ) -> Dict:
+        """
+        Perform multi-test-case merging within (role, website) groups.
+        
+        Args:
+            test_cases: Dictionary of test case ID to TestCase objects
+            
+        Returns:
+            Result dictionary with merged test cases
+        """
+        merged_count = 0
+        new_test_cases = {}
+        merged_groups = []
+        test_cases_to_remove = set()
+        
+        for (role, website), test_case_ids in self.role_website_groups.items():
+            if len(test_case_ids) < 3:
+                continue
+            
+            # Get test cases for this group
+            group_test_cases = [test_cases[tid] for tid in test_case_ids if tid in test_cases]
+            
+            if len(group_test_cases) < 3:
+                continue
+            
+            mergeable_groups = self.prefix_analyzer.find_mergeable_groups(
+                {tc.id: tc for tc in group_test_cases},
+                min_prefix_length=2, 
+                min_group_size=3    
+            )
+            
+            for merge_group in mergeable_groups:
+                group_test_cases_list = merge_group["test_cases"]
+                group_ids = [tc.id for tc in group_test_cases_list]
+                
+                # Validate merge safety
+                from optimization.coverage_validator import CoverageValidator
+                validator = CoverageValidator()
+                safety_check = validator.validate_merge_safety(group_test_cases_list)
+                
+                if not safety_check["passed"]:
+                    print(f"      [MULTI-MERGE] Skipping merge of {group_ids}: {safety_check['issues']}")
+                    continue
+                
+                # Perform merge
+                try:
+                    merged_tc = self.test_case_merger.merge_multiple_test_cases(group_test_cases_list)
+                    new_test_cases[merged_tc.id] = merged_tc
+                    test_cases_to_remove.update(group_ids)
+                    merged_groups.append({
+                        "source_ids": group_ids,
+                        "merged_id": merged_tc.id,
+                        "prefix_length": merge_group["prefix_length"],
+                        "group_size": len(group_test_cases_list)
+                    })
+                    merged_count += 1
+                    print(f"      [MULTI-MERGE] Merged {len(group_test_cases_list)} test cases (TC{group_ids}) → TC{merged_tc.id}")
+                except Exception as e:
+                    print(f"      [MULTI-MERGE] Failed to merge {group_ids}: {e}")
+                    continue
+        
+        # Create updated test cases dict
+        optimized_test_cases = {
+            tid: tc for tid, tc in test_cases.items()
+            if tid not in test_cases_to_remove
+        }
+        optimized_test_cases.update(new_test_cases)
+        
+        return {
+            "merged_count": merged_count,
+            "new_test_cases_count": len(new_test_cases),
+            "removed_count": len(test_cases_to_remove),
+            "optimized_test_cases": optimized_test_cases,
+            "merged_groups": merged_groups
+        }
     
     def optimize_test_suite(
         self,
@@ -90,7 +211,27 @@ class OptimizationEngine:
         """
         print(f"  [OPTIMIZATION ENGINE] Starting iterative optimization on {len(test_cases)} test cases...")
         
-        # Step 1: Calculate baseline coverage
+        print(f"  [OPTIMIZATION ENGINE] Step 0: Classifying test cases by role (admin/user)...")
+        self.role_classifications = self.role_classifier.classify_test_cases(test_cases)
+        role_stats = self.role_classifier.get_role_statistics(test_cases)
+        print(f"    Role distribution: {role_stats['admin']} admin, {role_stats['user']} user, {role_stats['unknown']} unknown")
+        print(f"    Admin: {role_stats['admin_percentage']:.1f}%, User: {role_stats['user_percentage']:.1f}%")
+        
+        print(f"  [OPTIMIZATION ENGINE] Step 0b: Grouping test cases by (role, website)...")
+        self.role_website_groups = self.website_grouper.group_by_role_and_website(
+            test_cases,
+            self.role_classifications
+        )
+        role_website_stats = self.website_grouper.get_role_website_statistics(
+            test_cases,
+            self.role_classifications
+        )
+        print(f"    Found {role_website_stats['groups']} (role, website) groups")
+        for group_key, count in list(role_website_stats['distribution'].items())[:5]:
+            print(f"      - {group_key}: {count} test cases")
+        
+        self.test_case_merger.role_classifications = self.role_classifications
+        
         print(f"  [OPTIMIZATION ENGINE] Step 1: Calculating baseline coverage...")
         baseline_coverage = self.coverage_analyzer.calculate_flow_coverage(test_cases)
         baseline_critical = self.coverage_analyzer.identify_critical_flow_coverage(test_cases)
@@ -99,18 +240,24 @@ class OptimizationEngine:
         print(f"    Baseline step coverage: {baseline_step_coverage['coverage_percentage']:.1f}% ({baseline_step_coverage['covered_steps']}/{baseline_step_coverage['total_unique_steps']} steps)")
         print(f"    Critical flows covered: {baseline_critical['all_critical_covered']}")
         
-        # Build step coverage map
         print(f"  [OPTIMIZATION ENGINE] Building step coverage map...")
         self.step_coverage_tracker.build_step_coverage_map(test_cases)
         
-        # Step 2: Get optimization candidates (sorted by priority)
-        print(f"  [OPTIMIZATION ENGINE] Step 2: Getting optimization candidates...")
-        candidates = self._get_optimization_candidates(test_cases, ai_recommendations)
+        print(f"  [OPTIMIZATION ENGINE] Step 2: Multi-test-case merging (within role+website groups)...")
+        current_test_cases = test_cases.copy()
+        multi_merge_result = self._perform_multi_test_case_merging(current_test_cases)
+        if multi_merge_result["merged_count"] > 0:
+            current_test_cases = multi_merge_result["optimized_test_cases"]
+            print(f"    Merged {multi_merge_result['merged_count']} groups into {multi_merge_result['new_test_cases_count']} consolidated flows")
+        else:
+            print(f"    No multi-merge opportunities found")
+        
+        print(f"  [OPTIMIZATION ENGINE] Step 3: Getting optimization candidates...")
+        candidates = self._get_optimization_candidates(current_test_cases, ai_recommendations)
         print(f"    Found {len(candidates)} optimization candidates")
         if candidates:
             top_5 = [f"TC{c['test_case_id']} ({c['type']}, sim={c.get('similarity', 0):.1%}, action={c.get('action', 'unknown')})" for c in candidates[:5]]
             print(f"    Top 5 candidates: {top_5}")
-            # Count by type
             exact = sum(1 for c in candidates if c.get('type') == 'exact_duplicate')
             near = sum(1 for c in candidates if c.get('type') == 'near_duplicate')
             highly = sum(1 for c in candidates if c.get('type') == 'highly_similar')
@@ -118,9 +265,8 @@ class OptimizationEngine:
             remove_count = sum(1 for c in candidates if c.get('action') == 'remove')
             print(f"    Breakdown: {exact} exact, {near} near, {highly} highly similar | {merge_count} merge, {remove_count} remove")
         
-        # Step 3: Iteratively optimize (one at a time with rollback)
-        print(f"  [OPTIMIZATION ENGINE] Step 3: Iteratively optimizing (one at a time with rollback)...")
-        current_test_cases = test_cases.copy()
+        print(f"  [OPTIMIZATION ENGINE] Step 4: Iteratively optimizing (one at a time with rollback)...")
+        # current_test_cases already set from multi-merge step
         to_remove = set()
         to_keep = set()
         to_merge = {}
@@ -136,11 +282,9 @@ class OptimizationEngine:
             sim = candidate.get('similarity', 0)
             keep_str = f"TC{keep_id}" if keep_id else "N/A"
             print(f"    [{idx}/{len(candidates)}] TC{test_id} → {action.upper()} (sim={sim:.1%}, keep={keep_str})...", end=" ")
-            # Try optimization
             result = self._try_optimize(current_test_cases, candidate, test_cases)
             
             if result["coverage_maintained"]:
-                # Apply change
                 current_test_cases = result["optimized_test_cases"]
                 
                 if result["action"] == "remove":
@@ -163,7 +307,6 @@ class OptimizationEngine:
                                 "action": "merged"
                             }
             else:
-                # Skip this candidate
                 reason = result.get("reason", "Coverage would be lost")
                 reason_str = reason if isinstance(reason, str) else reason.get("reason", "Coverage would be lost") if isinstance(reason, dict) else str(reason)
                 print(f"✗ SKIPPED (reason: {reason_str[:50]})")
@@ -189,7 +332,6 @@ class OptimizationEngine:
                             "similar_to": keep_id,
                             "similarity": group["max_similarity"]
                         }
-                        # Remove from current set
                         if remove_id in current_test_cases:
                             del current_test_cases[remove_id]
                             exact_count += 1
@@ -227,7 +369,6 @@ class OptimizationEngine:
                                 "action": "ai_recommended_remove"
                             }
                     elif action == "keep":
-                        # Explicitly keep this test case
                         to_keep.add(test_id)
                         ai_processed += 1
             print(f"    Processed {ai_processed} AI recommendations")
@@ -264,7 +405,6 @@ class OptimizationEngine:
         reduction = original_count - optimized_count
         reduction_percentage = (reduction / original_count * 100) if original_count > 0 else 0
         
-        # Calculate time savings
         original_time = sum(tc.duration or 0 for tc in test_cases.values())
         optimized_time = sum(tc.duration or 0 for tc in optimized_test_cases.values())
         time_saved = original_time - optimized_time
@@ -380,7 +520,6 @@ class OptimizationEngine:
                         )
                         
                         if should_merge:
-                            # Merge test cases
                             merged_id = self.test_case_merger.generate_merged_test_case_id([keep_id, remove_id])
                             merged_tc = self.test_case_merger.generate_merged_test_case(
                                 test_cases[keep_id],
@@ -408,7 +547,7 @@ class OptimizationEngine:
                                 "action": "merged"
                             }
                         else:
-                            # Check if safe to remove with step-level validation
+                           
                             removal_check = self._should_remove_test_case(
                                 remove_id,
                                 keep_id,
@@ -428,7 +567,6 @@ class OptimizationEngine:
                                     "step_coverage_maintained": removal_check.get("step_coverage_maintained", True)
                                 }
                             else:
-                                # Don't remove unique steps not covered
                                 to_keep.add(keep_id)
                                 removal_reasons[remove_id] = {
                                     "reason": f"Near duplicate but kept: {removal_check.get('reason', 'Unique steps not covered')}",
@@ -445,7 +583,6 @@ class OptimizationEngine:
                 
                 for remove_id in remove_ids:
                     if remove_id not in to_keep and remove_id not in to_remove:
-                        # Check if should merge instead of remove
                         should_merge = self.test_case_merger.should_merge_instead_of_remove(
                             test_cases[keep_id],
                             test_cases[remove_id]
@@ -500,7 +637,6 @@ class OptimizationEngine:
                                     "step_coverage_maintained": removal_check.get("step_coverage_maintained", True)
                                 }
                             else:
-                                # Don't remove - coverage would be lost
                                 to_keep.add(keep_id)
                                 removal_reasons[remove_id] = {
                                     "reason": f"Highly similar but kept: {removal_check.get('reason', 'Coverage would be lost')}",
@@ -637,7 +773,6 @@ class OptimizationEngine:
         
         test_case_to_remove = test_cases[remove_id]
         
-        # Create test set without this test case
         test_set = {k: v for k, v in test_cases.items() 
                    if k != remove_id and k not in to_remove}
         
@@ -659,14 +794,12 @@ class OptimizationEngine:
         # Identify unique steps in test case to remove
         unique_steps_info = None
         if keep_id and keep_id in test_cases:
-            # Compare with similar test case
             uniqueness_result = self.step_uniqueness_analyzer.identify_unique_steps(
                 test_case_to_remove,
                 test_cases[keep_id]
             )
             unique_steps_count = uniqueness_result["unique_in_test_case_1"]["total"]
             
-            # Check if unique steps are covered elsewhere
             unique_steps = uniqueness_result["unique_in_test_case_1"]["exact"] + \
                           uniqueness_result["unique_in_test_case_1"]["fuzzy"]
             coverage_info = self.step_uniqueness_analyzer.check_step_coverage(
@@ -809,7 +942,6 @@ class OptimizationEngine:
                         action = "remove"
                         priority = 1  
                 else:
-                    # Fallback if test cases not found
                     action = "remove"
                     priority = 1
                 
@@ -826,7 +958,6 @@ class OptimizationEngine:
         for group in duplicate_groups["near_duplicates"]:
             keep_id = group["recommended_keep"]
             for remove_id in group["recommended_remove"]:
-                # Check if should merge
                 should_merge = self.test_case_merger.should_merge_instead_of_remove(
                     test_cases[keep_id],
                     test_cases[remove_id]
@@ -841,7 +972,6 @@ class OptimizationEngine:
                     "action": "merge" if should_merge else "remove"
                 })
         
-        # Process highly similar
         for group in duplicate_groups["highly_similar"]:
             keep_id = group["recommended_keep"]
             for remove_id in group["recommended_remove"]:
@@ -855,7 +985,7 @@ class OptimizationEngine:
                     "keep_id": keep_id,
                     "similarity": group["max_similarity"],
                     "type": "highly_similar",
-                    "priority": 3,  # Lower priority
+                    "priority": 3, 
                     "action": "merge" if should_merge else "remove"
                 })
         
@@ -876,7 +1006,6 @@ class OptimizationEngine:
                         candidate["priority"] = candidate["priority"] + 1.0
                         candidate["ai_recommendation"] = "keep"
                     elif ai_rec.get("action") == "merge":
-                        # AI suggests merge - adjust action
                         if candidate["action"] != "merge":
                             candidate["action"] = "merge"
                         candidate["ai_recommendation"] = "merge"
@@ -921,7 +1050,6 @@ class OptimizationEngine:
         
         # Try optimization
         if action == "merge" and keep_id and keep_id in current_test_cases:
-            # Try merging
             try:
                 merged_id = self.test_case_merger.generate_merged_test_case_id([keep_id, test_case_id])
                 merged_tc = self.test_case_merger.generate_merged_test_case(
