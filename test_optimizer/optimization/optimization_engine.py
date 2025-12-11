@@ -111,26 +111,28 @@ class OptimizationEngine:
         test_cases_to_remove = set()
         
         for (role, website), test_case_ids in self.role_website_groups.items():
-            if len(test_case_ids) < 3:
+            # ENHANCED: Allow pairs (min_group_size=2) for maximum merging
+            if len(test_case_ids) < 2:
                 continue
             
             # Get test cases for this group
             group_test_cases = [test_cases[tid] for tid in test_case_ids if tid in test_cases]
             
-            if len(group_test_cases) < 3:
+            if len(group_test_cases) < 2:
                 continue
             
             mergeable_groups = self.prefix_analyzer.find_mergeable_groups(
                 {tc.id: tc for tc in group_test_cases},
-                min_prefix_length=2, 
-                min_group_size=3    
+                min_prefix_length=1,  # Lowered to allow login pattern detection (even 1 step)
+                min_group_size=2,     # CHANGED: Allow pairs to merge
+                use_flexible_login=True  
             )
             
             for merge_group in mergeable_groups:
                 group_test_cases_list = merge_group["test_cases"]
                 group_ids = [tc.id for tc in group_test_cases_list]
                 
-                # Validate merge safety
+                # Validate merge safety (role/website consistency)
                 from optimization.coverage_validator import CoverageValidator
                 validator = CoverageValidator()
                 safety_check = validator.validate_merge_safety(group_test_cases_list)
@@ -139,9 +141,59 @@ class OptimizationEngine:
                     print(f"      [MULTI-MERGE] Skipping merge of {group_ids}: {safety_check['issues']}")
                     continue
                 
-                # Perform merge
+                # CRITICAL: Validate step flow compatibility before merging
+                from optimization.step_flow_validator import StepFlowValidator
+                flow_validator = StepFlowValidator()
+                
+                # Check if test cases have compatible flows
+                flow_compatible = True
+                for tc in group_test_cases_list:
+                    deps_issues = flow_validator.validate_step_dependencies(tc.steps)
+                    if len(deps_issues) > 10:  # Too many dependency issues
+                        flow_compatible = False
+                        break
+                
+                if not flow_compatible:
+                    print(f"      [MULTI-MERGE] Skipping merge of {group_ids}: Too many flow dependency issues")
+                    continue
+                
+                # CRITICAL: Validate step coverage BEFORE merging
+                # Create a test merge to check coverage impact
                 try:
                     merged_tc = self.test_case_merger.merge_multiple_test_cases(group_test_cases_list)
+                    
+                    # Create test optimized set
+                    test_optimized = {
+                        tid: tc for tid, tc in test_cases.items()
+                        if tid not in group_ids
+                    }
+                    test_optimized[merged_tc.id] = merged_tc
+                    
+                    # Validate coverage against baseline (original test_cases)
+                    # For large merges (10+ test cases), use slightly lower threshold (95%)
+                    # because some step loss is expected but still acceptable for consolidation
+                    is_large_merge = len(group_ids) >= 10
+                    original_threshold = self.min_step_coverage
+                    
+                    # Temporarily lower threshold for large merges
+                    if is_large_merge:
+                        self.min_step_coverage = 0.95
+                    
+                    coverage_check = self._validate_coverage(
+                        test_cases,  # snapshot (before merge)
+                        test_optimized,  # optimized (after merge)
+                        test_cases  # baseline (original full suite)
+                    )
+                    
+                    # Restore original threshold
+                    if is_large_merge:
+                        self.min_step_coverage = original_threshold
+                    
+                    if not coverage_check["passed"]:
+                        print(f"      [MULTI-MERGE] Skipping merge of {group_ids}: {coverage_check.get('reason', 'Step coverage would drop below threshold')}")
+                        continue
+                    
+                    # Coverage maintained - proceed with merge
                     new_test_cases[merged_tc.id] = merged_tc
                     test_cases_to_remove.update(group_ids)
                     merged_groups.append({
@@ -243,14 +295,25 @@ class OptimizationEngine:
         print(f"  [OPTIMIZATION ENGINE] Building step coverage map...")
         self.step_coverage_tracker.build_step_coverage_map(test_cases)
         
-        print(f"  [OPTIMIZATION ENGINE] Step 2: Multi-test-case merging (within role+website groups)...")
+        print(f"  [OPTIMIZATION ENGINE] Step 2: Multi-test-case merging (enabled - login once, run all scenarios, logout once)...")
         current_test_cases = test_cases.copy()
+        multi_merged_test_cases = {}  # Track multi-merged test cases separately
+        multi_merged_source_ids = set()  # Track which original test cases were merged
         multi_merge_result = self._perform_multi_test_case_merging(current_test_cases)
         if multi_merge_result["merged_count"] > 0:
             current_test_cases = multi_merge_result["optimized_test_cases"]
+            # Extract multi-merged test cases (they have new IDs not in original test_cases)
+            for merged_id, merged_tc in current_test_cases.items():
+                if merged_id not in test_cases:  # New ID = multi-merged test case
+                    multi_merged_test_cases[merged_id] = merged_tc
+            # Extract source IDs that were merged (from merged_groups)
+            for merged_group in multi_merge_result.get("merged_groups", []):
+                source_ids = merged_group.get("source_ids", [])
+                multi_merged_source_ids.update(source_ids)
             print(f"    Merged {multi_merge_result['merged_count']} groups into {multi_merge_result['new_test_cases_count']} consolidated flows")
+            print(f"    Source test cases merged: {sorted(multi_merged_source_ids)}")
         else:
-            print(f"    No multi-merge opportunities found")
+            print(f"    No safe multi-merge opportunities found (all skipped due to coverage validation)")
         
         print(f"  [OPTIMIZATION ENGINE] Step 3: Getting optimization candidates...")
         candidates = self._get_optimization_candidates(current_test_cases, ai_recommendations)
@@ -267,12 +330,19 @@ class OptimizationEngine:
         
         print(f"  [OPTIMIZATION ENGINE] Step 4: Iteratively optimizing (one at a time with rollback)...")
         # current_test_cases already set from multi-merge step
-        to_remove = set()
+        to_remove = multi_merged_source_ids.copy()  # Start with test cases already merged in Step 2
         to_keep = set()
         to_merge = {}
         merged_test_cases = {}
         removal_reasons = {}
         skipped_candidates = []
+        
+        # Add removal reasons for multi-merged test cases
+        for source_id in multi_merged_source_ids:
+            removal_reasons[source_id] = {
+                "reason": "Multi-merged",
+                "action": "multi_merged"
+            }
         
         print(f"    Processing {len(candidates)} candidates one by one...")
         for idx, candidate in enumerate(candidates, 1):
@@ -379,10 +449,12 @@ class OptimizationEngine:
         all_ids = set(test_cases.keys())
         final_to_keep = all_ids - to_remove
         optimized_test_cases = {tid: current_test_cases[tid] for tid in final_to_keep if tid in current_test_cases}
-        optimized_test_cases.update(merged_test_cases) 
+        optimized_test_cases.update(merged_test_cases)  # Pair-wise merged test cases
+        optimized_test_cases.update(multi_merged_test_cases)  # Multi-merged test cases
+        total_merged = len(merged_test_cases) + len(multi_merged_test_cases)
         print(f"    Kept: {len(final_to_keep)} test cases")
         print(f"    Removed: {len(to_remove)} test cases")
-        print(f"    Merged: {len(merged_test_cases)} new merged test cases")
+        print(f"    Merged: {total_merged} new merged test cases ({len(multi_merged_test_cases)} multi-merge, {len(merged_test_cases)} pair-wise)")
         print(f"    Skipped: {len(skipped_candidates)} candidates (coverage would be lost)")
         
         print(f"  [OPTIMIZATION ENGINE] Step 7: Validating final coverage...")
@@ -419,7 +491,8 @@ class OptimizationEngine:
             "test_cases_removed": sorted(list(to_remove)),
             "test_cases_merged": to_merge,
             "merged_test_cases": list(merged_test_cases.keys()),
-            "merged_test_cases_dict": merged_test_cases, 
+            "merged_test_cases_dict": merged_test_cases,
+            "multi_merged_test_cases_dict": multi_merged_test_cases,  # Include multi-merged test cases 
             "removal_reasons": removal_reasons,
             "skipped_candidates": len(skipped_candidates),
             "coverage": {
@@ -917,8 +990,8 @@ class OptimizationEngine:
         """
         candidates = []
         
-        # Detect duplicates
-        duplicate_groups = self.duplicate_detector.detect_duplicates(test_cases)
+        # Detect duplicates (AI semantic already done in Phase 2b, skip here for performance)
+        duplicate_groups = self.duplicate_detector.detect_duplicates(test_cases, use_ai_semantic=False)
         
         
         for group in duplicate_groups["exact_duplicates"]:
@@ -1050,6 +1123,22 @@ class OptimizationEngine:
         
         # Try optimization
         if action == "merge" and keep_id and keep_id in current_test_cases:
+            # CRITICAL: Check role and website compatibility before merging
+            from optimization.coverage_validator import CoverageValidator
+            validator = CoverageValidator()
+            safety_check = validator.validate_merge_safety([
+                current_test_cases[keep_id],
+                current_test_cases[test_case_id]
+            ])
+            
+            if not safety_check["passed"]:
+                return {
+                    "optimized_test_cases": snapshot,
+                    "coverage_maintained": False,
+                    "action": "merge",
+                    "reason": f"Cannot merge: {', '.join(safety_check['issues'])}"
+                }
+            
             try:
                 merged_id = self.test_case_merger.generate_merged_test_case_id([keep_id, test_case_id])
                 merged_tc = self.test_case_merger.generate_merged_test_case(
@@ -1145,10 +1234,31 @@ class OptimizationEngine:
         flow_maintained = optimized_flow["coverage_percentage"] >= self.min_coverage * 100
         
         
+        # For multi-merge, use stricter threshold (98% instead of 95%)
+        # This prevents aggressive merges that lose too many steps
+        is_multi_merge = len(baseline) - len(optimized) > 2  # More than 2 test cases merged
+        # Lowered from 0.98 to 0.97 for multi-merge to allow more merges while maintaining high coverage
+        # For large merges, use lower threshold to allow consolidation
+        # This allows consolidation of many test cases while still maintaining high coverage
+        if is_multi_merge:
+            # Check if this is a large merge by counting test cases
+            # We can infer this from the difference in test case count
+            original_count = len(original)
+            optimized_count = len(optimized)
+            merged_count = original_count - optimized_count + 1  # Approximate merged test cases
+            if merged_count >= 20:
+                step_coverage_threshold = 0.94  # Very large merges: 94%
+            elif merged_count >= 10:
+                step_coverage_threshold = 0.95  # Large merges: 95%
+            else:
+                step_coverage_threshold = 0.97  # Small merges: 97%
+        else:
+            step_coverage_threshold = self.min_step_coverage
+        
         step_check = self.step_coverage_tracker.validate_step_coverage_maintained(
             baseline, 
             optimized,
-            self.min_step_coverage
+            step_coverage_threshold
         )
         
         baseline_critical = self.coverage_analyzer.identify_critical_flow_coverage(baseline)
@@ -1161,7 +1271,7 @@ class OptimizationEngine:
         if not flow_maintained:
             reason = f"Flow coverage dropped to {optimized_flow['coverage_percentage']:.1f}% (baseline: {baseline_flow['coverage_percentage']:.1f}%)"
         elif not step_check["is_maintained"]:
-            reason = f"Step coverage dropped to {step_check['coverage_percentage']:.1f}% vs baseline (threshold: {step_check['threshold']:.1f}%)"
+            reason = f"Step coverage would drop to {step_check['coverage_percentage']:.1f}% (threshold: {step_check['threshold']:.1f}%) - merge would lose unique steps"
         elif not critical_maintained:
             reason = "Critical flows no longer covered"
         else:

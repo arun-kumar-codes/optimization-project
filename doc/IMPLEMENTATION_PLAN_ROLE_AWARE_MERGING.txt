@@ -1,0 +1,595 @@
+================================================================================
+IMPLEMENTATION PLAN: ROLE-AWARE MULTI-TEST-CASE MERGING STRATEGY
+================================================================================
+
+OBJECTIVE:
+----------
+Implement advanced multi-test-case merging that:
+1. Only merges test cases within the same role (admin vs user)
+2. Groups by website/domain before merging
+3. Identifies common prefixes (e.g., login sequences)
+4. Merges multiple test cases (not just pairs) into consolidated flows
+5. Preserves all unique steps while eliminating redundancy
+
+EXPECTED OUTCOME:
+-----------------
+- Current: 30 test cases (after basic optimization)
+- Target: 10-15 test cases (after role-aware multi-test-case merging)
+- Reduction: 50-66% further reduction
+- Example: 5 OrangeHRM admin test cases → 1 consolidated admin flow
+
+CRITICAL CONSTRAINT:
+--------------------
+NEVER merge admin flows with user flows - this would break functionality
+due to different permissions/access levels.
+
+================================================================================
+PHASE 1: ENHANCE ROLE CLASSIFICATION
+================================================================================
+
+FILE: test_optimizer/output/output_generator.py
+METHOD: _is_admin_test_case()
+
+CURRENT STATE:
+--------------
+- Basic keyword-based classification exists
+- Only checks name, description, and first 5 steps
+- Used only for output file separation
+
+WHAT TO IMPROVE:
+----------------
+1. More comprehensive role detection:
+   - Check all steps (not just first 5)
+   - Analyze step actions (e.g., "delete user", "manage users" = admin)
+   - Check URLs/domains (admin portals vs user portals)
+   - Analyze element locators (admin-specific selectors)
+
+2. Create dedicated RoleClassifier class:
+   - test_optimizer/analysis/role_classifier.py (NEW FILE)
+   - Methods:
+     * classify_role(test_case) -> "admin" | "user" | "unknown"
+     * is_admin_test_case(test_case) -> bool
+     * extract_role_indicators(test_case) -> Dict
+     * get_role_confidence(test_case) -> float (0.0 to 1.0)
+
+3. Enhanced role detection logic:
+   - Admin indicators:
+     * Keywords: "admin", "administrator", "system user", "manage", "delete user", "create user"
+     * Actions: "deleteUser", "createUser", "manageUsers", "systemSettings"
+     * URLs: "/admin", "/management", "/system"
+     * Elements: admin-specific selectors, management panels
+   - User indicators:
+     * Keywords: "user", "customer", "employee", "login", "profile"
+     * Actions: "login", "viewProfile", "updateProfile", "logout"
+     * URLs: "/user", "/dashboard", "/profile"
+     * Elements: user-facing elements
+
+4. Store role classification in TestCase:
+   - Add optional field: role: Optional[str] = None
+   - Or use metadata/raw_data to store role
+   - Cache role classification to avoid re-computation
+
+IMPLEMENTATION STEPS:
+---------------------
+1. Create test_optimizer/analysis/role_classifier.py
+2. Implement RoleClassifier class with comprehensive detection
+3. Update TestCase model (or use metadata) to store role
+4. Integrate into data loading/processing pipeline
+5. Add role classification to optimization engine initialization
+6. Test with existing test cases to verify accuracy
+
+FILES TO CREATE:
+----------------
+- test_optimizer/analysis/role_classifier.py
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/data/models.py (optional: add role field)
+- test_optimizer/optimization/optimization_engine.py (classify roles during init)
+- test_optimizer/output/output_generator.py (use new RoleClassifier)
+
+ESTIMATED TIME:
+---------------
+2-3 hours
+
+================================================================================
+PHASE 2: WEBSITE/DOMAIN GROUPING WITHIN ROLES
+================================================================================
+
+FILE: test_optimizer/ai/semantic_analyzer.py
+METHOD: _extract_website_from_test_case()
+
+CURRENT STATE:
+--------------
+- Website extraction exists for AI semantic analysis
+- Used to prevent merging different websites
+- Not used for grouping/merging strategy
+
+WHAT TO IMPROVE:
+----------------
+1. Create WebsiteGrouper class:
+   - test_optimizer/analysis/website_grouper.py (NEW FILE)
+   - Methods:
+     * extract_website(test_case) -> str (domain/website identifier)
+     * group_by_website(test_cases) -> Dict[str, List[int]]
+     * group_by_role_and_website(test_cases) -> Dict[Tuple[str, str], List[int]]
+     * normalize_website(url) -> str (extract domain, normalize)
+
+2. Enhanced website extraction:
+   - Extract from navigateTo steps
+   - Extract from test_data URLs
+   - Extract from step descriptions
+   - Normalize domains (www.example.com = example.com)
+   - Handle subdomains (admin.example.com vs user.example.com)
+
+3. Grouping strategy:
+   - Group 1: (role="admin", website="orangehrm") -> [TC13, TC14, ...]
+   - Group 2: (role="user", website="orangehrm") -> [TC11, TC12, TC26, ...]
+   - Group 3: (role="user", website="salesforce") -> [TC29, TC32, ...]
+   - Group 4: (role="user", website="ecommerce") -> [TC15, TC17, ...]
+
+4. Integration with merging:
+   - Only merge test cases within same (role, website) group
+   - This ensures:
+     * Same role (admin vs user)
+     * Same website/domain
+     * Compatible flows
+
+IMPLEMENTATION STEPS:
+---------------------
+1. Create test_optimizer/analysis/website_grouper.py
+2. Implement website extraction and normalization
+3. Implement grouping methods
+4. Integrate with role classification
+5. Add grouping to optimization engine
+6. Test grouping accuracy with existing test cases
+
+FILES TO CREATE:
+----------------
+- test_optimizer/analysis/website_grouper.py
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/optimization_engine.py (add grouping step)
+- test_optimizer/optimization/test_case_merger.py (use grouping for merge candidates)
+
+ESTIMATED TIME:
+---------------
+2-3 hours
+
+================================================================================
+PHASE 3: COMMON PREFIX IDENTIFICATION
+================================================================================
+
+FILE: test_optimizer/analysis/sequence_extractor.py
+METHOD: extract_flow_pattern()
+
+CURRENT STATE:
+--------------
+- Sequence extraction exists
+- Flow pattern extraction exists
+- Used for similarity analysis
+- Not used for identifying common prefixes for merging
+
+WHAT TO IMPROVE:
+----------------
+1. Create PrefixAnalyzer class:
+   - test_optimizer/analysis/prefix_analyzer.py (NEW FILE)
+   - Methods:
+     * identify_common_prefix(test_cases) -> List[TestStep]
+     * find_longest_common_prefix(test_cases) -> List[str] (action sequence)
+     * extract_prefix_steps(test_case) -> List[TestStep]
+     * identify_common_suffix(test_cases) -> List[TestStep]
+     * find_merge_points(test_cases) -> Dict (prefix, unique_middle, suffix)
+
+2. Prefix identification logic:
+   - Compare step sequences from start
+   - Find longest common subsequence at beginning
+   - Common prefixes often include:
+     * Login sequences: [navigateto, click, enter, click, verify]
+     * Navigation sequences: [navigateto, wait, click]
+     * Setup sequences: [navigateto, click, enter, click]
+
+3. Suffix identification:
+   - Compare step sequences from end
+   - Find longest common subsequence at end
+   - Common suffixes often include:
+     * Logout sequences: [click, verify, navigateto]
+     * Cleanup sequences: [click, verify]
+
+4. Merge point detection:
+   - Identify where test cases diverge (after common prefix)
+   - Identify where test cases converge (before common suffix)
+   - This helps determine optimal merge structure
+
+IMPLEMENTATION STEPS:
+---------------------
+1. Create test_optimizer/analysis/prefix_analyzer.py
+2. Implement prefix/suffix identification algorithms
+3. Add merge point detection
+4. Integrate with sequence extractor
+5. Test with real test cases (e.g., OrangeHRM login flows)
+
+FILES TO CREATE:
+----------------
+- test_optimizer/analysis/prefix_analyzer.py
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/analysis/sequence_extractor.py (add prefix methods)
+- test_optimizer/optimization/test_case_merger.py (use prefix analysis)
+
+ESTIMATED TIME:
+---------------
+3-4 hours
+
+================================================================================
+PHASE 4: MULTI-TEST-CASE MERGING (BEYOND PAIRS)
+================================================================================
+
+FILE: test_optimizer/optimization/test_case_merger.py
+METHOD: generate_merged_test_case()
+
+CURRENT STATE:
+--------------
+- Only merges pairs of test cases (test_case1, test_case2)
+- generate_merged_test_case() takes 2 test cases
+- No support for merging 3+ test cases
+
+WHAT TO IMPROVE:
+----------------
+1. Add multi-test-case merging method:
+   - merge_multiple_test_cases(test_cases: List[TestCase]) -> TestCase
+   - This is the KEY method for advanced merging
+
+2. Merging strategy for multiple test cases:
+   - Step 1: Identify common prefix (all test cases share)
+   - Step 2: Extract unique middle sections (each test case's unique steps)
+   - Step 3: Identify common suffix (all test cases share, e.g., logout)
+   - Step 4: Combine: [Common Prefix] + [All Unique Middles] + [Common Suffix]
+
+3. Example merging:
+   - TC13: [Login] → [Change Password] → [Logout]
+   - TC14: [Login] → [Add Employee] → [Logout]
+   - TC15: [Login] → [Update Profile] → [Logout]
+   - Merged: [Login] → [Change Password] → [Add Employee] → [Update Profile] → [Logout]
+
+4. Step ordering logic:
+   - Preserve relative order within each test case's unique section
+   - Order unique sections by:
+     * Dependency order (if TC14 depends on TC13's output)
+     * Logical flow (setup → action → verification)
+     * Priority (high priority actions first)
+   - Remove duplicate steps (same signature)
+
+5. Metadata merging:
+   - Name: "Merged: TC13 + TC14 + TC15" or "Consolidated Admin Flow"
+   - Description: Combined descriptions
+   - Priority: Highest priority from all
+   - Tags: Union of all tags
+   - Test data: Combine test data IDs
+
+6. New ID generation:
+   - Use format: 20000 + hash(source_ids)
+   - Or sequential: 20001, 20002, ...
+   - Store source IDs in raw_data: {"source_test_cases": [13, 14, 15]}
+
+IMPLEMENTATION STEPS:
+---------------------
+1. Add merge_multiple_test_cases() method to TestCaseMerger
+2. Implement prefix/suffix identification using PrefixAnalyzer
+3. Implement unique middle section extraction
+4. Implement step ordering logic
+5. Add metadata merging for multiple test cases
+6. Update ID generation for multi-test-case merges
+7. Add validation to ensure merged test case maintains coverage
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/test_case_merger.py (add multi-merge method)
+- test_optimizer/analysis/prefix_analyzer.py (use for prefix/suffix)
+
+ESTIMATED TIME:
+---------------
+4-5 hours
+
+================================================================================
+PHASE 5: ROLE-AWARE MERGE VALIDATION
+================================================================================
+
+FILE: test_optimizer/optimization/coverage_validator.py
+METHOD: comprehensive_validation()
+
+CURRENT STATE:
+--------------
+- Enhanced validations exist (sequence, dependency, transition, etc.)
+- No specific validation for role-aware merging
+- No check to prevent admin/user cross-merging
+
+WHAT TO ADD:
+------------
+1. Role-aware merge validation:
+   - validate_role_consistency(merged_test_case, source_test_cases) -> Dict
+   - Checks: All source test cases have same role
+   - Prevents: Admin + User merging
+
+2. Website consistency validation:
+   - validate_website_consistency(merged_test_case, source_test_cases) -> Dict
+   - Checks: All source test cases have same website
+   - Prevents: Different website merging
+
+3. Merge safety validation:
+   - validate_merge_safety(test_cases_to_merge) -> Dict
+   - Checks:
+     * Same role
+     * Same website
+     * No conflicting state dependencies
+     * No circular dependencies
+     * All prerequisites available
+
+4. Integration with comprehensive validation:
+   - Add role/website checks to validation report
+   - Block merge if role/website mismatch detected
+   - Provide clear error messages
+
+IMPLEMENTATION STEPS:
+---------------------
+1. Add validate_role_consistency() to CoverageValidator
+2. Add validate_website_consistency() to CoverageValidator
+3. Add validate_merge_safety() to CoverageValidator
+4. Integrate into comprehensive_validation()
+5. Update validation report to show role/website checks
+6. Add error messages for role/website mismatches
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/coverage_validator.py (add role/website validations)
+
+ESTIMATED TIME:
+---------------
+2-3 hours
+
+================================================================================
+PHASE 6: INTEGRATION WITH OPTIMIZATION ENGINE
+================================================================================
+
+FILE: test_optimizer/optimization/optimization_engine.py
+METHOD: optimize_test_suite_iteratively()
+
+CURRENT STATE:
+--------------
+- Iterative optimization exists
+- Pair-wise merging exists
+- No multi-test-case merging
+- No role-aware grouping
+
+WHAT TO ADD:
+------------
+1. Pre-processing: Role and Website Classification
+   - Classify all test cases by role (admin/user)
+   - Group by (role, website) tuples
+   - Store groups for merging phase
+
+2. Multi-test-case merge candidate identification:
+   - Within each (role, website) group:
+     * Find test cases with common prefixes
+     * Identify mergeable groups (3+ test cases)
+     * Prioritize groups with longest common prefixes
+   - Example: OrangeHRM Admin group
+     * TC13, TC14, TC15 all have [Login] prefix
+     * Can merge into 1 consolidated flow
+
+3. Merging strategy:
+   - Phase 1: Multi-test-case merging (3+ test cases)
+     * Within each (role, website) group
+     * Merge test cases with common prefixes
+     * Create consolidated flows
+   - Phase 2: Pair-wise merging (remaining pairs)
+     * Merge remaining similar pairs
+     * Still within (role, website) groups
+   - Phase 3: Removal (exact duplicates)
+     * Remove exact duplicates
+     * Only if no unique steps
+
+4. Validation after each merge:
+   - Check role consistency
+   - Check website consistency
+   - Check step coverage maintained
+   - Check flow coverage maintained
+   - Check state dependencies maintained
+   - Rollback if validation fails
+
+5. Merge tracking:
+   - Track which test cases were merged
+   - Store merge metadata
+   - Generate merge report
+
+IMPLEMENTATION STEPS:
+---------------------
+1. Add role classification to optimization engine initialization
+2. Add website grouping to optimization engine initialization
+3. Add multi-test-case merge candidate identification
+4. Add multi-test-case merging phase before pair-wise merging
+5. Add role/website validation after each merge
+6. Update merge tracking and reporting
+7. Test with real test cases
+
+FILES TO MODIFY:
+----------------
+- test_optimizer/optimization/optimization_engine.py (add multi-merge phase)
+- test_optimizer/optimization/test_case_merger.py (integrate multi-merge)
+
+ESTIMATED TIME:
+---------------
+5-6 hours
+
+================================================================================
+PHASE 7: TESTING AND VALIDATION
+================================================================================
+
+TEST SCENARIOS:
+---------------
+1. Role Classification Accuracy:
+   - Test with known admin test cases → should classify as "admin"
+   - Test with known user test cases → should classify as "user"
+   - Test with ambiguous cases → should handle gracefully
+
+2. Website Grouping Accuracy:
+   - Test with OrangeHRM test cases → should group together
+   - Test with Salesforce test cases → should group separately
+   - Test with mixed websites → should not merge across websites
+
+3. Prefix Identification:
+   - Test with login flows → should identify login prefix
+   - Test with different prefixes → should identify correctly
+   - Test with no common prefix → should handle gracefully
+
+4. Multi-Test-Case Merging:
+   - Test merging 3 OrangeHRM admin test cases → should create 1 consolidated flow
+   - Test merging 5 OrangeHRM user test cases → should create 1 consolidated flow
+   - Test with conflicting dependencies → should not merge
+
+5. Role-Aware Validation:
+   - Test merging admin + user → should FAIL validation
+   - Test merging same role → should PASS validation
+   - Test merging different websites → should FAIL validation
+
+6. Coverage Validation:
+   - Test that merged test cases maintain step coverage
+   - Test that merged test cases maintain flow coverage
+   - Test that merged test cases maintain state dependencies
+
+7. End-to-End Test:
+   - Run full optimization with 43 test cases
+   - Verify output has 10-15 test cases (not 30)
+   - Verify all coverage maintained
+   - Verify no admin/user cross-merging
+
+FILES TO CREATE:
+----------------
+- test_optimizer/tests/test_role_classifier.py
+- test_optimizer/tests/test_website_grouper.py
+- test_optimizer/tests/test_prefix_analyzer.py
+- test_optimizer/tests/test_multi_test_case_merger.py
+- test_optimizer/tests/test_role_aware_validation.py
+
+ESTIMATED TIME:
+---------------
+4-5 hours
+
+================================================================================
+IMPLEMENTATION ORDER (RECOMMENDED)
+================================================================================
+
+Week 1:
+-------
+Day 1-2: Phase 1 (Role Classification)
+Day 3-4: Phase 2 (Website Grouping)
+
+Week 2:
+-------
+Day 1-2: Phase 3 (Prefix Identification)
+Day 3-4: Phase 4 (Multi-Test-Case Merging)
+
+Week 3:
+-------
+Day 1-2: Phase 5 (Role-Aware Validation)
+Day 3-4: Phase 6 (Integration)
+
+Week 4:
+-------
+Day 1-3: Phase 7 (Testing and Validation)
+Day 4-5: Bug fixes and refinements
+
+TOTAL ESTIMATED TIME: 3-4 weeks (120-160 hours)
+
+================================================================================
+SUCCESS CRITERIA
+================================================================================
+
+1. Role Classification:
+   - ✓ 95%+ accuracy in classifying admin vs user test cases
+   - ✓ Handles ambiguous cases gracefully
+
+2. Website Grouping:
+   - ✓ 100% accuracy in grouping by website/domain
+   - ✓ No cross-website merging
+
+3. Multi-Test-Case Merging:
+   - ✓ Successfully merges 3+ test cases into consolidated flows
+   - ✓ Preserves all unique steps
+   - ✓ Maintains logical step order
+
+4. Role-Aware Validation:
+   - ✓ Prevents admin/user cross-merging (100% prevention)
+   - ✓ Prevents cross-website merging (100% prevention)
+   - ✓ Provides clear error messages
+
+5. Coverage Maintenance:
+   - ✓ Step coverage ≥95%
+   - ✓ Flow coverage ≥90%
+   - ✓ All enhanced validations pass
+
+6. Reduction Target:
+   - ✓ Reduces from 30 test cases to 10-15 test cases
+   - ✓ 50-66% further reduction achieved
+
+7. End-to-End:
+   - ✓ Full optimization runs successfully
+   - ✓ Output files generated correctly
+   - ✓ All validations pass
+   - ✓ No broken functionality
+
+================================================================================
+RISKS AND MITIGATION
+================================================================================
+
+RISK 1: Role Classification Inaccuracy
+---------------------------------------
+Impact: Admin and user test cases might be misclassified
+Mitigation:
+- Use multiple indicators (keywords, actions, URLs, elements)
+- Provide confidence scores
+- Allow manual override
+- Extensive testing with known admin/user test cases
+
+RISK 2: Over-Merging
+--------------------
+Impact: Too many test cases merged, losing test isolation
+Mitigation:
+- Set maximum merge size (e.g., max 5 test cases per merge)
+- Validate coverage after each merge
+- Provide merge reports for review
+
+RISK 3: State Dependency Conflicts
+------------------------------------
+Impact: Merged test cases might have conflicting state dependencies
+Mitigation:
+- Enhanced dependency validation
+- Check for conflicts before merging
+- Rollback if conflicts detected
+
+RISK 4: Performance Impact
+---------------------------
+Impact: Multi-test-case merging might be slow
+Mitigation:
+- Optimize prefix/suffix identification algorithms
+- Cache role classifications
+- Limit merge candidate groups
+- Profile and optimize bottlenecks
+
+================================================================================
+NOTES
+================================================================================
+
+1. This is a MAJOR enhancement that will significantly improve optimization
+2. Must be implemented carefully to avoid breaking existing functionality
+3. Extensive testing required before production use
+4. Consider implementing in phases with testing after each phase
+5. Document all changes thoroughly
+6. Update user documentation after implementation
+
+================================================================================
+END OF IMPLEMENTATION PLAN
+================================================================================
+

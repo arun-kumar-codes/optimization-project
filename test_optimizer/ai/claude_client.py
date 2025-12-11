@@ -45,7 +45,7 @@ class ClaudeClient:
             from config.ai_config import AIConfig
             self.rate_limit_delay = AIConfig.RATE_LIMIT_DELAY
         except ImportError:
-            self.rate_limit_delay = 12.0
+            self.rate_limit_delay = 1.5  # Default: 1.5s (conservative for 50 req/min limit)
         self.last_request_time = 0
     
     def _rate_limit(self):

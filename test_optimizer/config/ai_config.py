@@ -8,7 +8,8 @@ class AIConfig:
     """Configuration for AI analysis settings."""
     
     # Rate limiting settings
-    RATE_LIMIT_DELAY = float(os.getenv("AI_RATE_LIMIT_DELAY", "12.0"))  # Seconds between requests (API limit: 5/min = 12s)
+    # Claude Haiku allows 50 requests/minute, so 1.2s delay is safe (conservative: 1.5s)
+    RATE_LIMIT_DELAY = float(os.getenv("AI_RATE_LIMIT_DELAY", "1.5"))  # Seconds between requests (API limit: 50/min = 1.2s, using 1.5s for safety)
     
     # Semantic duplicate detection settings
     SEMANTIC_DUPLICATE_CANDIDATE_LIMIT = int(os.getenv("AI_SEMANTIC_CANDIDATE_LIMIT", "30"))  # Max candidates to check

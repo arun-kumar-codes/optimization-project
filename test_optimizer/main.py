@@ -225,9 +225,13 @@ def main():
         if tid in test_cases
     }
     
-    # Add merged test cases (they have new IDs and are TestCase objects)
+    # Add pair-wise merged test cases (they have new IDs and are TestCase objects)
     if "merged_test_cases_dict" in optimization_result:
         optimized_test_cases.update(optimization_result["merged_test_cases_dict"])
+    
+    # Add multi-merged test cases (they have new IDs and are TestCase objects)
+    if "multi_merged_test_cases_dict" in optimization_result:
+        optimized_test_cases.update(optimization_result["multi_merged_test_cases_dict"])
     
     print(f"✓ Optimization completed")
     print(f"  Original: {optimization_result['original_test_cases']} test cases")
