@@ -428,22 +428,82 @@ class DuplicateDetector:
         
         candidate_pairs = candidate_pairs[:max_ai_checks]
         
+        # Pre-check cache to avoid unnecessary API calls
         print(f"  Checking {len(candidate_pairs)} candidate pairs with AI for semantic duplicates (limit: {max_ai_checks})...")
+        print(f"  Pre-checking cache for existing results...")
+        
+        cached_count = 0
+        cached_duplicates = 0
+        uncached_pairs = []
         
         for id1, id2, algo_sim in candidate_pairs:
-            try:
-                ai_result = self.ai_semantic_analyzer.identify_semantic_duplicates(
-                    test_cases[id1],
-                    test_cases[id2]
-                )
-                ai_similarity = ai_result.get("semantic_similarity", 0.0)
-                
+            # Quick cache check before API call
+            steps1 = self.ai_semantic_analyzer._prepare_steps_summary(test_cases[id1])
+            steps2 = self.ai_semantic_analyzer._prepare_steps_summary(test_cases[id2])
+            test_case1_data = {
+                "name": test_cases[id1].name,
+                "description": test_cases[id1].description or "",
+                "steps_summary": steps1
+            }
+            test_case2_data = {
+                "name": test_cases[id2].name,
+                "description": test_cases[id2].description or "",
+                "steps_summary": steps2
+            }
+            
+            cached_result = self.ai_semantic_analyzer.cache_manager.get_cached_result(
+                id1, id2, test_case1_data, test_case2_data
+            )
+            
+            if cached_result:
+                cached_count += 1
+                ai_similarity = cached_result.get("semantic_similarity", 0.0)
                 if ai_similarity >= ai_similarity_threshold:
                     semantic_pairs.append((id1, id2, ai_similarity))
-                    print(f"    AI found semantic duplicate: TC{id1} & TC{id2} ({ai_similarity:.1%} similar)")
-            except Exception as e:
-                print(f"    Warning: AI check failed for TC{id1} & TC{id2}: {e}")
-                continue
+                    cached_duplicates += 1
+                    print(f"    [CACHED] AI found semantic duplicate: TC{id1} & TC{id2} ({ai_similarity:.1%} similar)")
+            else:
+                uncached_pairs.append((id1, id2, algo_sim))
+        
+        print(f"  Cache hits: {cached_count}/{len(candidate_pairs)}, API calls needed: {len(uncached_pairs)}")
+        
+        # Process uncached pairs with progress indicator
+        total_uncached = len(uncached_pairs)
+        if total_uncached > 0:
+            import time
+            try:
+                from config.ai_config import AIConfig
+                rate_limit = AIConfig.RATE_LIMIT_DELAY
+            except:
+                rate_limit = 12.0
+            
+            estimated_time = (total_uncached * rate_limit) / 60.0
+            print(f"  Estimated time: ~{estimated_time:.1f} minutes for {total_uncached} API calls...")
+            
+            for idx, (id1, id2, algo_sim) in enumerate(uncached_pairs, 1):
+                try:
+                    print(f"    [{idx}/{total_uncached}] Checking TC{id1} & TC{id2}...", end=" ", flush=True)
+                    start_time = time.time()
+                    
+                    ai_result = self.ai_semantic_analyzer.identify_semantic_duplicates(
+                        test_cases[id1],
+                        test_cases[id2]
+                    )
+                    
+                    elapsed = time.time() - start_time
+                    ai_similarity = ai_result.get("semantic_similarity", 0.0)
+                    
+                    if ai_similarity >= ai_similarity_threshold:
+                        semantic_pairs.append((id1, id2, ai_similarity))
+                        print(f"✓ Duplicate found ({ai_similarity:.1%} similar, {elapsed:.1f}s)")
+                    else:
+                        print(f"✓ Not duplicate ({ai_similarity:.1%} similar, {elapsed:.1f}s)")
+                except Exception as e:
+                    print(f"✗ Failed: {e}")
+                    continue
+            
+            api_duplicates = len(semantic_pairs) - cached_duplicates
+            print(f"  ✓ AI semantic check complete: {len(semantic_pairs)} duplicates found ({cached_duplicates} from cache, {api_duplicates} from API)")
         
         return semantic_pairs
 

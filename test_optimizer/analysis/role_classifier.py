@@ -31,7 +31,9 @@ class RoleClassifier:
         
         self.admin_url_patterns = [
             r"/admin", r"/administrator", r"/management", r"/system",
-            r"/admin/", r"/manage/", r"/system/", r"/settings"
+            r"/admin/", r"/manage/", r"/system/", r"/settings",
+            r"/api/v2/admin", r"/api/v1/admin",  # API admin endpoints
+            r"viewSystemUsers", r"viewJobTitleList", r"saveJobTitle"  # Admin-specific pages
         ]
         
         self.admin_element_patterns = [
@@ -124,17 +126,46 @@ class RoleClassifier:
         # Extract elements from steps
         elements = self._extract_elements_from_steps(test_case.steps)
         
+        # Extract test_data from steps (usernames, values entered)
+        test_data_values = []
+        for step in test_case.steps:
+            if step.test_data:
+                test_data_str = str(step.test_data).strip()
+                # Skip URLs
+                if not (test_data_str.startswith("http://") or test_data_str.startswith("https://")):
+                    test_data_values.append(test_data_str.lower())
+            
+            # CRITICAL: Also check raw_data event.value for usernames/passwords
+            if step.raw_data and isinstance(step.raw_data, dict):
+                event = step.raw_data.get("event", {})
+                if isinstance(event, dict):
+                    # Check value field (often contains username/password)
+                    event_value = event.get("value", "")
+                    if event_value and isinstance(event_value, str):
+                        event_value_lower = event_value.lower().strip()
+                        # Skip URLs
+                        if not (event_value_lower.startswith("http://") or event_value_lower.startswith("https://")):
+                            test_data_values.append(event_value_lower)
+        
         # Count admin indicators
         admin_keyword_count = sum(1 for keyword in self.admin_keywords if keyword in text)
         admin_action_count = sum(1 for action in actions if any(admin_action in action for admin_action in self.admin_actions))
         admin_url_count = sum(1 for url in urls if any(re.search(pattern, url, re.IGNORECASE) for pattern in self.admin_url_patterns))
         admin_element_count = sum(1 for elem in elements if any(pattern in elem for pattern in self.admin_element_patterns))
+        # CRITICAL: Check test_data for admin usernames (e.g., "Admin", "administrator")
+        admin_test_data_count = sum(1 for td in test_data_values if any(
+            admin_word in td for admin_word in ["admin", "administrator"]
+        ))
         
         # Count user indicators
         user_keyword_count = sum(1 for keyword in self.user_keywords if keyword in text)
         user_action_count = sum(1 for action in actions if any(user_action in action for user_action in self.user_actions))
         user_url_count = sum(1 for url in urls if any(re.search(pattern, url, re.IGNORECASE) for pattern in self.user_url_patterns))
         user_element_count = sum(1 for elem in elements if any(pattern in elem for pattern in self.user_element_patterns))
+        # Check test_data for user usernames (e.g., "user", "employee", "customer")
+        user_test_data_count = sum(1 for td in test_data_values if any(
+            user_word in td for user_word in ["user", "employee", "customer", "testuser"]
+        ))
         
         return {
             "admin": {
@@ -142,18 +173,21 @@ class RoleClassifier:
                 "actions": admin_action_count,
                 "urls": admin_url_count,
                 "elements": admin_element_count,
-                "total": admin_keyword_count + admin_action_count + admin_url_count + admin_element_count
+                "test_data": admin_test_data_count,
+                "total": admin_keyword_count + admin_action_count + admin_url_count + admin_element_count + admin_test_data_count
             },
             "user": {
                 "keywords": user_keyword_count,
                 "actions": user_action_count,
                 "urls": user_url_count,
                 "elements": user_element_count,
-                "total": user_keyword_count + user_action_count + user_url_count + user_element_count
+                "test_data": user_test_data_count,
+                "total": user_keyword_count + user_action_count + user_url_count + user_element_count + user_test_data_count
             },
             "urls": urls,
             "actions": actions,
-            "elements": elements
+            "elements": elements,
+            "test_data": test_data_values
         }
     
     def get_role_confidence(
@@ -193,13 +227,48 @@ class RoleClassifier:
         if indicators["user"]["keywords"] > 0 and indicators["user"]["actions"] > 0:
             user_confidence = min(1.0, user_confidence + 0.2)
         
-        # Determine classification
-        if admin_confidence >= 0.6:
-            classification = "admin"
-        elif user_confidence >= 0.6:
-            classification = "user"
-        else:
-            classification = "unknown"
+        # CRITICAL: Strong boost if test_data contains admin/user usernames (most reliable indicator)
+        # If username "Admin" appears in test_data, it's a very strong admin indicator
+        if indicators["admin"].get("test_data", 0) >= 2:  # 2+ occurrences of "Admin" in test_data
+            admin_confidence = min(1.0, admin_confidence + 0.15)
+        if indicators["user"].get("test_data", 0) >= 2:  # 2+ occurrences of user keywords in test_data
+            user_confidence = min(1.0, user_confidence + 0.15)
+        
+        # CRITICAL FIX: Admin URLs are a VERY STRONG indicator - if found, ALWAYS classify as admin
+        # Admin URLs like /admin/viewSystemUsers, /api/v2/admin/* are definitive admin indicators
+        # This overrides all other indicators to prevent admin flows from being merged with user flows
+        classification = None  # Initialize classification variable
+        
+        if indicators["admin"].get("urls", 0) > 0:
+            # If admin URLs are found, FORCE admin classification (this is definitive)
+            admin_confidence = 1.0  # Maximum confidence - admin URLs are definitive
+            user_confidence = 0.0   # Zero user confidence - admin URLs override everything
+            classification = "admin"  # Direct classification, skip threshold check
+        # CRITICAL FIX: "Admin" (capital A) as username is a STRONG admin indicator
+        # Check if "Admin" (not "admin") appears in test_data - this is typically admin username
+        elif indicators["admin"].get("test_data", 0) > 0:
+            # Check if it's "Admin" (capital A) specifically, not just lowercase "admin"
+            admin_username_found = False
+            for td in indicators.get("test_data", []):
+                if td == "admin" or td.startswith("admin"):  # "Admin", "admin", "admin_5", etc.
+                    admin_username_found = True
+                    break
+            
+            if admin_username_found:
+                # "Admin" as username is a strong admin indicator
+                admin_confidence = min(1.0, admin_confidence + 0.4)
+                user_confidence = max(0.0, user_confidence - 0.3)
+        
+        # Only use threshold-based classification if not already classified
+        if classification is None:
+            # Lowered threshold for admin if admin credentials found
+            admin_threshold = 0.5 if indicators["admin"].get("test_data", 0) > 0 else 0.6
+            if admin_confidence >= admin_threshold:
+                classification = "admin"
+            elif user_confidence >= 0.6:
+                classification = "user"
+            else:
+                classification = "unknown"
         
         return {
             "admin_confidence": admin_confidence,
@@ -219,6 +288,23 @@ class RoleClassifier:
             if step.test_data and ("http://" in step.test_data or "https://" in step.test_data):
                 urls.append(step.test_data)
             
+            # CRITICAL: Check raw_data for event.href (where navigation URLs are stored)
+            if step.raw_data and isinstance(step.raw_data, dict):
+                event = step.raw_data.get("event", {})
+                if isinstance(event, dict):
+                    # Check href field (most common location for URLs)
+                    if "href" in event:
+                        href = event["href"]
+                        if href and ("http://" in href or "https://" in href):
+                            urls.append(href)
+                    # Check other URL fields in event
+                    for key in ["url", "targetPageUrl", "pageUrl"]:
+                        if key in event:
+                            url_value = event[key]
+                            if url_value and ("http://" in url_value or "https://" in url_value):
+                                urls.append(url_value)
+            
+            # Check action and description text
             text = f"{step.action} {step.description or ''}"
             url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
             matches = re.findall(url_pattern, text)
