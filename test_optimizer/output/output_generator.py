@@ -60,6 +60,9 @@ class OutputGenerator:
             print(f"    [{idx}/{len(optimized_test_cases)}] Generating TC{test_id:02d}.json...", end=" ")
             test_case_json = None
             
+            # Check if this is a merged test case (not in original)
+            is_merged = test_id not in original_test_cases
+            
             if test_id in original_test_cases:
                 original_raw = original_test_cases[test_id].raw_data
                 if original_raw:
@@ -84,9 +87,67 @@ class OutputGenerator:
                     except Exception as e:
                         print(f"Warning: Could not load original file {original_file}: {e}")
             
+            # CRITICAL FIX: For merged test cases, use structure from first source test case
+            if not test_case_json and is_merged:
+                # Get source test case IDs from description
+                import re
+                source_ids = re.findall(r'\(ID:\s*(\d+)\)', test_case.description or "")
+                if source_ids:
+                    # Try to get structure from first source test case
+                    first_source_id = int(source_ids[0])
+                    if first_source_id in original_test_cases:
+                        source_tc = original_test_cases[first_source_id]
+                        if source_tc.raw_data:
+                            test_case_json = source_tc.raw_data.copy()
+                            # Update with merged test case values
+                            test_case_json["id"] = test_case.id
+                            test_case_json["name"] = test_case.name
+                            if test_case.description:
+                                test_case_json["description"] = test_case.description
+                            if test_case.priority is not None:
+                                test_case_json["priority"] = test_case.priority
+                            if test_case.status:
+                                test_case_json["status"] = test_case.status
+                    else:
+                        # Try loading from file
+                        source_file = self.original_test_cases_dir / f"{first_source_id:02d}.json"
+                        if not source_file.exists():
+                            source_file = self.original_test_cases_dir / f"{first_source_id}.json"
+                        if source_file.exists():
+                            try:
+                                with open(source_file, 'r', encoding='utf-8') as f:
+                                    test_case_json = json.load(f)
+                                    # Update with merged test case values
+                                    test_case_json["id"] = test_case.id
+                                    test_case_json["name"] = test_case.name
+                                    if test_case.description:
+                                        test_case_json["description"] = test_case.description
+                                    if test_case.priority is not None:
+                                        test_case_json["priority"] = test_case.priority
+                                    if test_case.status:
+                                        test_case_json["status"] = test_case.status
+                            except Exception as e:
+                                print(f"Warning: Could not load source file {source_file}: {e}")
             
             if not test_case_json:
                 test_case_json = self._test_case_to_json(test_case, preserve_structure=True)
+            
+            # For merged test cases, remove merge-specific metadata to match standalone structure
+            if is_merged and test_case_json:
+                # Remove merge-specific fields that shouldn't be in final output
+                merge_fields_to_remove = [
+                    "source_test_cases",
+                    "merged_from",
+                    "merged_metadata",
+                    "combined_flows",
+                    "merge_strategy",
+                    "prefix_length",
+                    "suffix_length",
+                    "total_unique_steps",
+                    "original_total_steps"
+                ]
+                for field in merge_fields_to_remove:
+                    test_case_json.pop(field, None)
             
             # Write the file
             file_path = self.test_cases_dir / f"{test_id:02d}.json"
@@ -335,6 +396,21 @@ class OutputGenerator:
         """
         if preserve_structure and test_case.raw_data:
             json_data = test_case.raw_data.copy()
+            # Remove merge-specific metadata fields to match standalone structure
+            merge_fields_to_remove = [
+                "source_test_cases",
+                "merged_from",
+                "merged_metadata",
+                "combined_flows",
+                "merge_strategy",
+                "prefix_length",
+                "suffix_length",
+                "total_unique_steps",
+                "original_total_steps"
+            ]
+            for field in merge_fields_to_remove:
+                json_data.pop(field, None)
+            
             json_data["id"] = test_case.id
             json_data["name"] = test_case.name
             if test_case.description:
@@ -347,21 +423,86 @@ class OutputGenerator:
                 json_data["tags"] = test_case.tags
             return json_data
         
-        # Basic structure
+        # Basic structure - match input format with all required fields
+        import time
+        current_time = int(time.time() * 1000)
         json_data = {
             "id": test_case.id,
             "name": test_case.name,
-            "description": test_case.description,
-            "priority": test_case.priority,
-            "status": test_case.status,
+            "description": test_case.description or "",
+            "priority": test_case.priority if test_case.priority is not None else None,
+            "status": test_case.status or "READY",
             "tags": test_case.tags or [],
             "preRequisiteCase": test_case.prerequisite_case,
             "testDataId": test_case.test_data_id,
-            "createdDate": test_case.created_date,
-            "updatedDate": test_case.updated_date,
+            "createdDate": test_case.created_date or current_time,
+            "updatedDate": test_case.updated_date or current_time,
+            "startTime": None,
+            "endTime": None,
             "deleted": False,
             "isDataDriven": False,
             "isStepGroup": False,
+            "draftAt": None,
+            "obsoleteAt": None,
+            "readyAt": None,
+            "type": 1,
+            "workspaceVersionId": 1,
+            "preRequisite": None,
+            "copiedFrom": None,
+            "testDataStartIndex": 0,
+            "testDataEndIndex": None,
+            "results": None,
+            "priorityName": None,
+            "typeName": None,
+            "testDataName": None,
+            "preRequisiteName": None,
+            "order": None,
+            "files": [],
+            "testType": "BROWSER",
+            "jiraTicketsId": None,
+            "isExtensionUsed": False,
+            "testConfiguration": {
+                "viewport": {
+                    "width": 1280,
+                    "height": 720
+                }
+            },
+            "testDataFunctionArgs": None,
+            "disableAutoWaitSteps": False,
+            "testcaseTimeout": 20,
+            "session": None,
+            "lastRun": None,
+            "lastRunResult": None,
+            "updateMetadata": True,
+            "missingData": None,
+            "createdBy": None,
+            "knowledgeId": None,
+            "platform": None,
+            "suites": None,
+            "version": {
+                "id": 1,
+                "workspaceId": 1,
+                "versionName": "Version1.0",
+                "description": None,
+                "workspace": {
+                    "id": 1,
+                    "name": "Web workspace (Live)",
+                    "description": "Add, Delete or Update multiple workspace versions using Live.",
+                    "workspaceType": "WebApplication",
+                    "createdDate": 1655628237000,
+                    "updatedDate": 1655628237000,
+                    "userIds": [],
+                    "createdBy": None,
+                    "versions": None,
+                    "is_demo": True
+                },
+                "createdDate": 1550559354000,
+                "updatedDate": 1655628237000
+            },
+            "from": None,
+            "to": None,
+            "url": None,
+            "testData": None,
             "draftAt": None,
             "obsoleteAt": None,
             "readyAt": None,

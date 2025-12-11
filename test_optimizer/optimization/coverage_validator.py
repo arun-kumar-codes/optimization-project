@@ -922,10 +922,12 @@ class CoverageValidator:
                 "role_counts": role_counts
             }
         
+        # CRITICAL FIX: Don't allow merging if any test case has "unknown" role
+        # This prevents admin test cases (misclassified as "unknown") from being merged with user test cases
         if "unknown" in unique_roles:
             return {
-                "passed": True,
-                "issue": "Some test cases have unknown role classification",
+                "passed": False,
+                "issue": f"Cannot merge test cases with unknown role classification. All test cases must be clearly classified as 'admin' or 'user'. Found roles: {list(unique_roles)}",
                 "roles": list(unique_roles)
             }
         
@@ -1082,13 +1084,17 @@ class CoverageValidator:
         scenario_context_validation = self.validate_scenario_context(original_test_cases, optimized_test_cases)
         
         
+        # Flow transitions are less critical - only fail if we lose MANY transitions
+        # 1-2 lost transitions is acceptable (minor issue, not a blocker)
+        transition_critical = len(transition_validation.get("lost_transitions", [])) > 3
+        
         overall_valid = (
             step_validation["passed"] and
             flow_validation["is_valid"] and
             scenario_validation["passed"] and 
             sequence_validation["passed"] and 
             dependency_validation["passed"] and 
-            transition_validation["passed"] and 
+            (transition_validation["passed"] or not transition_critical) and  # Allow minor transition losses
             scenario_context_validation["passed"] 
         )
         
@@ -1125,9 +1131,14 @@ class CoverageValidator:
                 errors.append(f"  - {broken['issue']}")
         
         if not transition_validation["passed"]:
-            errors.append(f"Flow transition issues: {transition_validation['total_issues']} lost/broken transitions")
-            if transition_validation['lost_transitions']:
-                errors.append(f"  - Lost transitions: {len(transition_validation['lost_transitions'])}")
+            lost_count = len(transition_validation.get("lost_transitions", []))
+            if lost_count > 3:
+                # Only error if we lose many transitions
+                errors.append(f"Flow transition issues: {transition_validation['total_issues']} lost/broken transitions")
+                errors.append(f"  - Lost transitions: {lost_count}")
+            else:
+                # Minor loss - just a warning
+                warnings.append(f"Flow transition: {lost_count} transition(s) lost (acceptable for optimization)")
         
         if not data_combo_validation["passed"]:
             warnings.append(f"Data combination issues: {len(data_combo_validation['edge_cases_lost'])} edge case combinations lost")

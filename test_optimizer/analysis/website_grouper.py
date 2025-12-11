@@ -48,7 +48,7 @@ class WebsiteGrouper:
         if not domains:
             # Look for common website patterns in text
             website_patterns = {
-                "orangehrm": ["orangehrm", "orange hrm", "ohrm"],
+                "orangehrmlive": ["orangehrm", "orange hrm", "ohrm"],  # Normalize to orangehrmlive
                 "salesforce": ["salesforce", "sfdc"],
                 "ecommerce": ["ecommerce", "e-commerce", "shop", "store"],
                 "amazon": ["amazon"],
@@ -95,11 +95,14 @@ class WebsiteGrouper:
                 main_domain = parts[-2] if len(parts) >= 2 else parts[0]
                 
                 # Map common domains
+                # CRITICAL: Normalize all OrangeHRM variants to "orangehrmlive" for consistency
                 domain_mapping = {
-                    "orangehrm": "orangehrm",
-                    "ohrm": "orangehrm",
+                    "orangehrm": "orangehrmlive",  # Normalize to orangehrmlive
+                    "orangehrmlive": "orangehrmlive",  # Keep as is
+                    "ohrm": "orangehrmlive",  # Normalize to orangehrmlive
                     "salesforce": "salesforce",
                     "sfdc": "salesforce",
+                    "force": "salesforce",  # CRITICAL: lightning.force.com is Salesforce
                     "amazon": "amazon",
                     "airbnb": "airbnb",
                     "demo": "demo"  
